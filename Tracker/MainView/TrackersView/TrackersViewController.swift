@@ -29,10 +29,22 @@ final class TrackersViewController: UIViewController {
             titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                titleLabel.leadingAnchor.constraint(equalTo: dateButton.leadingAnchor, constant: dateButtonSpace),
-                titleLabel.trailingAnchor.constraint(equalTo: dateButton.trailingAnchor, constant: -dateButtonSpace),
-                titleLabel.topAnchor.constraint(equalTo: dateButton.topAnchor, constant: dateButtonSpace),
-                titleLabel.bottomAnchor.constraint(equalTo: dateButton.bottomAnchor, constant: -dateButtonSpace),
+                titleLabel.leadingAnchor.constraint(
+                    equalTo: dateButton.leadingAnchor,
+                    constant: dateButtonSpace
+                ),
+                titleLabel.trailingAnchor.constraint(
+                    equalTo: dateButton.trailingAnchor,
+                    constant: -dateButtonSpace
+                ),
+                titleLabel.topAnchor.constraint(
+                    equalTo: dateButton.topAnchor,
+                    constant: dateButtonSpace
+                ),
+                titleLabel.bottomAnchor.constraint(
+                    equalTo: dateButton.bottomAnchor,
+                    constant: -dateButtonSpace
+                ),
             ])
         }
         
@@ -60,7 +72,8 @@ final class TrackersViewController: UIViewController {
         
         setNavigationItem()
         
-        setStub()
+        // showStub()
+        showCollectionView()
         
         setConstraints()
     }
@@ -82,7 +95,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    private func setStub() {
+    private func showStub() {
         let trackersStubView = TrackersStubView()
         
         view.addSubview(trackersStubView)
@@ -91,6 +104,23 @@ final class TrackersViewController: UIViewController {
         NSLayoutConstraint.activate([
             trackersStubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             trackersStubView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func showCollectionView() {
+        let collectionView = TrackersCollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout()
+        )
+        
+        view.addSubview(collectionView)
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
