@@ -34,6 +34,8 @@ final class TrackersCollectionView: UICollectionView {
     }
 }
 
+// TODO: Лучше вынести датасурс в отдельный класс.
+// Он должен наследоваться от NSObject и UICollectionViewDataSource.
 extension TrackersCollectionView: UICollectionViewDataSource {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -47,10 +49,12 @@ extension TrackersCollectionView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         UICollectionViewCell()
-    } // Возвращать ячейкку с указанным индесом. Тут же можно ее обновлят
+    } // Возвращать ячейку с указанным индесом. Тут же можно ее обновлять.
     
 }
 
+// TODO: UICollectionViewDelegateFlowLayout - это потомок UICollectionViewDelegate.
+// Следовательно все методы последнего можно перенести в первый.
 extension TrackersCollectionView: UICollectionViewDelegate {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -173,5 +177,35 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 0
     }
+     */
+    
+    // На будущее.
+    // Задает отступы секции от краев коллекции.
+    /*
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets { }
+     */
+    
+    // На будущее.
+    // Задает вертикальный отступ между ячейками.
+    /*
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat { }
+     */
+    
+    // На будущее.
+    // Задает горизонтальный отступ между ячейками.
+    /*
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat { }
      */
 }

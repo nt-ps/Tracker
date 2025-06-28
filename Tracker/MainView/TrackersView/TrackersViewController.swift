@@ -16,46 +16,32 @@ final class TrackersViewController: UIViewController {
     } ()
     
     private lazy var dateBarButtonItem: UIBarButtonItem = {
-        let title = TrackersViewController.dateFormatter.string(from: Date())
-        
-        let dateButton = UIButton(type: .system)
-        dateButton.setTitle(title, for: .normal)
-        dateButton.tintColor = .YPColors.black
-        dateButton.backgroundColor = .YPColors.gray
-        dateButton.layer.masksToBounds = true
-        dateButton.layer.cornerRadius = 8
-        
-        if let titleLabel = dateButton.titleLabel {
-            titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-            titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                titleLabel.leadingAnchor.constraint(
-                    equalTo: dateButton.leadingAnchor,
-                    constant: dateButtonSpace
-                ),
-                titleLabel.trailingAnchor.constraint(
-                    equalTo: dateButton.trailingAnchor,
-                    constant: -dateButtonSpace
-                ),
-                titleLabel.topAnchor.constraint(
-                    equalTo: dateButton.topAnchor,
-                    constant: dateButtonSpace
-                ),
-                titleLabel.bottomAnchor.constraint(
-                    equalTo: dateButton.bottomAnchor,
-                    constant: -dateButtonSpace
-                ),
-            ])
-        }
-        
-        let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
+        let dateBarButtonItem = UIBarButtonItem(customView: datePicker)
         return dateBarButtonItem
     } ()
+    
+    // Пока оставил в стандартном виде,
+    // поскольку не нашел решения, как можно изменить формат даты
+    // на кнопке. Пишут, что он сложно настраивается.
+    // Предлагают "перекрыть" лэйблом, но как это сделать
+    // так и не понял.
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+        return datePicker
+    } ()
+     
     
     // MARK: - UI Properties
     
     private let addButtonIconName = "Icons/Add"
     private let dateButtonSpace = 6.0
+    
+    // MARK: - Private Properties
+    
+    private var selectedDate: Date?
     
     // MARK: - Static Properties
     
@@ -76,12 +62,19 @@ final class TrackersViewController: UIViewController {
         showCollectionView()
         
         setConstraints()
+        
+        selectedDate = Date()
     }
     
     // MARK: - Button Actions
     
     @objc
     private func didTapAddButton() { }
+    
+    @objc
+    private func dateChanged(_ sender: UIDatePicker) {
+        selectedDate = sender.date
+    }
     
     // MARK: - UI Updates
     
@@ -108,9 +101,10 @@ final class TrackersViewController: UIViewController {
     }
     
     private func showCollectionView() {
+        let layout = UICollectionViewFlowLayout()
         let collectionView = TrackersCollectionView(
             frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout()
+            collectionViewLayout: layout
         )
         
         view.addSubview(collectionView)
