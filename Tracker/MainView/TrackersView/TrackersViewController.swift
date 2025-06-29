@@ -11,7 +11,7 @@ final class TrackersViewController: UIViewController {
             target: self,
             action: #selector(self.didTapAddButton)
         )
-        addBarButtonItem.tintColor = .YPColors.black
+        addBarButtonItem.tintColor = .AppColors.black
         return addBarButtonItem
     } ()
     
@@ -36,7 +36,7 @@ final class TrackersViewController: UIViewController {
     
     // MARK: - UI Properties
     
-    private let addButtonIconName = "Icons/Add"
+    private let addButtonIconName = "Icons/Plus"
     private let dateButtonSpace = 6.0
     
     // MARK: - Private Properties

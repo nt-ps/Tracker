@@ -7,6 +7,8 @@ final class TrackersCollectionView: UICollectionView {
                                             // новый массив.
     var completedTrackers: [TrackerRecord] = []
     
+    private var geometryParameters: GeometryParameters?
+    
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
@@ -22,6 +24,14 @@ final class TrackersCollectionView: UICollectionView {
             TrackersHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: TrackersHeaderView.reuseIdentifier
+        )
+        
+        // TODO: Вынести базовую единицу 8 в глобальные константы, и использовать тут.
+        geometryParameters = GeometryParameters(
+            cellCount: 2,
+            sectionInsets: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16),
+            cellSpacing: CGPoint(x: 8, y: 0),
+            cellHeightToWidthRatio: 149.0 / 167.0
         )
         
         // Флаг, сообщающий, поддерживается множественный выбор или нет.
@@ -41,16 +51,23 @@ extension TrackersCollectionView: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        0
-    } // Возвращать количество элементов в указанной секции.
+        3
+    } 
     
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        UICollectionViewCell()
-    } // Возвращать ячейку с указанным индесом. Тут же можно ее обновлять.
-    
+        let cell = dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier, for: indexPath)
+                
+        guard let trackerCell = cell as? TrackersCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
+        trackerCell.prepareForReuse()
+        
+        return trackerCell
+    }
 }
 
 // TODO: UICollectionViewDelegateFlowLayout - это потомок UICollectionViewDelegate.
@@ -67,12 +84,13 @@ extension TrackersCollectionView: UICollectionViewDelegate {
                 withReuseIdentifier: TrackersHeaderView.reuseIdentifier,
                 for: indexPath
             ) as! TrackersHeaderView
-            header.title = "Загловок"
+            header.title = "Заголовок"
             return header
         }
         
         return UICollectionViewCell()
     }
+
     
     // Метод выделения ячейки. Добавил на случай, если понадобится в проекте.
     // Если заданная ячейка выделена, то можно изменить
@@ -125,87 +143,48 @@ extension TrackersCollectionView: UICollectionViewDelegate {
 }
 
 extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
-    // Без ячеек этот метод пока валится.
-    // Он определяет размер хэдера.
-    /*
+    // Определяет размер хэдера/футера.
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        let indexPath = IndexPath(row: 0, section: section)
-        let headerView = self.collectionView(
-            collectionView,
-            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-            at: indexPath
-        )
-        
-        return headerView.systemLayoutSizeFitting(
-            CGSize(
-                width: collectionView.frame.width,
-                height: UIView.layoutFittingExpandedSize.height
-            ),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
+        CGSize(
+            width: collectionView.frame.width,
+            height: TrackersHeaderView.defaultHeight
         )
     }
-     */
     
-    // Без ячеек этот метод пока валится.
     // Система сама настривает размер ячейки исходя из контента.
     // Если есть требование расположить в строке определенное кол-во
     // ячеек, их размер нужно задать самостоятельно в этом методе.
     // В данном примере он задается относительно ширины коллекции,
     // т.е. берется половина от величины.
-    /*
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width / 2, height: 50)
-    }
-     */
-    
-    // Без ячеек этот метод пока валится.
-    // Задает минимальный отступ между ячейками.
-    /*
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int
-    ) -> CGFloat {
-        return 0
-    }
-     */
-    
-    // На будущее.
+    ) -> CGSize { geometryParameters?.calcCellSize(for: collectionView.frame) ?? .zero }
+     
     // Задает отступы секции от краев коллекции.
-    /*
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
-    ) -> UIEdgeInsets { }
-     */
+    ) -> UIEdgeInsets { geometryParameters?.sectionInsets ?? .zero }
     
-    // На будущее.
     // Задает вертикальный отступ между ячейками.
-    /*
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
-    ) -> CGFloat { }
-     */
+    ) -> CGFloat { geometryParameters?.cellSpacing.y ?? 0 }
     
-    // На будущее.
+    
     // Задает горизонтальный отступ между ячейками.
-    /*
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
-    ) -> CGFloat { }
-     */
+    ) -> CGFloat { geometryParameters?.cellSpacing.x ?? 0 }
 }

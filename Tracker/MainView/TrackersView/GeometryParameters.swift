@@ -1,17 +1,26 @@
 import UIKit
 
-struct GeometricParams {
+struct GeometryParameters {
     let cellCount: Int
-    let leftInset: CGFloat
-    let rightInset: CGFloat
-    let cellSpacing: CGFloat
-    let paddingWidth: CGFloat
+    let sectionInsets: UIEdgeInsets
+    let cellSpacing: CGPoint
+    let cellHeightToWidthRatio: CGFloat
     
-    init(cellCount: Int, leftInset: CGFloat, rightInset: CGFloat, cellSpacing: CGFloat) {
+    private let availableWidth: CGFloat
+    
+    init(cellCount: Int, sectionInsets: UIEdgeInsets, cellSpacing: CGPoint, cellHeightToWidthRatio: CGFloat) {
         self.cellCount = cellCount
-        self.leftInset = leftInset
-        self.rightInset = rightInset
+        self.sectionInsets = sectionInsets
         self.cellSpacing = cellSpacing
-        self.paddingWidth = leftInset + rightInset + CGFloat(cellCount - 1) * cellSpacing
+        self.cellHeightToWidthRatio = cellHeightToWidthRatio
+        
+        self.availableWidth = sectionInsets.left + sectionInsets.right + CGFloat(cellCount - 1) * cellSpacing.x
+    }
+    
+    func calcCellSize(for viewRect: CGRect) -> CGSize {
+        let availableWidth = viewRect.width - availableWidth
+        let cellWidth = availableWidth / CGFloat(cellCount)
+        let cellHeight = cellWidth * cellHeightToWidthRatio
+        return CGSize(width: cellWidth, height: cellHeight)
     }
 }

@@ -13,7 +13,7 @@ final class TrackersStubView: UIView {
         let labelView = UILabel()
         labelView.text = labelText
         labelView.font = UIFont.systemFont(ofSize: labelSize, weight: .medium)
-        labelView.textColor = .YPColors.black
+        labelView.textColor = .AppColors.black
         labelView.translatesAutoresizingMaskIntoConstraints = false
         return labelView
     } ()
