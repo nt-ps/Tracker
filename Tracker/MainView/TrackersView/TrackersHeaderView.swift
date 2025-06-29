@@ -38,6 +38,7 @@ final class TrackersHeaderView: UICollectionReusableView {
     
     private static var defaultTitle = "Без названия"
     
+    // TODO: Вычислять относительно базовой единицы.
     private static var viewXPadding = 28.0
     private static var viewYPadding = 12.0
     

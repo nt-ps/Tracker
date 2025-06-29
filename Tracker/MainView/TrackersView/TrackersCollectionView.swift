@@ -1,25 +1,33 @@
 import UIKit
 
-final class TrackersCollectionView: UICollectionView {
+final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProtocol {
+    
+    // MARK: - Trackers Collection View Protocol Properties
+    
+    var navigator: (any TrackersNavigatorItemProtocol)?
+    
+    // MARK: - Internal Properties
     
     var categories: [TrackerCategory] = []  // Не рекомендуется менять массив, лучше
                                             // при создании новой категории создавать
                                             // новый массив.
     var completedTrackers: [TrackerRecord] = []
     
+    // MARK: - Private Properties
+    
     private var geometryParameters: GeometryParameters?
+    
+    // MARK: - Overrided methods
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
         dataSource = self
         delegate = self
-        
         register(
             TrackersCollectionViewCell.self,
             forCellWithReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier
         )
-        
         register(
             TrackersHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -34,6 +42,9 @@ final class TrackersCollectionView: UICollectionView {
             cellHeightToWidthRatio: 149.0 / 167.0
         )
         
+        // Mock.
+        categories = TrackersDataMock.data
+        
         // Флаг, сообщающий, поддерживается множественный выбор или нет.
         // Добавил на случай, если понадобится в проекте.
         // allowsMultipleSelection = false
@@ -41,6 +52,92 @@ final class TrackersCollectionView: UICollectionView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    // MARK: - Trackers Collection View Protocol Properties
+    
+    func updateTrackersCollection() {
+        // TODO: Метод написан "на скорую руку".
+        // Переписать нормально.
+        guard let date = navigator?.selectedDate else { return }
+        
+        let data = TrackersDataMock.data
+        
+        let newData: [TrackerCategory] = data.reduce(into: [], { (result, category) in
+            let newTrackers: [Tracker] = category.trackers.reduce(into: [], { (result, tracker) in
+                let weekday = Calendar.current.component(.weekday, from: date)
+                if tracker.schedule.contains(weekday: weekday) {
+                    result.append(tracker)
+                }
+            })
+            
+            if !newTrackers.isEmpty {
+                let newCategory = TrackerCategory(
+                    title: category.title,
+                    trackers: newTrackers
+                )
+                result.append(newCategory)
+            }
+        })
+        
+        if newData.isEmpty {
+            navigator?.showStub()
+        }
+        
+        categories = newData
+        reloadData()
+    }
+    
+    func close() {
+        self.willMove(toSuperview: nil)
+        self.removeFromSuperview()
+    }
+    
+    // MARK: - UI Updates
+    
+    private func configCell(with indexPath: IndexPath) {
+        guard let tracker = getTracker(with: indexPath) else { return }
+        configCell(with: indexPath, from: tracker)
+    }
+    
+    private func configCell(with indexPath: IndexPath, from tracker: Tracker) {
+        guard let cell = cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return }
+        configCell(cell, from: tracker)
+    }
+    
+    private func configCell(for cell: TrackersCollectionViewCell, with indexPath: IndexPath) {
+        guard let tracker = getTracker(with: indexPath) else { return }
+        configCell(cell, from: tracker)
+    }
+    
+    private func configCell(_ cell: TrackersCollectionViewCell, from tracker: Tracker) {
+        guard let navigator else { return }
+        let isDone = findRecordIndex(for: tracker, inDay: navigator.selectedDate) != nil
+        configCell(cell, from: tracker, isDone: isDone)
+    }
+    
+    private func configCell(_ cell: TrackersCollectionViewCell, from tracker: Tracker, isDone: Bool) {
+        cell.color = tracker.color
+        cell.emoji = tracker.emoji
+        cell.name = tracker.name
+        cell.isDone = isDone
+        
+        let daysNum = completedTrackers.count { record in
+            record.trackerId == tracker.id
+        }
+        cell.daysNumber = daysNum
+    }
+    
+    // MARK: - Private methods
+    
+    private func getTracker(with indexPath: IndexPath) -> Tracker? {
+        categories[indexPath.section].trackers[indexPath.item]
+    }
+    
+    private func findRecordIndex(for tracker: Tracker, inDay date: Date) -> Int? {
+        completedTrackers.firstIndex { record in
+            record.trackerId == tracker.id && Calendar.current.isDate(record.date, inSameDayAs: date)
+        }
     }
 }
 
@@ -51,20 +148,22 @@ extension TrackersCollectionView: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        3
-    } 
+        categories[0].trackers.count
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier, for: indexPath)
-                
+        
         guard let trackerCell = cell as? TrackersCollectionViewCell else {
             return UICollectionViewCell()
         }
         
-        trackerCell.prepareForReuse()
+        // trackerCell.prepareForReuse()
+        configCell(for: trackerCell, with: indexPath)
+        trackerCell.delegate = self
         
         return trackerCell
     }
@@ -187,4 +286,27 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat { geometryParameters?.cellSpacing.x ?? 0 }
+}
+
+extension TrackersCollectionView: TrackersCollectionViewCellDelegate {
+    func trackerCellDoneButtonDidTap(_ cell: TrackersCollectionViewCell) {
+        guard
+            let indexPath = indexPath(for: cell),
+            let tracker = getTracker(with: indexPath),
+            let date = navigator?.selectedDate
+        else { return }
+        
+        if date > Date() {
+            return
+        }
+
+        if let recordIndex = findRecordIndex(for: tracker, inDay: date) {
+            completedTrackers.remove(at: recordIndex)
+            configCell(cell, from: tracker, isDone: false)
+        } else {
+            let record = TrackerRecord(trackerId: tracker.id, date: date )
+            completedTrackers.append(record)
+            configCell(cell, from: tracker, isDone: true)
+        }
+    }
 }

@@ -1,8 +1,15 @@
 import UIKit
 
-final class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController, TrackersNavigatorItemProtocol {
+    
+    // MARK: - Trackers View Controller Protocol
+    
+    weak var collection: TrackersCollectionViewProtocol?
+    var selectedDate: Date = Date()
     
     // MARK: - Views
+    
+    private var stub: TrackersStubView?
     
     private lazy var addBarButtonItem: UIBarButtonItem = {
         let addBarButtonItem = UIBarButtonItem(
@@ -28,28 +35,16 @@ final class TrackersViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
+        datePicker.date = selectedDate
         datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         return datePicker
     } ()
-     
     
     // MARK: - UI Properties
     
     private let addButtonIconName = "Icons/Plus"
     private let dateButtonSpace = 6.0
-    
-    // MARK: - Private Properties
-    
-    private var selectedDate: Date?
-    
-    // MARK: - Static Properties
-    
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        return formatter
-    } ()
     
     // MARK: - Lifecycle
     
@@ -57,13 +52,8 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         
         setNavigationItem()
-        
-        // showStub()
+        //showStub()
         showCollectionView()
-        
-        setConstraints()
-        
-        selectedDate = Date()
     }
     
     // MARK: - Button Actions
@@ -74,6 +64,13 @@ final class TrackersViewController: UIViewController {
     @objc
     private func dateChanged(_ sender: UIDatePicker) {
         selectedDate = sender.date
+        
+        // TODO: Переключение между экранами пока очень корявое.
+        // Подумать, как реализовать лучше.
+        if collection == nil {
+            showCollectionView()
+        }
+        collection?.updateTrackersCollection()
     }
     
     // MARK: - UI Updates
@@ -88,7 +85,9 @@ final class TrackersViewController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    private func showStub() {
+    func showStub() {
+        collection?.close()
+        
         let trackersStubView = TrackersStubView()
         
         view.addSubview(trackersStubView)
@@ -101,6 +100,8 @@ final class TrackersViewController: UIViewController {
     }
     
     private func showCollectionView() {
+        stub?.close()
+        
         let layout = UICollectionViewFlowLayout()
         let collectionView = TrackersCollectionView(
             frame: .zero,
@@ -116,7 +117,8 @@ final class TrackersViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        collection = collectionView
+        collection?.navigator = self
     }
-    
-    private func setConstraints() { }
 }

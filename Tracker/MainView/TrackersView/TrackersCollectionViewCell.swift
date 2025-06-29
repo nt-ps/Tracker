@@ -2,11 +2,14 @@ import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - Trackers Collection View Protocol
+    
+    weak var navigator: TrackersNavigatorItemProtocol?
+    
     // MARK: - Views
     
     private lazy var infoView: UIView = {
         let infoView = UIView()
-        infoView.backgroundColor = .TrackerColors.green
         infoView.layer.masksToBounds = true
         infoView.layer.cornerRadius = infoViewCornerRadius
         infoView.translatesAutoresizingMaskIntoConstraints = false
@@ -19,7 +22,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
-        emojiLabel.text = "😪"
         // Установил 13 вместо 16, потому что при значении 16
         // эмодзи слишком большое в сравнении с макетом.
         emojiLabel.font = .systemFont(ofSize: 13, weight: .regular)
@@ -33,7 +35,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
-        nameLabel.text = "Поливать растения"
         nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
         nameLabel.numberOfLines = 2
         nameLabel.adjustsFontSizeToFitWidth = false
@@ -55,7 +56,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var counterLabel: UILabel = {
         let counterLabel = UILabel()
-        counterLabel.text = "0 дней"
         counterLabel.font = .systemFont(ofSize: 12, weight: .medium)
         counterLabel.textColor = .AppColors.black
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -64,9 +64,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
-        doneButton.setImage(UIImage(named: doneButtonIconName), for: .normal)
+        doneButton.setImage(UIImage(named: enabledDoneButtonIconName), for: .normal)
         doneButton.tintColor = .AppColors.white
-        doneButton.backgroundColor = .TrackerColors.green
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = doneButtonCornerRadius
         doneButton.addTarget(
@@ -95,14 +94,61 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private lazy var controlViewTopPadding = baseUnit
     private lazy var controlViewBottomPadding = baseUnit * 2
     
-    private lazy var doneButtonIconName = "Icons/Plus"
-    private lazy var doneButtonIconSize = CGSize(width: 10.62, height: 10.21)
+    private lazy var enabledDoneButtonIconName = "Icons/Plus"
+    private lazy var enabledDoneButtonIconSize = CGSize(width: 10.62, height: 10.21)
+    private lazy var enabledDoneButtonOpacity: Float = 1.0
+    
+    private lazy var disabledDoneButtonIconName = "Icons/Done"
+    private lazy var disabledDoneButtonIconSize = CGSize(width: 12, height: 12)
+    private lazy var disabledDoneButtonOpacity: Float = 0.3
+    
     private lazy var doneButtonSize = 34.0
     private lazy var doneButtonCornerRadius = doneButtonSize / 2
     
     // MARK: - Static Properties
     
     static let reuseIdentifier = String(describing: TrackersCollectionViewCell.self)
+    
+    // MARK: - Internal Properties
+    
+    weak var delegate: TrackersCollectionViewCellDelegate?
+    
+    var color: UIColor? {
+        didSet (oldValue) {
+            let newValue = color ?? .AppColors.black
+            if oldValue != newValue {
+                infoView.backgroundColor = newValue
+                doneButton.backgroundColor = newValue
+            }
+        }
+    }
+    
+    var emoji: Character? {
+        didSet {
+            let emojiString = emoji != nil ? String(emoji!) : nil
+            updateText(inLabel: emojiLabel, to: emojiString)
+        }
+    }
+    
+    var name: String? {
+        didSet {
+            updateText(inLabel: nameLabel, to: name)
+        }
+    }
+    
+    var daysNumber: Int? {
+        didSet {
+            let daysString = getString(forDaysNumber: daysNumber)
+            updateText(inLabel: counterLabel, to: daysString)
+        }
+    }
+    
+    var isDone: Bool? {
+        didSet {
+            let newValue = isDone ?? false
+            updateDoneButton(isEnable: !newValue)
+        }
+    }
     
     // MARK: - Initializers
     
@@ -130,7 +176,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     // MARK: - Button Actions
     
     @objc
-    private func didTapDoneButton() { }
+    private func didTapDoneButton() {
+        delegate?.trackerCellDoneButtonDidTap(self)
+    }
     
     // MARK: - UI Updates
     
@@ -169,22 +217,79 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             doneButton.trailingAnchor.constraint(equalTo: controlView.trailingAnchor, constant: -controlViewXPadding),
             doneButton.bottomAnchor.constraint(equalTo: controlView.bottomAnchor, constant: -controlViewBottomPadding),
             doneButton.widthAnchor.constraint(equalToConstant: doneButtonSize),
-            doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor),
+            doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)
         ])
         
         if let doneButtonIcon = doneButton.imageView {
             NSLayoutConstraint.activate([
-                doneButtonIcon.widthAnchor.constraint(equalToConstant: doneButtonIconSize.width),
-                doneButtonIcon.heightAnchor.constraint(equalToConstant: doneButtonIconSize.height),
+                doneButtonIcon.widthAnchor.constraint(equalToConstant: enabledDoneButtonIconSize.width),
+                doneButtonIcon.heightAnchor.constraint(equalToConstant: enabledDoneButtonIconSize.height),
                 doneButtonIcon.centerXAnchor.constraint(equalTo: doneButton.centerXAnchor),
-                doneButtonIcon.centerYAnchor.constraint(equalTo: doneButton.centerYAnchor),
+                doneButtonIcon.centerYAnchor.constraint(equalTo: doneButton.centerYAnchor)
             ])
         }
     }
-}
+    
+    private func updateText(inLabel label: UILabel, to newValue: String?) {
+        if let newValue {
+            if newValue != label.text {
+                label.text = newValue
+            }
+        } else {
+            label.text = ""
+        }
+    }
+    
+    private func updateDoneButton(isEnable: Bool) {
+        if isEnable {
+            updateDoneButton(
+                iconName: enabledDoneButtonIconName,
+                iconSize: enabledDoneButtonIconSize,
+                opacity: enabledDoneButtonOpacity
+            )
+        } else {
+            updateDoneButton(
+                iconName: disabledDoneButtonIconName,
+                iconSize: disabledDoneButtonIconSize,
+                opacity: disabledDoneButtonOpacity
+            )
+        }
+    }
+    
+    private func updateDoneButton(iconName: String, iconSize: CGSize, opacity: Float, ) {
+        doneButton.setImage(UIImage(named: iconName), for: .normal)
+        doneButton.layer.opacity = opacity
+        
+        guard let doneButtonIcon = doneButton.imageView else { return }
+        
+        NSLayoutConstraint.activate([
+            doneButtonIcon.widthAnchor.constraint(equalToConstant: iconSize.width),
+            doneButtonIcon.heightAnchor.constraint(equalToConstant: iconSize.height)
+        ])
+    }
+    
+    // MARK: - Private Methods
+    
+    private func getString(forDaysNumber value: Int?) -> String {
+        let number = value ?? 0
+        
+        var dayString: String
+        if number % 100 / 10 < 2 {
+            dayString = "дней";
+        }
 
-/*
- #Preview("Cell", traits: .sizeThatFitsLayout) {
- TrackersCollectionViewCell()
- }
- */
+        switch number % 10 {
+        case 1:
+            dayString = "день"
+            break
+        case 2, 3, 4:
+            dayString = "дня"
+            break
+        default:
+            dayString = "дней"
+            break
+        }
+        
+        return "\(number) \(dayString)"
+    }
+}

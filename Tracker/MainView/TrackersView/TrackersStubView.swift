@@ -36,6 +36,11 @@ final class TrackersStubView: UIView {
         fatalError("TrackersStubView.init(coder:) has not been implemented")
     }
     
+    func close() {
+        self.willMove(toSuperview: nil)
+        self.removeFromSuperview()
+    }
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: self.topAnchor),
