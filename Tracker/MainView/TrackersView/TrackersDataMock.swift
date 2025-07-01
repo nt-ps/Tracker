@@ -7,14 +7,16 @@ final class TrackersDataMock {
             name: "Поливать растения",
             color: .TrackerColors.green,
             emoji: "🥸",
-            schedule: Schedule(
-                monday: true,
-                tuesday: true,
-                wednesday: true,
-                thursday: true,
-                friday: true,
-                saturday: false,
-                sunday: false
+            type: .habit(
+                Schedule(
+                    monday: true,
+                    tuesday: true,
+                    wednesday: true,
+                    thursday: true,
+                    friday: true,
+                    saturday: false,
+                    sunday: false
+                )
             )
         )
         

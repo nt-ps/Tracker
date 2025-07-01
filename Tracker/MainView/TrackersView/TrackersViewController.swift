@@ -51,7 +51,14 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setNavigationItem()
+        navigationItem.title = "Трекеры"
+        
+        navigationItem.leftBarButtonItem = addBarButtonItem
+        navigationItem.rightBarButtonItem = dateBarButtonItem
+        
+        navigationItem.searchController = UISearchController()
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
         //showStub()
         showCollectionView()
     }
@@ -59,7 +66,11 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
     // MARK: - Button Actions
     
     @objc
-    private func didTapAddButton() { }
+    private func didTapAddButton() {
+        let trackerEditorNavigationController = TrackerEditorNavigationController()
+        trackerEditorNavigationController.view.backgroundColor = .white
+        present(trackerEditorNavigationController, animated: true)
+    }
     
     @objc
     private func dateChanged(_ sender: UIDatePicker) {
@@ -74,16 +85,6 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
     }
     
     // MARK: - UI Updates
-    
-    private func setNavigationItem() {
-        navigationItem.title = "Трекеры"
-        
-        navigationItem.leftBarButtonItem = addBarButtonItem
-        navigationItem.rightBarButtonItem = dateBarButtonItem
-        
-        navigationItem.searchController = UISearchController()
-        navigationItem.hidesSearchBarWhenScrolling = false
-    }
     
     func showStub() {
         collection?.close()
