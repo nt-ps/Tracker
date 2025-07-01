@@ -9,12 +9,11 @@ final class TrackerTypeViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 16.0 // TODO: Вычислять относительно базовой единицы.
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
         return stackView
     } ()
     
-    private lazy var habitButton: UISolidButton = {
-        let habitButton = UISolidButton()
+    private lazy var habitButton: SolidButton = {
+        let habitButton = SolidButton()
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.addTarget(
             self,
@@ -24,8 +23,8 @@ final class TrackerTypeViewController: UIViewController {
         return habitButton
     } ()
     
-    private lazy var eventButton: UISolidButton = {
-        let eventButton = UISolidButton()
+    private lazy var eventButton: SolidButton = {
+        let eventButton = SolidButton()
         eventButton.setTitle("Нерегулярное событие", for: .normal)
         eventButton.addTarget(
             self,
@@ -35,15 +34,15 @@ final class TrackerTypeViewController: UIViewController {
         return eventButton
     } ()
     
-    // MARK: - Initializers
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = "Создание трекера"
+        navigationItem.setHidesBackButton(true, animated: true)
         
         view.addSubview(stackView)
-        
         
         setConstraints()
     }
@@ -51,10 +50,20 @@ final class TrackerTypeViewController: UIViewController {
     // MARK: - Button Actions
     
     @objc
-    private func didTapHabitButton() { }
+    private func didTapHabitButton() {
+        let trackerEditorViewController = TrackerEditorViewController()
+        trackerEditorViewController.trackerType = .habit(Schedule())
+        trackerEditorViewController.viewTitle = "Новая привычка"
+        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+    }
 
     @objc
-    private func didTapEventButton() { }
+    private func didTapEventButton() {
+        let trackerEditorViewController = TrackerEditorViewController()
+        trackerEditorViewController.trackerType = .event
+        trackerEditorViewController.viewTitle = "Новое нерегулярное событие"
+        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+    }
     
     // MARK: - UI Updates
     

@@ -167,7 +167,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
-    // MARK: - Overrided methods
+    // MARK: - Overrided Methods
     
     override func prepareForReuse() {
         super.prepareForReuse()

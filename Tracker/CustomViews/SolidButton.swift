@@ -1,6 +1,6 @@
 import UIKit
 
-final class UISolidButton: UIButton {
+final class SolidButton: UIButton {
     override var isEnabled: Bool {
         didSet {
             super.isEnabled = isEnabled
@@ -12,7 +12,7 @@ final class UISolidButton: UIButton {
         super.init(frame: frame)
         
         titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        titleLabel?.textColor = .AppColors.white
+        setTitleColor(.AppColors.white, for: .normal)
         
         backgroundColor = .AppColors.black
         

@@ -1,0 +1,142 @@
+import UIKit
+
+final class TrackerEditorViewController: UIViewController {
+    
+    // MARK: - UI Views
+    
+    private lazy var parametersStackView: UIStackView = {
+        let parametersStackView = UIStackView(arrangedSubviews: [nameTextField, parametersTableView])
+        parametersStackView.axis = .vertical
+        parametersStackView.spacing = 24.0 // TODO: Вычислять относительно базовой единицы.
+        parametersStackView.translatesAutoresizingMaskIntoConstraints = false
+        return parametersStackView
+    } ()
+    
+    private lazy var nameTextField: OneLineTextField = {
+        let nameTextField = OneLineTextField()
+        nameTextField.placeholder = "Введите название трекера"
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        return nameTextField
+    } ()
+    
+    private lazy var parametersTableView: ParametersTableView = {
+        let parametersTableView = ParametersTableView()
+        parametersTableView.translatesAutoresizingMaskIntoConstraints = false
+        var parameters = [categoryButton]
+        switch trackerType {
+        case .habit:
+            parameters.append(scheduleButton)
+        default:
+            break
+        }
+        parametersTableView.updateParameters(parameters)
+        return parametersTableView
+    } ()
+    
+    private lazy var categoryButton: ButtonTableViewCell = {
+        let categoryButton = ButtonTableViewCell()
+        categoryButton.title = "Категория"
+        return categoryButton
+    } ()
+    
+    private lazy var scheduleButton: ButtonTableViewCell = {
+        let scheduleButton = ButtonTableViewCell()
+        scheduleButton.title = "Расписание"
+        return scheduleButton
+    } ()
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = 8.0 // TODO: Вычислять относительно базовой единицы.
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsStackView
+    } ()
+    
+    private lazy var cancelButton: OutlineButton = {
+        let cancelButton = OutlineButton()
+        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.addTarget(
+            self,
+            action: #selector(self.didTapCancelButton),
+            for: .touchUpInside
+        )
+        return cancelButton
+    } ()
+    
+    private lazy var createButton: SolidButton = {
+        let createButton = SolidButton()
+        createButton.setTitle("Создать", for: .normal)
+        createButton.addTarget(
+            self,
+            action: #selector(self.didTapCreateButton),
+            for: .touchUpInside
+        )
+        createButton.isEnabled = false
+        return createButton
+    } ()
+    
+    // MARK: - Internal Properties
+    
+    var trackerType: TrackerType?
+    var viewTitle: String?
+     
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        navigationItem.title = viewTitle
+        navigationItem.setHidesBackButton(true, animated: true)
+
+        view.addSubview(parametersStackView)
+        view.addSubview(buttonsStackView)
+        setConstraints()
+    }
+    
+    // MARK: - Button Actions
+    
+    @objc
+    private func didTapCancelButton() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc
+    private func didTapCreateButton() { }
+    
+    // MARK: - UI Updates
+
+    private func setConstraints() {
+        NSLayoutConstraint.activate([
+            parametersStackView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 16
+            ),
+            parametersStackView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 24
+            ),
+            parametersStackView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -16
+            ),
+            parametersStackView.bottomAnchor.constraint(
+                lessThanOrEqualTo: buttonsStackView.topAnchor
+            ),
+            
+            buttonsStackView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 16
+            ),
+            buttonsStackView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -16
+            ),
+            buttonsStackView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            buttonsStackView.heightAnchor.constraint(equalToConstant: 60)
+        ])
+    }
+}
