@@ -17,15 +17,15 @@ final class SolidButton: UIButton {
         backgroundColor = .AppColors.black
         
         layer.masksToBounds = true
-        layer.cornerRadius = 16 // TODO: Использовать базовую единицу.
+        layer.cornerRadius = 16
         
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.heightAnchor.constraint(equalToConstant: 60) // TODO: Использовать базовую единицу.
+            self.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     
     required init?(coder: NSCoder) {
-        fatalError("UISolidButton.init(coder:) has not been implemented")
+        fatalError("SolidButton.init(coder:) has not been implemented")
     }
 }

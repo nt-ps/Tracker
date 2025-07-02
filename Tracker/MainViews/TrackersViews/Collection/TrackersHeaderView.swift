@@ -37,8 +37,7 @@ final class TrackersHeaderView: UICollectionReusableView {
     // MARK: - Private Properties
     
     private static var defaultTitle = "Без названия"
-    
-    // TODO: Вычислять относительно базовой единицы.
+
     private static var viewXPadding = 28.0
     private static var viewYPadding = 12.0
     
@@ -59,7 +58,6 @@ final class TrackersHeaderView: UICollectionReusableView {
     // MARK: - UI Updates
     
     private func setConstraints() {
-        // TODO: Вывести значения в поля класса.
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,

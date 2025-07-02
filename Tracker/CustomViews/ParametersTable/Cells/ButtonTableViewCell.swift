@@ -4,7 +4,7 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     
     // MARK: - UI Views
     
-    // Да, есть тип ячейки с подтекстом, но я не нашел
+    // Есть дефолтный тип ячейки с подтекстом, но я не нашел
     // рабочего способа изменить стиль текста и отступы.
     // Поэтому добавил лейблы самостоятельно.
     

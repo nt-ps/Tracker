@@ -2,10 +2,6 @@ import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
-    // MARK: - Trackers Collection View Protocol
-    
-    weak var navigator: TrackersNavigatorItemProtocol?
-    
     // MARK: - Views
     
     private lazy var infoView: UIView = {
@@ -82,17 +78,15 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI Properties
     
-    private lazy var baseUnit = 8.0
+    private lazy var infoViewCornerRadius = 16.0
+    private lazy var infoViewPadding = 12.0
     
-    private lazy var infoViewCornerRadius = baseUnit * 2
-    private lazy var infoViewPadding = baseUnit * 3 / 2
-    
-    private lazy var emojiLabelSize = baseUnit * 3
+    private lazy var emojiLabelSize = 24.0
     private lazy var emojiLabelCornerRadius = emojiLabelSize / 2
     
-    private lazy var controlViewXPadding = baseUnit * 3 / 2
-    private lazy var controlViewTopPadding = baseUnit
-    private lazy var controlViewBottomPadding = baseUnit * 2
+    private lazy var controlViewXPadding = 12.0
+    private lazy var controlViewTopPadding = 8.0
+    private lazy var controlViewBottomPadding = 16.0
     
     private lazy var enabledDoneButtonIconName = "Icons/Plus"
     private lazy var enabledDoneButtonIconSize = CGSize(width: 10.62, height: 10.21)
@@ -189,43 +183,85 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             infoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             infoView.bottomAnchor.constraint(equalTo: controlView.topAnchor),
             
-            emojiLabel.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: infoViewPadding),
-            emojiLabel.topAnchor.constraint(equalTo: infoView.topAnchor, constant: infoViewPadding),
-            emojiLabel.trailingAnchor.constraint(lessThanOrEqualTo: infoView.trailingAnchor),
+            emojiLabel.leadingAnchor.constraint(
+                equalTo: infoView.leadingAnchor,
+                constant: infoViewPadding
+            ),
+            emojiLabel.topAnchor.constraint(
+                equalTo: infoView.topAnchor,
+                constant: infoViewPadding
+            ),
+            emojiLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: infoView.trailingAnchor
+            ),
             emojiLabel.topAnchor.constraint(lessThanOrEqualTo: infoView.topAnchor),
             emojiLabel.widthAnchor.constraint(equalToConstant: emojiLabelSize),
             emojiLabel.heightAnchor.constraint(equalTo: emojiLabel.widthAnchor),
             
-            nameLabel.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: infoViewPadding),
-            nameLabel.topAnchor.constraint(greaterThanOrEqualTo: emojiLabel.bottomAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -infoViewPadding),
-            nameLabel.bottomAnchor.constraint(equalTo: infoView.bottomAnchor, constant: -infoViewPadding),
+            nameLabel.leadingAnchor.constraint(
+                equalTo: infoView.leadingAnchor,
+                constant: infoViewPadding
+            ),
+            nameLabel.topAnchor.constraint(
+                greaterThanOrEqualTo: emojiLabel.bottomAnchor
+            ),
+            nameLabel.trailingAnchor.constraint(
+                equalTo: infoView.trailingAnchor,
+                constant: -infoViewPadding
+            ),
+            nameLabel.bottomAnchor.constraint(
+                equalTo: infoView.bottomAnchor,
+                constant: -infoViewPadding
+            ),
         
             controlView.leadingAnchor.constraint(equalTo: leadingAnchor),
             controlView.trailingAnchor.constraint(equalTo: trailingAnchor),
             controlView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            counterLabel.centerYAnchor.constraint(equalTo: doneButton.centerYAnchor),
+            counterLabel.centerYAnchor.constraint(
+                equalTo: doneButton.centerYAnchor
+            ),
             counterLabel.leadingAnchor.constraint(
                 equalTo: controlView.leadingAnchor,
                 constant: controlViewXPadding
             ),
-            counterLabel.trailingAnchor.constraint(lessThanOrEqualTo: doneButton.leadingAnchor),
+            counterLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: doneButton.leadingAnchor
+            ),
             
-            doneButton.leadingAnchor.constraint(greaterThanOrEqualTo: counterLabel.trailingAnchor),
-            doneButton.topAnchor.constraint(equalTo: controlView.topAnchor, constant: controlViewTopPadding),
-            doneButton.trailingAnchor.constraint(equalTo: controlView.trailingAnchor, constant: -controlViewXPadding),
-            doneButton.bottomAnchor.constraint(equalTo: controlView.bottomAnchor, constant: -controlViewBottomPadding),
+            doneButton.leadingAnchor.constraint(
+                greaterThanOrEqualTo: counterLabel.trailingAnchor
+            ),
+            doneButton.topAnchor.constraint(
+                equalTo: controlView.topAnchor,
+                constant: controlViewTopPadding
+            ),
+            doneButton.trailingAnchor.constraint(
+                equalTo: controlView.trailingAnchor,
+                constant: -controlViewXPadding
+            ),
+            doneButton.bottomAnchor.constraint(
+                equalTo: controlView.bottomAnchor,
+                constant: -controlViewBottomPadding
+            ),
             doneButton.widthAnchor.constraint(equalToConstant: doneButtonSize),
             doneButton.heightAnchor.constraint(equalTo: doneButton.widthAnchor)
         ])
         
         if let doneButtonIcon = doneButton.imageView {
             NSLayoutConstraint.activate([
-                doneButtonIcon.widthAnchor.constraint(equalToConstant: enabledDoneButtonIconSize.width),
-                doneButtonIcon.heightAnchor.constraint(equalToConstant: enabledDoneButtonIconSize.height),
-                doneButtonIcon.centerXAnchor.constraint(equalTo: doneButton.centerXAnchor),
-                doneButtonIcon.centerYAnchor.constraint(equalTo: doneButton.centerYAnchor)
+                doneButtonIcon.widthAnchor.constraint(
+                    equalToConstant: enabledDoneButtonIconSize.width
+                ),
+                doneButtonIcon.heightAnchor.constraint(
+                    equalToConstant: enabledDoneButtonIconSize.height
+                ),
+                doneButtonIcon.centerXAnchor.constraint(
+                    equalTo: doneButton.centerXAnchor
+                ),
+                doneButtonIcon.centerYAnchor.constraint(
+                    equalTo: doneButton.centerYAnchor
+                )
             ])
         }
     }

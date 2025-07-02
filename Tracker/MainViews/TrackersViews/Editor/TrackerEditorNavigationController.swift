@@ -2,7 +2,7 @@ import UIKit
 
 final class TrackerEditorNavigationController: UINavigationController {
     
-    weak var trackersNavigator: TrackersNavigatorItemProtocol?
+    weak var trackersNavigationItem: TrackersNavigationItem?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -12,7 +12,8 @@ final class TrackerEditorNavigationController: UINavigationController {
         ]
         
         let trackerTypeViewController = TrackerTypeViewController()
-        trackerTypeViewController.trackersNavigator = self.trackersNavigator
+        trackerTypeViewController.trackersNavigationItem = self.trackersNavigationItem
+        
         self.viewControllers = [ trackerTypeViewController ]
         
     }

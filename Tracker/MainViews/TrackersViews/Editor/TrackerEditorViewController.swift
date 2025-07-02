@@ -13,9 +13,11 @@ final class TrackerEditorViewController: UIViewController {
     } ()
     
     private lazy var parametersStackView: UIStackView = {
-        let parametersStackView = UIStackView(arrangedSubviews: [nameTextField, parametersTableView])
+        let parametersStackView = UIStackView(
+            arrangedSubviews: [nameTextField, parametersTableView]
+        )
         parametersStackView.axis = .vertical
-        parametersStackView.spacing = 24.0 // TODO: Вычислять относительно базовой единицы.
+        parametersStackView.spacing = 24.0
         parametersStackView.translatesAutoresizingMaskIntoConstraints = false
         return parametersStackView
     } ()
@@ -60,7 +62,7 @@ final class TrackerEditorViewController: UIViewController {
     private lazy var buttonsStackView: UIStackView = {
         let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
         buttonsStackView.axis = .horizontal
-        buttonsStackView.spacing = 8.0 // TODO: Вычислять относительно базовой единицы.
+        buttonsStackView.spacing = 8.0
         buttonsStackView.distribution = .fillEqually
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         return buttonsStackView
@@ -91,7 +93,7 @@ final class TrackerEditorViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    weak var trackersNavigator: TrackersNavigatorItemProtocol?
+    weak var trackersNavigator: TrackersNavigationItem?
     
     var viewTitle: String?
     
@@ -124,13 +126,14 @@ final class TrackerEditorViewController: UIViewController {
         view.addSubview(scrollView)
         view.addSubview(buttonsStackView)
         setConstraints()
+        
+        addTapGestureToHideKeyboard()
     }
     
     // MARK: - Button Actions
     
     @objc
     private func didTapCancelButton() {
-        // navigationController?.popViewController(animated: true)
         dismiss(animated: true) { }
     }
     
@@ -140,9 +143,9 @@ final class TrackerEditorViewController: UIViewController {
             name: trackerName ?? "Без названия",
             type: trackerType ?? .event
         )
-        TrackersDataMock.share.addTracker(tracker)
+        TrackersMockData.share.addTracker(tracker)
         dismiss(animated: true) { [weak self] in
-            self?.trackersNavigator?.updateView()
+            self?.trackersNavigator?.updateCollection()
         }
     }
     
@@ -222,9 +225,18 @@ final class TrackerEditorViewController: UIViewController {
             buttonsStackView.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
-}
-
-extension TrackerEditorViewController: TrackerEditorViewControllerProtocol {
+    
+    private func addTapGestureToHideKeyboard() {
+        let tapGesture = UITapGestureRecognizer(
+            target: view,
+            action: #selector(view.endEditing)
+        )
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Internal Methods
+    
     func updateSchedule(from newValues: [WeekDay]) {
         switch trackerType {
         case .habit:

@@ -64,15 +64,19 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             titleLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: 16 // TODO: Через базовую единицу.
+                constant: 16
             ),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: switchView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(
+                lessThanOrEqualTo: switchView.leadingAnchor
+            ),
             
             switchView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            switchView.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor),
+            switchView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: titleLabel.trailingAnchor
+            ),
             switchView.trailingAnchor.constraint(
                 equalTo: trailingAnchor,
-                constant: -16 // TODO: Через базовую единицу.
+                constant: -16
             )
         ])
     }

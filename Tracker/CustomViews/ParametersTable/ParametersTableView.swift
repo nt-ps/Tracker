@@ -30,12 +30,13 @@ final class ParametersTableView: UITableView {
         super.init(frame: frame, style: style)
         
         layer.masksToBounds = true
-        layer.cornerRadius = 16 // TODO: Использовать базовую единицу.
+        layer.cornerRadius = 16
         backgroundColor = .AppColors.lightGray
         isScrollEnabled = false
+        // Удаление верхнего сепаратора.
         tableHeaderView = UIView(
             frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 1)
-        ) // Удаление верхнего сепаратора.
+        )
         
         delegate = self
         dataSource = self
@@ -80,13 +81,7 @@ extension ParametersTableView: UITableViewDelegate {
     }
     
     // На будущее. Создание контекстного меню.
-    /*
-    func tableView(
-        _ tableView: UITableView,
-        contextMenuConfigurationForRowAt indexPaths: IndexPath,
-        point: CGPoint
-    ) -> UIContextMenuConfiguration? { }
-     */
+    // func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? { }
 }
 
 extension ParametersTableView: UITableViewDataSource {

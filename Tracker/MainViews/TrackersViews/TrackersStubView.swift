@@ -2,6 +2,8 @@ import UIKit
 
 final class TrackersStubView: UIView {
     
+    // MARK: - Views
+    
     private lazy var imageView: UIImageView = {
         let image = UIImage(named: imageName)
         let imageView = UIImageView(image: image)
@@ -18,9 +20,13 @@ final class TrackersStubView: UIView {
         return labelView
     } ()
     
+    // MARK: - UI Properties
+    
     private let imageName = "TrackersStubImage"
     private let labelText = "Что будем отслеживать?"
     private let labelSize = 12.0
+    
+    // MARK: - Initializers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,17 +42,17 @@ final class TrackersStubView: UIView {
         fatalError("TrackersStubView.init(coder:) has not been implemented")
     }
     
-    func close() {
-        self.willMove(toSuperview: nil)
-        self.removeFromSuperview()
-    }
+    // MARK: - UI Updates
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: self.topAnchor),
-            imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            labelView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+            labelView.topAnchor.constraint(
+                equalTo: imageView.bottomAnchor,
+                constant: 8
+            ),
             labelView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
         ])
     }

@@ -17,17 +17,17 @@ final class OutlineButton: UIButton {
         backgroundColor = .clear
         
         layer.masksToBounds = true
-        layer.cornerRadius = 16 // TODO: Использовать базовую единицу.
+        layer.cornerRadius = 16
         layer.borderWidth = 1
         layer.borderColor = UIColor.AppColors.red.cgColor
         
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.heightAnchor.constraint(equalToConstant: 60) // TODO: Использовать базовую единицу.
+            self.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     
     required init?(coder: NSCoder) {
-        fatalError("UISolidButton.init(coder:) has not been implemented")
+        fatalError("OutlineButton.init(coder:) has not been implemented")
     }
 }

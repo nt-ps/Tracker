@@ -7,7 +7,7 @@ final class TrackerTypeViewController: UIViewController {
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [habitButton, eventButton])
         stackView.axis = .vertical
-        stackView.spacing = 16.0 // TODO: Вычислять относительно базовой единицы.
+        stackView.spacing = 16.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     } ()
@@ -36,7 +36,7 @@ final class TrackerTypeViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    weak var trackersNavigator: TrackersNavigatorItemProtocol?
+    weak var trackersNavigationItem: TrackersNavigationItem?
     
     // MARK: - Lifecycle
     
@@ -56,7 +56,7 @@ final class TrackerTypeViewController: UIViewController {
     @objc
     private func didTapHabitButton() {
         let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigator
+        trackerEditorViewController.trackersNavigator = trackersNavigationItem
         trackerEditorViewController.trackerType = .habit(Schedule())
         trackerEditorViewController.viewTitle = "Новая привычка"
         navigationController?.pushViewController(trackerEditorViewController, animated: true)
@@ -65,7 +65,7 @@ final class TrackerTypeViewController: UIViewController {
     @objc
     private func didTapEventButton() {
         let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigator
+        trackerEditorViewController.trackersNavigator = trackersNavigationItem
         trackerEditorViewController.trackerType = .event
         trackerEditorViewController.viewTitle = "Новое нерегулярное событие"
         navigationController?.pushViewController(trackerEditorViewController, animated: true)

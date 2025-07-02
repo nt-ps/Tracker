@@ -1,9 +1,11 @@
 import Foundation
 
-final class TrackersDataMock {
-    static let share = TrackersDataMock()
+final class TrackersMockData {
+    static let share = TrackersMockData()
     
     var data: [TrackerCategory] { dataValue }
+    
+    var count: Int { dataValue.reduce(0) { $0 + $1.trackers.count } }
     
     private var dataValue: [TrackerCategory] = []
     
@@ -17,8 +19,8 @@ final class TrackersDataMock {
                     days: [
                         .monday,
                         .tuesday,
+                        .wednesday,
                         .thursday,
-                        .tuesday,
                         .friday
                     ]
                 )

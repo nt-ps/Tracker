@@ -1,6 +1,6 @@
 import UIKit
 
-final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewControllerProtocol {
+final class ScheduleEditorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -15,12 +15,11 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [parametersTableView])
         stackView.axis = .vertical
-        stackView.spacing = 24.0 // TODO: Вычислять относительно базовой единицы.
+        stackView.spacing = 24.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     } ()
      
-    
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -51,9 +50,9 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
         return createButton
     } ()
     
-    // MARK: - Schedule Editor View Controller Protocol Properties
+    // MARK: - Internal Properties
     
-    weak var trackerEditorView: TrackerEditorViewControllerProtocol?
+    weak var trackerEditorView: TrackerEditorViewController?
     
     var days: [WeekDay] {
         get {
@@ -78,7 +77,6 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
         navigationItem.title = "Расписание"
         navigationItem.setHidesBackButton(true, animated: true)
         
-        // view.addSubview(parametersTableView)
         scrollView.addSubview(stackView)
         view.addSubview(scrollView)
         
@@ -98,7 +96,6 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
 
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: doneButton.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),

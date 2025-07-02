@@ -7,7 +7,7 @@ final class OneLineTextField: UIView {
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [textField, limitLabel])
         stackView.axis = .vertical
-        stackView.spacing = 8.0 // TODO: Вычислять относительно базовой единицы.
+        stackView.spacing = 8.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     } ()
@@ -18,12 +18,18 @@ final class OneLineTextField: UIView {
         textField.backgroundColor = .AppColors.lightGray
         textField.clearButtonMode = .whileEditing
         textField.layer.masksToBounds = true
-        textField.layer.cornerRadius = 16 // TODO: Использовать базовую единицу.
-        textField.attributedPlaceholder = NSAttributedString(string: "Placeholder Text", attributes: [
-            .foregroundColor: UIColor.AppColors.gray,
-            .font: UIFont.systemFont(ofSize: 17, weight: .regular)
-        ])
-        textField.addTarget(self, action: #selector(self.editingChanged(sender:)), for: .editingChanged)
+        textField.layer.cornerRadius = 16
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Placeholder Text",
+            attributes: [
+                .foregroundColor: UIColor.AppColors.gray,
+                .font: UIFont.systemFont(ofSize: 17, weight: .regular)
+            ]
+        )
+        textField.addTarget(
+            self,
+            action: #selector(self.editingChanged(sender:)),
+            for: .editingChanged)
         return textField
     } ()
     

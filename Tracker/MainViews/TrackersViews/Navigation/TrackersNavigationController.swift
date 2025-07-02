@@ -8,7 +8,7 @@ final class TrackersNavigationController: UINavigationController {
         self.navigationBar.backgroundColor = .clear
         self.navigationBar.isTranslucent = true
         
-        let trackersViewController = TrackersViewController()
-        self.viewControllers = [ trackersViewController ]
+        let trackersNavigationItem = TrackersNavigationItem()
+        self.viewControllers = [ trackersNavigationItem ]
     }
 }
