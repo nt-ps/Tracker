@@ -4,6 +4,14 @@ final class TrackerEditorViewController: UIViewController {
     
     // MARK: - UI Views
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.showsVerticalScrollIndicator = true
+        return scrollView
+    } ()
+    
     private lazy var parametersStackView: UIStackView = {
         let parametersStackView = UIStackView(arrangedSubviews: [nameTextField, parametersTableView])
         parametersStackView.axis = .vertical
@@ -112,7 +120,8 @@ final class TrackerEditorViewController: UIViewController {
         navigationItem.title = viewTitle
         navigationItem.setHidesBackButton(true, animated: true)
 
-        view.addSubview(parametersStackView)
+        scrollView.addSubview(parametersStackView)
+        view.addSubview(scrollView)
         view.addSubview(buttonsStackView)
         setConstraints()
     }
@@ -172,20 +181,30 @@ final class TrackerEditorViewController: UIViewController {
 
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            parametersStackView.leadingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
-            ),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            
             parametersStackView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                equalTo: scrollView.topAnchor,
                 constant: 24
             ),
+            parametersStackView.bottomAnchor.constraint(
+                equalTo: scrollView.bottomAnchor,
+                constant: -24
+            ),
+            parametersStackView.leadingAnchor.constraint(
+                equalTo: scrollView.leadingAnchor,
+                constant: 16
+            ),
             parametersStackView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                equalTo: scrollView.trailingAnchor,
                 constant: -16
             ),
-            parametersStackView.bottomAnchor.constraint(
-                lessThanOrEqualTo: buttonsStackView.topAnchor
+            parametersStackView.widthAnchor.constraint(
+                equalTo: scrollView.widthAnchor,
+                constant: -32
             ),
             
             buttonsStackView.leadingAnchor.constraint(

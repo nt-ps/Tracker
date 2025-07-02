@@ -78,6 +78,15 @@ extension ParametersTableView: UITableViewDelegate {
             action()
         }
     }
+    
+    // На будущее. Создание контекстного меню.
+    /*
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPaths: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? { }
+     */
 }
 
 extension ParametersTableView: UITableViewDataSource {

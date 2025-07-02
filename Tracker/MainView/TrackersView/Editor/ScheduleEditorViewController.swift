@@ -4,6 +4,23 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
     
     // MARK: - UI Views
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.showsVerticalScrollIndicator = true
+        return scrollView
+    } ()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [parametersTableView])
+        stackView.axis = .vertical
+        stackView.spacing = 24.0 // TODO: Вычислять относительно базовой единицы.
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    } ()
+     
+    
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +78,10 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
         navigationItem.title = "Расписание"
         navigationItem.setHidesBackButton(true, animated: true)
         
-        view.addSubview(parametersTableView)
+        // view.addSubview(parametersTableView)
+        scrollView.addSubview(stackView)
+        view.addSubview(scrollView)
+        
         view.addSubview(doneButton)
         setConstraints()
     }
@@ -78,22 +98,33 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
 
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            parametersTableView.leadingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
-            ),
-            parametersTableView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
+            
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: doneButton.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            
+            stackView.topAnchor.constraint(
+                equalTo: scrollView.topAnchor,
                 constant: 24
             ),
-            parametersTableView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            stackView.bottomAnchor.constraint(
+                equalTo: scrollView.bottomAnchor,
+                constant: -24
+            ),
+            stackView.leadingAnchor.constraint(
+                equalTo: scrollView.leadingAnchor,
+                constant: 16
+            ),
+            stackView.trailingAnchor.constraint(
+                equalTo: scrollView.trailingAnchor,
                 constant: -16
             ),
-            parametersTableView.bottomAnchor.constraint(
-                lessThanOrEqualTo: doneButton.topAnchor
+            stackView.widthAnchor.constraint(
+                equalTo: scrollView.widthAnchor,
+                constant: -32
             ),
-            
+             
             doneButton.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
                 constant: 16
