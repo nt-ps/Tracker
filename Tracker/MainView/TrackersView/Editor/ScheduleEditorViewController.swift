@@ -103,7 +103,8 @@ final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewCo
                 constant: -16
             ),
             doneButton.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: ScreenType.shared.isWithIsland ? 0 : -24
             ),
             doneButton.heightAnchor.constraint(equalToConstant: 60)
         ])

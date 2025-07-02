@@ -121,7 +121,8 @@ final class TrackerEditorViewController: UIViewController {
     
     @objc
     private func didTapCancelButton() {
-        navigationController?.popViewController(animated: true)
+        // navigationController?.popViewController(animated: true)
+        dismiss(animated: true) { }
     }
     
     @objc
@@ -196,7 +197,8 @@ final class TrackerEditorViewController: UIViewController {
                 constant: -16
             ),
             buttonsStackView.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: ScreenType.shared.isWithIsland ? 0 : -24
             ),
             buttonsStackView.heightAnchor.constraint(equalToConstant: 60)
         ])

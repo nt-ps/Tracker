@@ -7,6 +7,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
+        ScreenType.shared.setHeight(scene.screen.bounds.height)
         window = UIWindow(windowScene: scene)
         window?.rootViewController = MainTabBarController()
         window?.makeKeyAndVisible()

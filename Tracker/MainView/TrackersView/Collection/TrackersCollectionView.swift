@@ -11,7 +11,7 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
     var categories: [TrackerCategory] = []  // Не рекомендуется менять массив, лучше
                                             // при создании новой категории создавать
                                             // новый массив.
-    var completedTrackers: [TrackerRecord] = []
+    var completedTrackers = Set<TrackerRecord>()
     
     // MARK: - Private Properties
     
@@ -118,7 +118,7 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
     
     private func configCell(_ cell: TrackersCollectionViewCell, from tracker: Tracker) {
         guard let navigator else { return }
-        let isDone = findRecordIndex(for: tracker, inDay: navigator.selectedDate) != nil
+        let isDone = findRecord(for: tracker, inDay: navigator.selectedDate) != nil
         configCell(cell, from: tracker, isDone: isDone)
     }
     
@@ -140,8 +140,8 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
         categories[indexPath.section].trackers[indexPath.item]
     }
     
-    private func findRecordIndex(for tracker: Tracker, inDay date: Date) -> Int? {
-        completedTrackers.firstIndex { record in
+    private func findRecord(for tracker: Tracker, inDay date: Date) -> TrackerRecord? {
+        completedTrackers.first { record in
             record.trackerId == tracker.id && Calendar.current.isDate(record.date, inSameDayAs: date)
         }
     }
@@ -306,12 +306,12 @@ extension TrackersCollectionView: TrackersCollectionViewCellDelegate {
             return
         }
 
-        if let recordIndex = findRecordIndex(for: tracker, inDay: date) {
-            completedTrackers.remove(at: recordIndex)
+        if let record = findRecord(for: tracker, inDay: date) {
+            completedTrackers.remove(record)
             configCell(cell, from: tracker, isDone: false)
         } else {
             let record = TrackerRecord(trackerId: tracker.id, date: date )
-            completedTrackers.append(record)
+            completedTrackers.insert(record)
             configCell(cell, from: tracker, isDone: true)
         }
     }
