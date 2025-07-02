@@ -46,6 +46,10 @@ final class OneLineTextField: UIView {
         }
     }
     
+    var text: String? { textField.text }
+    
+    var editingAction: (() -> Void)?
+    
     // MARK: - Private Properties
     
     private let maxLenght = 38
@@ -75,6 +79,7 @@ final class OneLineTextField: UIView {
             limitLabel.isHidden = false
             return
         } else {
+            editingAction?()
             limitLabel.isHidden = true
         }
     }

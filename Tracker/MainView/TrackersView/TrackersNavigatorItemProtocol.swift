@@ -5,4 +5,5 @@ protocol TrackersNavigatorItemProtocol: AnyObject {
     var selectedDate: Date { get }
     
     func showStub()
+    func updateView()
 }

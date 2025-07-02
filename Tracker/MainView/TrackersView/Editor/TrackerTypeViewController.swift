@@ -34,6 +34,10 @@ final class TrackerTypeViewController: UIViewController {
         return eventButton
     } ()
     
+    // MARK: - Internal Properties
+    
+    weak var trackersNavigator: TrackersNavigatorItemProtocol?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -52,6 +56,7 @@ final class TrackerTypeViewController: UIViewController {
     @objc
     private func didTapHabitButton() {
         let trackerEditorViewController = TrackerEditorViewController()
+        trackerEditorViewController.trackersNavigator = trackersNavigator
         trackerEditorViewController.trackerType = .habit(Schedule())
         trackerEditorViewController.viewTitle = "Новая привычка"
         navigationController?.pushViewController(trackerEditorViewController, animated: true)
@@ -60,6 +65,7 @@ final class TrackerTypeViewController: UIViewController {
     @objc
     private func didTapEventButton() {
         let trackerEditorViewController = TrackerEditorViewController()
+        trackerEditorViewController.trackersNavigator = trackersNavigator
         trackerEditorViewController.trackerType = .event
         trackerEditorViewController.viewTitle = "Новое нерегулярное событие"
         navigationController?.pushViewController(trackerEditorViewController, animated: true)

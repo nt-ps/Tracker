@@ -68,6 +68,7 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
     @objc
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
+        trackerEditorNavigationController.trackersNavigator = self
         trackerEditorNavigationController.view.backgroundColor = .white
         present(trackerEditorNavigationController, animated: true)
     }
@@ -75,7 +76,12 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
     @objc
     private func dateChanged(_ sender: UIDatePicker) {
         selectedDate = sender.date
-        
+        updateView()
+    }
+    
+    // MARK: - UI Updates
+    
+    func updateView() {
         // TODO: Переключение между экранами пока очень корявое.
         // Подумать, как реализовать лучше.
         if collection == nil {
@@ -83,8 +89,6 @@ final class TrackersViewController: UIViewController, TrackersNavigatorItemProto
         }
         collection?.updateTrackersCollection()
     }
-    
-    // MARK: - UI Updates
     
     func showStub() {
         collection?.close()

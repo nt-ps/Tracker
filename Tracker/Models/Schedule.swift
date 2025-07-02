@@ -1,6 +1,5 @@
-// TODO: Подумать над тем, чтобы поменять на enum.
 struct Schedule {
-    let days: [WeekDay]
+    private(set) var days: [WeekDay]
     
     init(days: [WeekDay] = []) {
         self.days = days
@@ -15,5 +14,15 @@ struct Schedule {
         days.contains { day in
             day.rawValue == dayNumber
         }
+    }
+    
+    func toString() -> String {
+        if WeekDay.allCases.allSatisfy({ days.contains($0) }) {
+            return "Каждый день"
+        }
+        
+        let array = days.map{ $0.getShortName() }
+        let result = array.joined(separator: ", ")
+        return result
     }
 }

@@ -16,6 +16,7 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     // чтобы можно было настроить констрейнты.
     private lazy var switchView: UISwitch = {
         let switchView = UISwitch()
+        switchView.isOn = false
         switchView.onTintColor = .AppColors.blue
         switchView.translatesAutoresizingMaskIntoConstraints = false
         return switchView
@@ -33,10 +34,9 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         }
     }
      
-    var isOn: Bool? {
-        didSet {
-            switchView.isOn = isOn ?? false
-        }
+    var isOn: Bool {
+        get { switchView.isOn }
+        set { switchView.isOn = newValue }
     }
     
     // MARK: - Initializers

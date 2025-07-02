@@ -4,7 +4,7 @@ final class SolidButton: UIButton {
     override var isEnabled: Bool {
         didSet {
             super.isEnabled = isEnabled
-            backgroundColor = .AppColors.gray
+            backgroundColor = isEnabled ? .AppColors.black : .AppColors.gray
         }
     }
     

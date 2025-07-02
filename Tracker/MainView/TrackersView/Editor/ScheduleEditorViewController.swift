@@ -1,67 +1,26 @@
 import UIKit
 
-final class ScheduleEditorViewController: UIViewController {
+final class ScheduleEditorViewController: UIViewController, ScheduleEditorViewControllerProtocol {
     
     // MARK: - UI Views
     
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
-        var parameters = [
-            mondaySwitch, tuesdaySwitch, wednesdaySwitch,
-            thursdaySwitch, fridaySwitch, saturdaySwitch, sundaySwitch
-        ]
+        var parameters = daySwitches.map { $0.value }
         parametersTableView.updateParameters(parameters)
         return parametersTableView
     } ()
     
-    private lazy var mondaySwitch: SwitchTableViewCell = {
-        let mondaySwitch = SwitchTableViewCell()
-        mondaySwitch.title = "Понедельник"
-        mondaySwitch.isOn = false
-        return mondaySwitch
-    } ()
-    
-    private lazy var tuesdaySwitch: SwitchTableViewCell = {
-        let tuesdaySwitch = SwitchTableViewCell()
-        tuesdaySwitch.title = "Вторник"
-        tuesdaySwitch.isOn = false
-        return tuesdaySwitch
-    } ()
-    
-    private lazy var wednesdaySwitch: SwitchTableViewCell = {
-        let wednesdaySwitch = SwitchTableViewCell()
-        wednesdaySwitch.title = "Среда"
-        wednesdaySwitch.isOn = false
-        return wednesdaySwitch
-    } ()
-    
-    private lazy var thursdaySwitch: SwitchTableViewCell = {
-        let thursdaySwitch = SwitchTableViewCell()
-        thursdaySwitch.title = "Четверг"
-        thursdaySwitch.isOn = false
-        return thursdaySwitch
-    } ()
-    
-    private lazy var fridaySwitch: SwitchTableViewCell = {
-        let fridaySwitch = SwitchTableViewCell()
-        fridaySwitch.title = "Пятница"
-        fridaySwitch.isOn = false
-        return fridaySwitch
-    } ()
-    
-    private lazy var saturdaySwitch: SwitchTableViewCell = {
-        let saturdaySwitch = SwitchTableViewCell()
-        saturdaySwitch.title = "Суббота"
-        saturdaySwitch.isOn = false
-        return saturdaySwitch
-    } ()
-    
-    private lazy var sundaySwitch: SwitchTableViewCell = {
-        let sundaySwitch = SwitchTableViewCell()
-        sundaySwitch.title = "Воскресенье"
-        sundaySwitch.isOn = false
-        return sundaySwitch
+    private lazy var daySwitches: [Dictionary<WeekDay, SwitchTableViewCell>.Element] = {
+        var switches: [WeekDay: SwitchTableViewCell] = [:]
+        WeekDay.allCases.forEach {
+            let switchCell = SwitchTableViewCell()
+            switchCell.title = $0.getName()
+            switchCell.isOn = false
+            switches[$0] = switchCell
+        }
+        return switches.sorted { $0.key.rawValue < $1.key.rawValue }
     } ()
     
     private lazy var doneButton: SolidButton = {
@@ -74,6 +33,25 @@ final class ScheduleEditorViewController: UIViewController {
         )
         return createButton
     } ()
+    
+    // MARK: - Schedule Editor View Controller Protocol Properties
+    
+    weak var trackerEditorView: TrackerEditorViewControllerProtocol?
+    
+    var days: [WeekDay] {
+        get {
+            Array(
+                daySwitches
+                    .filter{ $0.value.isOn }
+                    .map{ $0.key }
+            )
+        }
+        set {
+            daySwitches.forEach {
+                $0.value.isOn = newValue.contains($0.key)
+            }
+        }
+    }
     
     // MARK: - Lifecycle
     
@@ -92,6 +70,7 @@ final class ScheduleEditorViewController: UIViewController {
     
     @objc
     private func didTapDoneButton() {
+        trackerEditorView?.updateSchedule(from: days)
         navigationController?.popViewController(animated: true)
     }
     

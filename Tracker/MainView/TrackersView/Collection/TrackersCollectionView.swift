@@ -43,7 +43,7 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
         )
         
         // Mock.
-        categories = TrackersDataMock.data
+        categories = TrackersDataMock.share.data
         
         // Флаг, сообщающий, поддерживается множественный выбор или нет.
         // Добавил на случай, если понадобится в проекте.
@@ -61,11 +61,12 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
         // Переписать нормально.
         guard let date = navigator?.selectedDate else { return }
         
-        let data = TrackersDataMock.data
+        let data = TrackersDataMock.share.data
         
         let newData: [TrackerCategory] = data.reduce(into: [], { (result, category) in
             let newTrackers: [Tracker] = category.trackers.reduce(into: [], { (result, tracker) in
-                let dayNumber = Calendar.current.component(.weekday, from: date)
+                var dayNumber = Calendar.current.component(.weekday, from: date)
+                dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
                 switch tracker.type {
                 case .event:
                     result.append(tracker)

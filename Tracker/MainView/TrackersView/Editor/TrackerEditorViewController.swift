@@ -15,6 +15,7 @@ final class TrackerEditorViewController: UIViewController {
     private lazy var nameTextField: OneLineTextField = {
         let nameTextField = OneLineTextField()
         nameTextField.placeholder = "Введите название трекера"
+        nameTextField.editingAction = updateCreateButton
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         return nameTextField
     } ()
@@ -82,8 +83,26 @@ final class TrackerEditorViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    var trackerType: TrackerType?
+    weak var trackersNavigator: TrackersNavigatorItemProtocol?
+    
     var viewTitle: String?
+    
+    var trackerName: String? { nameTextField.text }
+    
+    var trackerType: TrackerType? {
+        didSet {
+            if let trackerType {
+                switch trackerType{
+                case .habit(let schedule):
+                    scheduleButton.subtitle = schedule.toString()
+                    updateCreateButton()
+                    break
+                default:
+                    break
+                }
+            }
+        }
+    }
      
     // MARK: - Lifecycle
     
@@ -106,12 +125,47 @@ final class TrackerEditorViewController: UIViewController {
     }
     
     @objc
-    private func didTapCreateButton() { }
+    private func didTapCreateButton() {
+        let tracker = Tracker(
+            name: trackerName ?? "Без названия",
+            type: trackerType ?? .event
+        )
+        TrackersDataMock.share.addTracker(tracker)
+        dismiss(animated: true) { [weak self] in
+            self?.trackersNavigator?.updateView()
+        }
+    }
     
     // MARK: - UI Updates
     
+    private func updateCreateButton() {
+        if
+            let trackerName,
+            !trackerName.isEmpty
+        {
+            switch trackerType{
+            case .habit(let schedule):
+                createButton.isEnabled = !schedule.days.isEmpty
+                break
+            default:
+                createButton.isEnabled = true
+                break
+            }
+        } else {
+            createButton.isEnabled = false
+        }
+    }
+    
     private func showScheduleEditor() {
         let scheduleEditorViewController = ScheduleEditorViewController()
+        scheduleEditorViewController.trackerEditorView = self
+        switch trackerType {
+        case .habit(let schedule):
+            scheduleEditorViewController.days = schedule.days
+            break
+        default:
+            break
+        }
         navigationController?.pushViewController(scheduleEditorViewController, animated: true)
     }
 
@@ -146,5 +200,18 @@ final class TrackerEditorViewController: UIViewController {
             ),
             buttonsStackView.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+}
+
+extension TrackerEditorViewController: TrackerEditorViewControllerProtocol {
+    func updateSchedule(from newValues: [WeekDay]) {
+        switch trackerType {
+        case .habit:
+            let newSchedule = Schedule(days: newValues)
+            self.trackerType = .habit(newSchedule)
+            break
+        default:
+            break
+        }
     }
 }
