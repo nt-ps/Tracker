@@ -67,6 +67,17 @@ extension ParametersTableView: UITableViewDelegate {
         _ tableView: UITableView,
         heightForRowAt indexPath: IndexPath
     ) -> CGFloat { 75 }
+    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath) {
+        if
+            let cell = tableView.cellForRow(at: indexPath) as? ButtonTableViewCell,
+            let action = cell.tapAction
+        {
+            action()
+        }
+    }
 }
 
 extension ParametersTableView: UITableViewDataSource {

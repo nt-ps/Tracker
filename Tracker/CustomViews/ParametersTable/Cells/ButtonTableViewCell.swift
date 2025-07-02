@@ -57,6 +57,10 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         }
     }
     
+    // MARK: - Private Properties
+    
+    var tapAction: (() -> Void)?
+    
     // MARK: - Initializers
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

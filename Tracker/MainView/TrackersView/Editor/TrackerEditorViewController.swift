@@ -42,6 +42,9 @@ final class TrackerEditorViewController: UIViewController {
     private lazy var scheduleButton: ButtonTableViewCell = {
         let scheduleButton = ButtonTableViewCell()
         scheduleButton.title = "Расписание"
+        scheduleButton.tapAction = { [weak self] in
+            self?.showScheduleEditor()
+        }
         return scheduleButton
     } ()
     
@@ -106,6 +109,11 @@ final class TrackerEditorViewController: UIViewController {
     private func didTapCreateButton() { }
     
     // MARK: - UI Updates
+    
+    private func showScheduleEditor() {
+        let scheduleEditorViewController = ScheduleEditorViewController()
+        navigationController?.pushViewController(scheduleEditorViewController, animated: true)
+    }
 
     private func setConstraints() {
         NSLayoutConstraint.activate([
