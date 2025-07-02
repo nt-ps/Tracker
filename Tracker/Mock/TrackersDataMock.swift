@@ -9,13 +9,13 @@ final class TrackersDataMock {
             emoji: "🥸",
             type: .habit(
                 Schedule(
-                    monday: true,
-                    tuesday: true,
-                    wednesday: true,
-                    thursday: true,
-                    friday: true,
-                    saturday: false,
-                    sunday: false
+                    days: [
+                        .monday,
+                        .tuesday,
+                        .thursday,
+                        .tuesday,
+                        .friday
+                    ]
                 )
             )
         )

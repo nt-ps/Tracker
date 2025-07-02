@@ -65,12 +65,12 @@ final class TrackersCollectionView: UICollectionView, TrackersCollectionViewProt
         
         let newData: [TrackerCategory] = data.reduce(into: [], { (result, category) in
             let newTrackers: [Tracker] = category.trackers.reduce(into: [], { (result, tracker) in
-                let weekday = Calendar.current.component(.weekday, from: date)
+                let dayNumber = Calendar.current.component(.weekday, from: date)
                 switch tracker.type {
                 case .event:
                     result.append(tracker)
                 case .habit(let schedule):
-                    if schedule.contains(weekday: weekday) {
+                    if schedule.contains(dayNumber: dayNumber) {
                         result.append(tracker)
                     }
                 }
