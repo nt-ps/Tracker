@@ -7,14 +7,15 @@ final class TrackerEditorNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationBar.titleTextAttributes = [
+        view.backgroundColor = .white
+        
+        navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
         
         let trackerTypeViewController = TrackerTypeViewController()
-        trackerTypeViewController.trackersNavigationItem = self.trackersNavigationItem
+        trackerTypeViewController.trackersNavigationItem = trackersNavigationItem
         
-        self.viewControllers = [ trackerTypeViewController ]
-        
+        viewControllers = [ trackerTypeViewController ]
     }
 }

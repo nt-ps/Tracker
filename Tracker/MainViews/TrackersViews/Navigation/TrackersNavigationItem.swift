@@ -82,7 +82,6 @@ final class TrackersNavigationItem: UIViewController {
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
         trackerEditorNavigationController.trackersNavigationItem = self
-        trackerEditorNavigationController.view.backgroundColor = .white
         present(trackerEditorNavigationController, animated: true)
     }
     

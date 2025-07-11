@@ -128,12 +128,14 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionHeader {
+        if
+            kind == UICollectionView.elementKindSectionHeader,
             let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: TrackersHeaderView.reuseIdentifier,
                 for: indexPath
-            ) as! TrackersHeaderView
+            ) as? TrackersHeaderView
+        {
             header.title = categories[indexPath.section].title
             return header
         }

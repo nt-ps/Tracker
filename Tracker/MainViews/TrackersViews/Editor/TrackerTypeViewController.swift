@@ -17,7 +17,7 @@ final class TrackerTypeViewController: UIViewController {
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.addTarget(
             self,
-            action: #selector(self.didTapHabitButton),
+            action: #selector(didTapHabitButton),
             for: .touchUpInside
         )
         return habitButton
@@ -28,7 +28,7 @@ final class TrackerTypeViewController: UIViewController {
         eventButton.setTitle("Нерегулярное событие", for: .normal)
         eventButton.addTarget(
             self,
-            action: #selector(self.didTapEventButton),
+            action: #selector(didTapEventButton),
             for: .touchUpInside
         )
         return eventButton

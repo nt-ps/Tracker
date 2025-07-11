@@ -8,24 +8,24 @@ final class MainTabBarController: UITabBarController {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .AppColors.white
         
-        self.tabBar.standardAppearance = appearance
-        self.tabBar.tintColor = .AppColors.blue
+        tabBar.standardAppearance = appearance
+        tabBar.tintColor = .AppColors.blue
         
         let trackersNavigationController = TrackersNavigationController()
         trackersNavigationController.tabBarItem = UITabBarItem(
             title: "Трекеры",
-            image: UIImage(named: "Icons/TrackersTab"),
+            image: UIImage(resource: .Icons.trackersTab),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
             title: "Статистика",
-            image: UIImage(named: "Icons/StatisticsTab"),
+            image: UIImage(resource: .Icons.statisticsTab),
             selectedImage: nil
         )
         
-        self.viewControllers = [trackersNavigationController, statisticsViewController]
+        viewControllers = [trackersNavigationController, statisticsViewController]
     }
 }
 

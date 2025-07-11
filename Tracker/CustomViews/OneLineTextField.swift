@@ -28,7 +28,7 @@ final class OneLineTextField: UIView {
         )
         textField.addTarget(
             self,
-            action: #selector(self.editingChanged(sender:)),
+            action: #selector(editingChanged(sender:)),
             for: .editingChanged)
         return textField
     } ()
@@ -36,7 +36,7 @@ final class OneLineTextField: UIView {
     private lazy var limitLabel: UILabel = {
         let limitLabel = UILabel()
         limitLabel.textAlignment = .center
-        limitLabel.text = "Ограничение \(maxLenght) символов"
+        limitLabel.text = "Ограничение \(maxLength) символов"
         limitLabel.font = .systemFont(ofSize: 17, weight: .regular)
         limitLabel.textColor = .AppColors.red
         limitLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -58,7 +58,7 @@ final class OneLineTextField: UIView {
     
     // MARK: - Private Properties
     
-    private let maxLenght = 38
+    private let maxLength = 38
     
     // MARK: - Initializers
     
@@ -79,9 +79,9 @@ final class OneLineTextField: UIView {
     private func editingChanged(sender: UITextField) {
         if
             let text = sender.text,
-            text.count > maxLenght
+            text.count > maxLength
         {
-            sender.text = String(text.dropLast(text.count - maxLenght))
+            sender.text = String(text.dropLast(text.count - maxLength))
             limitLabel.isHidden = false
             return
         } else {

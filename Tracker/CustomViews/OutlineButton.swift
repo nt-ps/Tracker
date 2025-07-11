@@ -23,7 +23,7 @@ final class OutlineButton: UIButton {
         
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.heightAnchor.constraint(equalToConstant: 60)
+            heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     

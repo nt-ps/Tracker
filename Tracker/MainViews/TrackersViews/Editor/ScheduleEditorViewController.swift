@@ -32,7 +32,7 @@ final class ScheduleEditorViewController: UIViewController {
         var switches: [WeekDay: SwitchTableViewCell] = [:]
         WeekDay.allCases.forEach {
             let switchCell = SwitchTableViewCell()
-            switchCell.title = $0.getName()
+            switchCell.title = $0.name
             switchCell.isOn = false
             switches[$0] = switchCell
         }
@@ -44,7 +44,7 @@ final class ScheduleEditorViewController: UIViewController {
         createButton.setTitle("Готово", for: .normal)
         createButton.addTarget(
             self,
-            action: #selector(self.didTapDoneButton),
+            action: #selector(didTapDoneButton),
             for: .touchUpInside
         )
         return createButton
@@ -73,6 +73,8 @@ final class ScheduleEditorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .white
         
         navigationItem.title = "Расписание"
         navigationItem.setHidesBackButton(true, animated: true)

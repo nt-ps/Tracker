@@ -60,13 +60,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
-        doneButton.setImage(UIImage(named: enabledDoneButtonIconName), for: .normal)
+        let icon = UIImage(resource: enabledDoneButtonIconResource)
+        doneButton.setImage(icon, for: .normal)
         doneButton.tintColor = .AppColors.white
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = doneButtonCornerRadius
         doneButton.addTarget(
             self,
-            action: #selector(self.didTapDoneButton),
+            action: #selector(didTapDoneButton),
             for: .touchUpInside
         )
         
@@ -88,11 +89,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private lazy var controlViewTopPadding = 8.0
     private lazy var controlViewBottomPadding = 16.0
     
-    private lazy var enabledDoneButtonIconName = "Icons/Plus"
+    private lazy var enabledDoneButtonIconResource: ImageResource = .Icons.plus
     private lazy var enabledDoneButtonIconSize = CGSize(width: 10.62, height: 10.21)
     private lazy var enabledDoneButtonOpacity: Float = 1.0
     
-    private lazy var disabledDoneButtonIconName = "Icons/Done"
+    private lazy var disabledDoneButtonIconResource: ImageResource = .Icons.done
     private lazy var disabledDoneButtonIconSize = CGSize(width: 12, height: 12)
     private lazy var disabledDoneButtonOpacity: Float = 0.3
     
@@ -161,7 +162,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
-    // MARK: - Overrided Methods
+    // MARK: - Overridden Methods
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -279,21 +280,26 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private func updateDoneButton(isEnable: Bool) {
         if isEnable {
             updateDoneButton(
-                iconName: enabledDoneButtonIconName,
+                iconResource: enabledDoneButtonIconResource,
                 iconSize: enabledDoneButtonIconSize,
                 opacity: enabledDoneButtonOpacity
             )
         } else {
             updateDoneButton(
-                iconName: disabledDoneButtonIconName,
+                iconResource: disabledDoneButtonIconResource,
                 iconSize: disabledDoneButtonIconSize,
                 opacity: disabledDoneButtonOpacity
             )
         }
     }
     
-    private func updateDoneButton(iconName: String, iconSize: CGSize, opacity: Float, ) {
-        doneButton.setImage(UIImage(named: iconName), for: .normal)
+    private func updateDoneButton(
+        iconResource: ImageResource,
+        iconSize: CGSize,
+        opacity: Float
+    ) {
+        let icon = UIImage(resource: iconResource)
+        doneButton.setImage(icon, for: .normal)
         doneButton.layer.opacity = opacity
         
         guard let doneButtonIcon = doneButton.imageView else { return }

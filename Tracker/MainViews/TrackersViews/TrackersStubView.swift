@@ -5,7 +5,7 @@ final class TrackersStubView: UIView {
     // MARK: - Views
     
     private lazy var imageView: UIImageView = {
-        let image = UIImage(named: imageName)
+        let image = UIImage(resource: imageResource)
         let imageView = UIImageView(image: image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -22,7 +22,7 @@ final class TrackersStubView: UIView {
     
     // MARK: - UI Properties
     
-    private let imageName = "TrackersStubImage"
+    private let imageResource: ImageResource = .trackersStub
     private let labelText = "Что будем отслеживать?"
     private let labelSize = 12.0
     
@@ -31,8 +31,8 @@ final class TrackersStubView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.addSubview(imageView)
-        self.addSubview(labelView)
+        addSubview(imageView)
+        addSubview(labelView)
         
         setConstraints()
     }

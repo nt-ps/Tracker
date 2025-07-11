@@ -21,7 +21,7 @@ final class SolidButton: UIButton {
         
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.heightAnchor.constraint(equalToConstant: 60)
+            heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     

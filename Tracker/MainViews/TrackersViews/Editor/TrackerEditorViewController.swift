@@ -73,7 +73,7 @@ final class TrackerEditorViewController: UIViewController {
         cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.addTarget(
             self,
-            action: #selector(self.didTapCancelButton),
+            action: #selector(didTapCancelButton),
             for: .touchUpInside
         )
         return cancelButton
@@ -84,7 +84,7 @@ final class TrackerEditorViewController: UIViewController {
         createButton.setTitle("Создать", for: .normal)
         createButton.addTarget(
             self,
-            action: #selector(self.didTapCreateButton),
+            action: #selector(didTapCreateButton),
             for: .touchUpInside
         )
         createButton.isEnabled = false
@@ -118,6 +118,8 @@ final class TrackerEditorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .white
         
         navigationItem.title = viewTitle
         navigationItem.setHidesBackButton(true, animated: true)
@@ -241,7 +243,7 @@ final class TrackerEditorViewController: UIViewController {
         switch trackerType {
         case .habit:
             let newSchedule = Schedule(days: newValues)
-            self.trackerType = .habit(newSchedule)
+            trackerType = .habit(newSchedule)
             break
         default:
             break

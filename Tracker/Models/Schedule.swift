@@ -21,7 +21,7 @@ struct Schedule {
             return "Каждый день"
         }
         
-        let array = days.map{ $0.getShortName() }
+        let array = days.map{ $0.shortName }
         let result = array.joined(separator: ", ")
         return result
     }
