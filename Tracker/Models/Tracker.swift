@@ -12,7 +12,7 @@ struct Tracker {
     
     init(
         name: String,
-        color: UIColor = .TrackerColors.green,
+        color: UIColor = .TrackerColors.color5,
         emoji: Character = "🥸",
         type: TrackerType = .event
     ) {

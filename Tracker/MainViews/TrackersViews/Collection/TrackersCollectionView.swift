@@ -33,9 +33,9 @@ final class TrackersCollectionView: UICollectionView {
             forCellWithReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier
         )
         register(
-            TrackersHeaderView.self,
+            HeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: TrackersHeaderView.reuseIdentifier
+            withReuseIdentifier: HeaderView.reuseIdentifier
         )
     }
     
@@ -132,9 +132,9 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
             kind == UICollectionView.elementKindSectionHeader,
             let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
-                withReuseIdentifier: TrackersHeaderView.reuseIdentifier,
+                withReuseIdentifier: HeaderView.reuseIdentifier,
                 for: indexPath
-            ) as? TrackersHeaderView
+            ) as? HeaderView
         {
             header.title = categories[indexPath.section].title
             return header
@@ -159,7 +159,7 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         CGSize(
             width: collectionView.frame.width,
-            height: TrackersHeaderView.defaultHeight
+            height: HeaderView.defaultHeight
         )
     }
     

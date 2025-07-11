@@ -12,7 +12,7 @@ final class TrackersMockData {
     private init() {
         let tracker = Tracker(
             name: "Поливать растения",
-            color: .TrackerColors.green,
+            color: .TrackerColors.color5,
             emoji: "🥸",
             type: .habit(
                 Schedule(

@@ -14,7 +14,12 @@ final class TrackerEditorViewController: UIViewController {
     
     private lazy var parametersStackView: UIStackView = {
         let parametersStackView = UIStackView(
-            arrangedSubviews: [nameTextField, parametersTableView]
+            arrangedSubviews: [
+                nameTextField,
+                parametersTableView,
+                emojiCollectionView,
+                colorCollectionView
+            ]
         )
         parametersStackView.axis = .vertical
         parametersStackView.spacing = 24.0
@@ -57,6 +62,36 @@ final class TrackerEditorViewController: UIViewController {
             self?.showScheduleEditor()
         }
         return scheduleButton
+    } ()
+    
+    private lazy var emojiCollectionView: SelectorCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let emojiCollectionView = SelectorCollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
+        emojiCollectionView.title = "Emoji"
+        emojiCollectionView.addValues(TrackerViewData.emoji)
+        emojiCollectionView.selectAction = { [weak self] in
+            self?.updateCreateButton()
+        }
+        emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return emojiCollectionView
+    } ()
+    
+    private lazy var colorCollectionView: SelectorCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let colorCollectionView = SelectorCollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
+        colorCollectionView.title = "Цвет"
+        colorCollectionView.addValues(TrackerViewData.colors)
+        colorCollectionView.selectAction = { [weak self] in
+            self?.updateCreateButton()
+        }
+        colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return colorCollectionView
     } ()
     
     private lazy var buttonsStackView: UIStackView = {
@@ -113,6 +148,9 @@ final class TrackerEditorViewController: UIViewController {
             }
         }
     }
+    
+    var trackerEmoji: Character? { emojiCollectionView.selectedItem as? Character }
+    var trackerColor: UIColor? { colorCollectionView.selectedItem as? UIColor }
      
     // MARK: - Lifecycle
     
@@ -143,6 +181,8 @@ final class TrackerEditorViewController: UIViewController {
     private func didTapCreateButton() {
         let tracker = Tracker(
             name: trackerName ?? "Без названия",
+            color: trackerColor ?? .black,
+            emoji: trackerEmoji ?? " ",
             type: trackerType ?? .event
         )
         TrackersMockData.share.addTracker(tracker)
@@ -156,7 +196,9 @@ final class TrackerEditorViewController: UIViewController {
     private func updateCreateButton() {
         if
             let trackerName,
-            !trackerName.isEmpty
+            !trackerName.isEmpty,
+            trackerEmoji != nil,
+            trackerColor != nil
         {
             switch trackerType{
             case .habit(let schedule):
@@ -185,6 +227,9 @@ final class TrackerEditorViewController: UIViewController {
     }
 
     private func setConstraints() {
+        let emojiCollectionViewHeight = emojiCollectionView.estimatHeight(for: view.bounds)
+        let colorCollectionViewHeight = colorCollectionView.estimatHeight(for: view.bounds)
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
@@ -199,18 +244,48 @@ final class TrackerEditorViewController: UIViewController {
                 equalTo: scrollView.bottomAnchor,
                 constant: -24
             ),
-            parametersStackView.leadingAnchor.constraint(
-                equalTo: scrollView.leadingAnchor,
+            parametersStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            nameTextField.leadingAnchor.constraint(
+                equalTo: parametersStackView.leadingAnchor,
                 constant: 16
             ),
-            parametersStackView.trailingAnchor.constraint(
-                equalTo: scrollView.trailingAnchor,
+            nameTextField.trailingAnchor.constraint(
+                equalTo: parametersStackView.trailingAnchor,
                 constant: -16
             ),
-            parametersStackView.widthAnchor.constraint(
-                equalTo: scrollView.widthAnchor,
-                constant: -32
+            
+            parametersTableView.leadingAnchor.constraint(
+                equalTo: parametersStackView.leadingAnchor,
+                constant: 16
             ),
+            parametersTableView.trailingAnchor.constraint(
+                equalTo: parametersStackView.trailingAnchor,
+                constant: -16
+            ),
+            
+            emojiCollectionView.topAnchor.constraint(
+                equalTo: parametersTableView.bottomAnchor,
+                constant: 20
+            ),
+            emojiCollectionView.leadingAnchor.constraint(
+                equalTo: parametersStackView.leadingAnchor
+            ),
+            emojiCollectionView.trailingAnchor.constraint(
+                equalTo: parametersStackView.trailingAnchor
+            ),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: emojiCollectionViewHeight),
+            
+            colorCollectionView.topAnchor.constraint(
+                equalTo: emojiCollectionView.bottomAnchor
+            ),
+            colorCollectionView.leadingAnchor.constraint(
+                equalTo: parametersStackView.leadingAnchor
+            ),
+            colorCollectionView.trailingAnchor.constraint(
+                equalTo: parametersStackView.trailingAnchor
+            ),
+            colorCollectionView.heightAnchor.constraint(equalToConstant: colorCollectionViewHeight),
             
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
@@ -224,7 +299,17 @@ final class TrackerEditorViewController: UIViewController {
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
                 constant: ScreenType.shared.isWithIsland ? 0 : -24
             ),
-            buttonsStackView.heightAnchor.constraint(equalToConstant: 60)
+            buttonsStackView.heightAnchor.constraint(equalToConstant: 68),
+            
+            cancelButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: 8
+            ),
+            
+            createButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: 8
+            )
         ])
     }
     
