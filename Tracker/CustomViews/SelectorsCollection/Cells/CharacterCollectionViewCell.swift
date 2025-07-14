@@ -12,10 +12,6 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
         return characterLabel
     } ()
     
-    // MARK: - UI Properties
-    
-    // ***
-    
     // MARK: - Static Properties
     
     static let reuseIdentifier = String(describing: CharacterCollectionViewCell.self)

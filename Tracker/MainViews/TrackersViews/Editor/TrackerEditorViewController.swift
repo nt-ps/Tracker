@@ -24,6 +24,7 @@ final class TrackerEditorViewController: UIViewController {
         parametersStackView.axis = .vertical
         parametersStackView.spacing = 24.0
         parametersStackView.translatesAutoresizingMaskIntoConstraints = false
+        parametersStackView.isLayoutMarginsRelativeArrangement = true
         return parametersStackView
     } ()
     
@@ -189,7 +190,7 @@ final class TrackerEditorViewController: UIViewController {
             emoji: trackerEmoji ?? " ",
             type: trackerType ?? .event
         )
-        // TODO: В бущуем выводить алерт с ошибкой.
+        // TODO: В будущем выводить алерт с ошибкой.
         try? trackerStore.addTracker(tracker, to: TrackersMockData.defaultCategoryTitle)
         dismiss(animated: true)
     }
@@ -272,11 +273,10 @@ final class TrackerEditorViewController: UIViewController {
                 constant: 20
             ),
             emojiCollectionView.leadingAnchor.constraint(
-                equalTo: parametersStackView.leadingAnchor
+                equalTo: parametersTableView.leadingAnchor,
+                constant: -16
             ),
-            emojiCollectionView.trailingAnchor.constraint(
-                equalTo: parametersStackView.trailingAnchor
-            ),
+            emojiCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: emojiCollectionViewHeight),
             
             colorCollectionView.topAnchor.constraint(
@@ -285,9 +285,7 @@ final class TrackerEditorViewController: UIViewController {
             colorCollectionView.leadingAnchor.constraint(
                 equalTo: parametersStackView.leadingAnchor
             ),
-            colorCollectionView.trailingAnchor.constraint(
-                equalTo: parametersStackView.trailingAnchor
-            ),
+            colorCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             colorCollectionView.heightAnchor.constraint(equalToConstant: colorCollectionViewHeight),
             
             buttonsStackView.leadingAnchor.constraint(

@@ -30,6 +30,7 @@ final class OneLineTextField: UIView {
             self,
             action: #selector(editingChanged(sender:)),
             for: .editingChanged)
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     } ()
     

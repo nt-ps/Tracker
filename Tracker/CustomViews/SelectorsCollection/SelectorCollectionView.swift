@@ -23,8 +23,12 @@ final class SelectorCollectionView: UICollectionView {
         
         geometryParameters = GeometryParameters(
             cellCount: 6,
-            sectionInsets: UIEdgeInsets(top: 12, left: 18, bottom: 24, right: 18),
-            cellSpacing: CGPoint(x: 5, y: 0),
+            sectionInsets: UIEdgeInsets(
+                top: 12,
+                left: ScreenType.shared.isWithIsland ? 18 : 16,
+                bottom: 24,
+                right: ScreenType.shared.isWithIsland ? 18 : 16),
+            cellSpacing: CGPoint(x: ScreenType.shared.isWithIsland ? 5 : 0, y: 0),
             cellHeightToWidthRatio: 1
         )
         
