@@ -2,10 +2,6 @@ import UIKit
 
 final class TrackersNavigationItem: UIViewController {
     
-    // TODO: Текст Core Data. Протянуть по нормальному.
-    private let trackerCategoryStore = TrackerCategoryStore() // TODO: Удалить, если не потребуется.
-    private let trackerStore = TrackerStore()
-    
     // MARK: - Views
     
     private lazy var addBarButtonItem: UIBarButtonItem = {
@@ -64,15 +60,22 @@ final class TrackersNavigationItem: UIViewController {
     
     private(set) var selectedDate: Date = Date()
     
+    // MARK: - Private Properties
+    
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerStore = TrackerStore()
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: Пока категорий нет, тут добавляется дефолтная категория "Разное".
+        // TODO: Пока категорий нет, тут добавляется дефолтная категория.
         // Удалить этот фрагмент когда появится создание категорий.
         do {
-            try trackerCategoryStore.addCategory(TrackerCategory(title: "Разное"))
+            try trackerCategoryStore.addCategory(
+                TrackersMockData.defaultCategoryTitle
+            )
         } catch {}
         
         trackerStore.delegate = self
@@ -106,31 +109,12 @@ final class TrackersNavigationItem: UIViewController {
     // MARK: - UI Updates
     
     func updateCollection() {
-        trackerStore.setFetchedResultsController(for: selectedDate)
-        let categories = trackerStore.trackerCategories
-        
-        // TODO: Core Data Test
-        /*
-        guard var categories = try? trackerCategoryStore.getAll() else {
+        trackerStore.setFetchRequest(for: selectedDate)
+        let categories = trackerStore.trackersByCategory
+        if categories.isEmpty {
             showStub()
-            return
-        }
-        
-        categories = filterCategories(
-            categories,
-            by: selectedDate
-        )
-         */
-        
-        /*let categories = filterCategories(
-            TrackersMockData.share.data,
-            by: selectedDate
-        )*/
-        
-        if !categories.isEmpty {
-            showCollectionView(with: categories)
         } else {
-            showStub()
+            showCollectionView(with: categories)
         }
     }
     
@@ -162,67 +146,17 @@ final class TrackersNavigationItem: UIViewController {
         
         collectionView.reloadData()
     }
-    
-    // MARK: - Private Methods
-    
-    private func filterCategories(
-        _ categories: [TrackerCategory],
-        by date: Date
-    ) -> [TrackerCategory] {
-        let filteredCategories: [TrackerCategory] = categories.reduce(
-            into: []
-        ) { (result, category) in
-            
-            let filteredTrackers: [Tracker] = filterTrackers(
-                category.trackers,
-                by: date
-            )
-            
-            if !filteredTrackers.isEmpty {
-                let newCategory = TrackerCategory(
-                    title: category.title,
-                    trackers: filteredTrackers
-                )
-                result.append(newCategory)
-            }
-        }
-        
-        return filteredCategories
-    }
-    
-    private func filterTrackers(
-        _ trackers: [Tracker],
-        by date: Date
-    ) -> [Tracker] {
-        var dayNumber = Calendar.current.component(.weekday, from: date)
-        dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
-        
-        let filteredTrackers: [Tracker] = trackers.reduce(
-            into: []
-        ) { (result, tracker) in
-            switch tracker.type {
-            case .event:
-                result.append(tracker)
-            case .habit(let schedule):
-                if schedule.contains(dayNumber: dayNumber) {
-                    result.append(tracker)
-                }
-            }
-        }
-        
-        return filteredTrackers
-    }
 }
 
 extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
-        let oldNum = collectionView.categories.count
-        let newCategories = trackerStore.trackerCategories
-        let newNum = newCategories.count
-        if oldNum == 0 {
+        let newCategories = trackerStore.trackersByCategory
+        if newCategories.count == 0 {
+            showStub()
+        } else if collectionView.categories.count == 0 {
             showCollectionView(with: newCategories)
         } else {
-            collectionView.categories = trackerStore.trackerCategories
+            collectionView.categories = newCategories
             collectionView.performBatchUpdates {
                 let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
                 collectionView.insertItems(at: insertedIndexPaths)

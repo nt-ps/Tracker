@@ -8,8 +8,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let container = NSPersistentContainer(name: "TrackersData")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // TODO: Убрать fatalError. Можно выводить ошибку загрузки в консоль и загружать приложение пустым.
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                // TODO: В будущем выводить алерт с ошибкой доступа к базе.
+                print("Unresolved error \(error), \(error.userInfo)")
             }
         })
         return container
@@ -18,11 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: UISceneSession Lifecycle
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //WeekDaysTransformer.register()
-        //TrackerTypeWrapperTransformer.register()
-        //CharacterWrapperTransformer.register()
-
-        return true
+        true
     }
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

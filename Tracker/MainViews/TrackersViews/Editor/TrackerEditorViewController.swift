@@ -189,11 +189,9 @@ final class TrackerEditorViewController: UIViewController {
             emoji: trackerEmoji ?? " ",
             type: trackerType ?? .event
         )
-        //TrackersMockData.share.addTracker(tracker)
-        try? trackerStore.addTracker(tracker, to: TrackerCategory(title: "Разное")) // TODO: Пока написано грубо. Улучшить.
-        dismiss(animated: true) /* /{ [weak self] in
-            self?.trackersNavigator?.updateCollection()
-        } */
+        // TODO: В бущуем выводить алерт с ошибкой.
+        try? trackerStore.addTracker(tracker, to: TrackersMockData.defaultCategoryTitle)
+        dismiss(animated: true)
     }
     
     // MARK: - UI Updates

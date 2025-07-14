@@ -1,52 +1,24 @@
 import CoreData
 import UIKit
 
-// TODO: Вынести в отдельный файл.
-struct TrackerStoreUpdate {
-    let insertedIndexes: IndexSet
-    // TODO: В будущем помещать сюда остальные изменения типа удаления, перемещения и т.д.
-}
-
-// TODO: Вынести в отдельный файл.
-protocol TrackerStoreDelegate: AnyObject {
-    func didUpdate(_ update: TrackerStoreUpdate)
-}
-
 final class TrackerStore: NSObject {
     
     // MARK: - Internal Properties
     
     weak var delegate: TrackerStoreDelegate?
     
-    var trackerCategories: [TrackerCategory] {
-        guard
-            let categories = fetchedResultsController?.sections
-        else { return [] }
-        
-        let obj = categories.first?.objects?.first as? TrackerCoreData
-        let id1 = obj?.id
-        let name1 = obj?.name
-        let color1 = obj?.color
-        let emoji1 = obj?.emoji
-        let type1 = obj?.type
+    var trackersByCategory: [TrackerCategory] {
+        guard let categories = fetchedResultsController?.sections else { return [] }
     
         let trackerCategories = categories.map {
             let title = $0.name
-            //let trackersCoreData = $0.objects as? [TrackerCoreData]
             let trackers: [Tracker]? = $0.objects?.reduce(
                 into: []
             ) { (result, data) in
                 if
                     let trackerCoreData = data as? TrackerCoreData,
-                    let id = trackerCoreData.id,
-                    let name = trackerCoreData.name,
-                    let colorString = trackerCoreData.color,
-                    let color = UIColor(hexaDecimalString: colorString),
-                    let emoji = trackerCoreData.emoji?.first,
-                    let typeString = trackerCoreData.type
+                    let tracker = try? createTracker(from: trackerCoreData)
                 {
-                    let type = TrackerType(from: typeString)
-                    let tracker = Tracker(id: id, name: name, color: color, emoji: emoji, type: type)
                     result.append(tracker)
                 }
             }
@@ -59,9 +31,6 @@ final class TrackerStore: NSObject {
     // MARK: - Private Properties
     
     private let context: NSManagedObjectContext?
-    //private let trackerCategoryStore = TrackerCategoryStore()
-    
-    /*
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>? = {
         guard let context else { return nil }
         
@@ -70,20 +39,18 @@ final class TrackerStore: NSObject {
         )
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
         
-        let fetchedResultsController = NSFetchedResultsController(
+        fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: context,
             sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
             cacheName: nil
         )
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
+        fetchedResultsController?.delegate = self
+        try? fetchedResultsController?.performFetch()
+        
         return fetchedResultsController
-    }()
-     */
-    
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
-    
+    } ()
+
     private var insertedIndexes: IndexSet = IndexSet()
     
     // MARK: - Initializers
@@ -99,51 +66,29 @@ final class TrackerStore: NSObject {
     }
     
     // MARK: - Internal Methods
-    
-    func setFetchedResultsController(for date: Date) {
-        guard let context else { return }
-        
+
+    func setFetchRequest(for date: Date) {
         var dayNumber = Calendar.current.component(.weekday, from: date)
         dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
         
-        let fetchRequest = NSFetchRequest<TrackerCoreData>(
-            entityName: String(describing: TrackerCoreData.self)
-        )
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
-        fetchRequest.predicate = NSPredicate(
+        fetchedResultsController?.fetchRequest.predicate = NSPredicate(
             format: "%K CONTAINS[n] %@",
             #keyPath(TrackerCoreData.type),
             "\(dayNumber)"
         )
         
-        fetchedResultsController = NSFetchedResultsController(
-            fetchRequest: fetchRequest,
-            managedObjectContext: context,
-            sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
-            cacheName: nil
-        )
-        fetchedResultsController?.delegate = self
         try? fetchedResultsController?.performFetch()
     }
     
-    func addTracker(_ tracker: Tracker, to category: TrackerCategory) throws {
+    func addTracker(_ tracker: Tracker, to categoryTitle: String) throws {
         guard let context else {
             throw TrackerStoreError.couldNotGetContext
         }
-        let trackerCoreData = try createTracker(from: tracker)
-        guard let categoryCoreData = try? getCoreData(for: category) else {
+        let trackerCoreData = try createTrackerCoreData(from: tracker)
+        guard let categoryCoreData = try? getCategoryCoreData(categoryTitle) else {
             throw TrackerCategoryStoreError.categoryNotFound
         }
         categoryCoreData.addToTrackers(trackerCoreData)
-        try context.save()
-    }
-    
-    func addTracker(_ tracker: Tracker, to category: TrackerCategoryCoreData) throws {
-        guard let context else {
-            throw TrackerStoreError.couldNotGetContext
-        }
-        let trackerCoreData = try createTracker(from: tracker)
-        category.addToTrackers(trackerCoreData)
         try context.save()
     }
 
@@ -157,7 +102,24 @@ final class TrackerStore: NSObject {
     
     // MARK: - Private Methods
     
-    private func createTracker(from tracker: Tracker) throws -> TrackerCoreData {
+    private func createTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
+        guard
+            let id = trackerCoreData.id,
+            let name = trackerCoreData.name,
+            let colorString = trackerCoreData.color,
+            let color = UIColor(hexaDecimalString: colorString),
+            let emoji = trackerCoreData.emoji?.first,
+            let typeString = trackerCoreData.type
+        else {
+            throw TrackerStoreError.failedToDecodeFields
+        }
+        
+        let type = TrackerType(from: typeString)
+        
+        return Tracker(id: id, name: name, color: color, emoji: emoji, type: type)
+    }
+    
+    private func createTrackerCoreData(from tracker: Tracker) throws -> TrackerCoreData {
         guard let context else {
             throw TrackerStoreError.couldNotGetContext
         }
@@ -166,7 +128,13 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
-    private func getCoreData(for category: TrackerCategory) throws -> TrackerCategoryCoreData? {
+    // Дублировал этот метод из TrackerCategoryCoreData по след. причинам:
+    // - Он мне тут нужен для создания связи;
+    // - По заданию должны быть добавлены TrackerStore и TrackerCategoryCoreData отдельно;
+    // - Не хочу вытаскивать в public или internal методы, которые возвращают
+    //   объекты CoreData. Тогда они будут торчать наружу и могут изменяться где попало,
+    //   это не хорошо.
+    private func getCategoryCoreData(_ title: String) throws -> TrackerCategoryCoreData? {
         guard let context else {
             throw TrackerCategoryStoreError.couldNotGetContext
         }
@@ -178,7 +146,7 @@ final class TrackerStore: NSObject {
         request.predicate = NSPredicate(
             format: "%K == %@",
             #keyPath(TrackerCategoryCoreData.title),
-            category.title
+            title
         )
         let category = try context.fetch(request).first
         
@@ -193,15 +161,12 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
-            TrackerStoreUpdate(
-                insertedIndexes: insertedIndexes
-            )
+            TrackerStoreUpdate(insertedIndexes: insertedIndexes)
         )
         insertedIndexes.removeAll()
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
         switch type {
         case .insert:
             if let indexPath = newIndexPath {
