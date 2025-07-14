@@ -151,6 +151,10 @@ final class TrackerEditorViewController: UIViewController {
     
     var trackerEmoji: Character? { emojiCollectionView.selectedItem as? Character }
     var trackerColor: UIColor? { colorCollectionView.selectedItem as? UIColor }
+    
+    // MARK: - Private Properties
+    
+    private let trackerStore = TrackerStore()
      
     // MARK: - Lifecycle
     
@@ -185,10 +189,11 @@ final class TrackerEditorViewController: UIViewController {
             emoji: trackerEmoji ?? " ",
             type: trackerType ?? .event
         )
-        TrackersMockData.share.addTracker(tracker)
-        dismiss(animated: true) { [weak self] in
+        //TrackersMockData.share.addTracker(tracker)
+        try? trackerStore.addTracker(tracker, to: TrackerCategory(title: "Разное")) // TODO: Пока написано грубо. Улучшить.
+        dismiss(animated: true) /* /{ [weak self] in
             self?.trackersNavigator?.updateCollection()
-        }
+        } */
     }
     
     // MARK: - UI Updates

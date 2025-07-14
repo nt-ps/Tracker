@@ -2,6 +2,10 @@ import UIKit
 
 final class TrackersNavigationItem: UIViewController {
     
+    // TODO: Текст Core Data. Протянуть по нормальному.
+    private let trackerCategoryStore = TrackerCategoryStore() // TODO: Удалить, если не потребуется.
+    private let trackerStore = TrackerStore()
+    
     // MARK: - Views
     
     private lazy var addBarButtonItem: UIBarButtonItem = {
@@ -65,6 +69,14 @@ final class TrackersNavigationItem: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TODO: Пока категорий нет, тут добавляется дефолтная категория "Разное".
+        // Удалить этот фрагмент когда появится создание категорий.
+        do {
+            try trackerCategoryStore.addCategory(TrackerCategory(title: "Разное"))
+        } catch {}
+        
+        trackerStore.delegate = self
+        
         navigationItem.title = "Трекеры"
         
         navigationItem.leftBarButtonItem = addBarButtonItem
@@ -94,15 +106,31 @@ final class TrackersNavigationItem: UIViewController {
     // MARK: - UI Updates
     
     func updateCollection() {
-        let categories = filterCategories(
-            TrackersMockData.share.data,
+        trackerStore.setFetchedResultsController(for: selectedDate)
+        let categories = trackerStore.trackerCategories
+        
+        // TODO: Core Data Test
+        /*
+        guard var categories = try? trackerCategoryStore.getAll() else {
+            showStub()
+            return
+        }
+        
+        categories = filterCategories(
+            categories,
             by: selectedDate
         )
+         */
         
-        if categories.isEmpty {
-            showStub()
-        } else {
+        /*let categories = filterCategories(
+            TrackersMockData.share.data,
+            by: selectedDate
+        )*/
+        
+        if !categories.isEmpty {
             showCollectionView(with: categories)
+        } else {
+            showStub()
         }
     }
     
@@ -183,5 +211,22 @@ final class TrackersNavigationItem: UIViewController {
         }
         
         return filteredTrackers
+    }
+}
+
+extension TrackersNavigationItem: TrackerStoreDelegate {
+    func didUpdate(_ update: TrackerStoreUpdate) {
+        let oldNum = collectionView.categories.count
+        let newCategories = trackerStore.trackerCategories
+        let newNum = newCategories.count
+        if oldNum == 0 {
+            showCollectionView(with: newCategories)
+        } else {
+            collectionView.categories = trackerStore.trackerCategories
+            collectionView.performBatchUpdates {
+                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexPaths)
+            }
+        }
     }
 }
