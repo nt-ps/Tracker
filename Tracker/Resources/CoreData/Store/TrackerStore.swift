@@ -84,7 +84,8 @@ final class TrackerStore: NSObject {
         guard let context else {
             throw TrackerStoreError.couldNotGetContext
         }
-        let trackerCoreData = try createTrackerCoreData(from: tracker)
+        let trackerCoreData = TrackerCoreData(context: context)
+        updateExistingTracker(trackerCoreData, with: tracker)
         guard let categoryCoreData = try? getCategoryCoreData(categoryTitle) else {
             throw TrackerCategoryStoreError.categoryNotFound
         }
@@ -93,7 +94,7 @@ final class TrackerStore: NSObject {
     }
 
     func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
-        trackerCoreData.id = tracker.id
+        trackerCoreData.trackerId = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.color = tracker.color.toHexString()
         trackerCoreData.emoji = String(tracker.emoji)
@@ -104,7 +105,7 @@ final class TrackerStore: NSObject {
     
     private func createTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard
-            let id = trackerCoreData.id,
+            let id = trackerCoreData.trackerId,
             let name = trackerCoreData.name,
             let colorString = trackerCoreData.color,
             let color = UIColor(hexaDecimalString: colorString),
@@ -117,15 +118,6 @@ final class TrackerStore: NSObject {
         let type = TrackerType(from: typeString)
         
         return Tracker(id: id, name: name, color: color, emoji: emoji, type: type)
-    }
-    
-    private func createTrackerCoreData(from tracker: Tracker) throws -> TrackerCoreData {
-        guard let context else {
-            throw TrackerStoreError.couldNotGetContext
-        }
-        let trackerCoreData = TrackerCoreData(context: context)
-        updateExistingTracker(trackerCoreData, with: tracker)
-        return trackerCoreData
     }
     
     // Дублировал этот метод из TrackerCategoryCoreData по след. причинам:
@@ -148,9 +140,8 @@ final class TrackerStore: NSObject {
             #keyPath(TrackerCategoryCoreData.title),
             title
         )
-        let category = try context.fetch(request).first
-        
-        return category
+
+        return try context.fetch(request).first
     }
 }
 

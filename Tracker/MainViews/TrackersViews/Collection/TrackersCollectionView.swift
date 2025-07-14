@@ -10,13 +10,16 @@ final class TrackersCollectionView: UICollectionView {
     var completedTrackers = Set<TrackerRecord>()
     
     // MARK: - Private Properties
-    
+
+    private let trackerRecordStore = TrackerRecordStore()
     private var geometryParameters: GeometryParameters?
     
     // MARK: - Initializers
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
+        
+        completedTrackers = trackerRecordStore.records
         
         geometryParameters = GeometryParameters(
             cellCount: 2,
@@ -204,10 +207,12 @@ extension TrackersCollectionView: TrackersCollectionViewCellDelegate {
 
         if let record = findRecord(for: tracker, inDay: date) {
             completedTrackers.remove(record)
+            try? trackerRecordStore.deleteRecord(record)
             configCell(cell, from: tracker, isDone: false)
         } else {
-            let record = TrackerRecord(trackerId: tracker.id, date: date )
+            let record = TrackerRecord(trackerId: tracker.id, date: date)
             completedTrackers.insert(record)
+            try? trackerRecordStore.addRecord(record)
             configCell(cell, from: tracker, isDone: true)
         }
     }
