@@ -151,16 +151,21 @@ final class TrackersNavigationItem: UIViewController {
 extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         let newCategories = trackerStore.trackersByCategory
-        if newCategories.count == 0 {
+        
+        guard !newCategories.isEmpty else {
             showStub()
-        } else if collectionView.categories.count == 0 {
-            showCollectionView(with: newCategories)
-        } else {
+            return
+        }
+        
+        guard collectionView.categories.isEmpty else {
             collectionView.categories = newCategories
             collectionView.performBatchUpdates {
                 let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
                 collectionView.insertItems(at: insertedIndexPaths)
             }
+            return
         }
+
+        showCollectionView(with: newCategories)
     }
 }

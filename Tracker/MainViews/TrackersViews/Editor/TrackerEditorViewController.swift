@@ -22,7 +22,7 @@ final class TrackerEditorViewController: UIViewController {
             ]
         )
         parametersStackView.axis = .vertical
-        parametersStackView.spacing = 24.0
+        parametersStackView.spacing = stackItemYSpacing
         parametersStackView.translatesAutoresizingMaskIntoConstraints = false
         parametersStackView.isLayoutMarginsRelativeArrangement = true
         return parametersStackView
@@ -126,6 +126,11 @@ final class TrackerEditorViewController: UIViewController {
         createButton.isEnabled = false
         return createButton
     } ()
+    
+    // MARK: - UI Properties
+    
+    private let stackItemXSpacing = 16.0
+    private let stackItemYSpacing = 24.0
     
     // MARK: - Internal Properties
     
@@ -242,30 +247,30 @@ final class TrackerEditorViewController: UIViewController {
             
             parametersStackView.topAnchor.constraint(
                 equalTo: scrollView.topAnchor,
-                constant: 24
+                constant: stackItemYSpacing
             ),
             parametersStackView.bottomAnchor.constraint(
                 equalTo: scrollView.bottomAnchor,
-                constant: -24
+                constant: -stackItemYSpacing
             ),
             parametersStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
             nameTextField.leadingAnchor.constraint(
                 equalTo: parametersStackView.leadingAnchor,
-                constant: 16
+                constant: stackItemXSpacing
             ),
             nameTextField.trailingAnchor.constraint(
                 equalTo: parametersStackView.trailingAnchor,
-                constant: -16
+                constant: -stackItemXSpacing
             ),
             
             parametersTableView.leadingAnchor.constraint(
                 equalTo: parametersStackView.leadingAnchor,
-                constant: 16
+                constant: stackItemXSpacing
             ),
             parametersTableView.trailingAnchor.constraint(
                 equalTo: parametersStackView.trailingAnchor,
-                constant: -16
+                constant: -stackItemXSpacing
             ),
             
             emojiCollectionView.topAnchor.constraint(
@@ -274,7 +279,7 @@ final class TrackerEditorViewController: UIViewController {
             ),
             emojiCollectionView.leadingAnchor.constraint(
                 equalTo: parametersTableView.leadingAnchor,
-                constant: -16
+                constant: -stackItemXSpacing
             ),
             emojiCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: emojiCollectionViewHeight),
@@ -290,15 +295,15 @@ final class TrackerEditorViewController: UIViewController {
             
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
+                constant: stackItemXSpacing
             ),
             buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -16
+                constant: -stackItemXSpacing
             ),
             buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? 0 : -24
+                constant: ScreenType.shared.isWithIsland ? 0 : -stackItemYSpacing
             ),
             buttonsStackView.heightAnchor.constraint(equalToConstant: 68),
             

@@ -25,13 +25,17 @@ final class HeaderView: UICollectionReusableView {
     
     var title: String? {
         didSet {
-            titleLabel.text = title ?? HeaderView.defaultTitle
+            titleLabel.text = title ?? HeaderConstants.defaultTitle
         }
     }
     
-    // MARK: - Private Properties
+    // MARK: - Private Enumerations
     
-    private static var defaultTitle = "Без названия"
+    private enum HeaderConstants {
+        static let defaultTitle = "Без названия"
+    }
+    
+    // MARK: - Private Properties
 
     private static var viewXPadding = 28.0
     private static var viewYPadding = 12.0
@@ -77,7 +81,7 @@ final class HeaderView: UICollectionReusableView {
     
     private static func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
-        titleLabel.text = HeaderView.defaultTitle
+        titleLabel.text = HeaderConstants.defaultTitle
         titleLabel.font = .systemFont(ofSize: 19, weight: .bold)
         titleLabel.numberOfLines = 1
         titleLabel.adjustsFontSizeToFitWidth = false
