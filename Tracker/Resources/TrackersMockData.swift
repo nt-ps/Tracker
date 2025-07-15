@@ -2,6 +2,7 @@ import Foundation
 
 final class TrackersMockData {
     static let share = TrackersMockData()
+    static let defaultCategoryTitle = "Разное"
     
     var data: [TrackerCategory] { dataValue }
     
@@ -12,7 +13,7 @@ final class TrackersMockData {
     private init() {
         let tracker = Tracker(
             name: "Поливать растения",
-            color: .TrackerColors.green,
+            color: .TrackerColors.color5,
             emoji: "🥸",
             type: .habit(
                 Schedule(
@@ -27,11 +28,10 @@ final class TrackersMockData {
             )
         )
         
-        let category = TrackerCategory(title: "Разное", trackers: [tracker])
+        let category = TrackerCategory(title: TrackersMockData.defaultCategoryTitle, trackers: [tracker])
         dataValue.append(category)
     }
     
-    // TODO: В будущем передавать сюда категорию.
     func addTracker(_ tracker: Tracker) {
         var trackers = dataValue[0].trackers
         trackers.append(tracker)

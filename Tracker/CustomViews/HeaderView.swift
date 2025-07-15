@@ -1,22 +1,17 @@
 import UIKit
 
-final class TrackersHeaderView: UICollectionReusableView {
+final class HeaderView: UICollectionReusableView {
     
     // MARK: - Views
     
-    private lazy var titleLabel: UILabel = TrackersHeaderView.getTitleLabel()
+    private lazy var titleLabel: UILabel = HeaderView.getTitleLabel()
 
     // MARK: - Static Properties
     
-    static let reuseIdentifier = String(describing: TrackersHeaderView.self)
+    static let reuseIdentifier = String(describing: HeaderView.self)
     
-    // Сделал так, потому что предложенный в теории
-    // метод вычисления высоты валит приложение.
-    // Вынес в статик, чтобы обращаться без привязки к объекту.
-    // Необходимые для вычисления поля тоже пометил как статические,
-    // иначе ругается.
     static var defaultHeight: CGFloat = {
-        let label = TrackersHeaderView.getTitleLabel()
+        let label = HeaderView.getTitleLabel()
         let labelSize = label.sizeThatFits(
             CGSize(
                 width: CGFloat.greatestFiniteMagnitude,
@@ -30,13 +25,17 @@ final class TrackersHeaderView: UICollectionReusableView {
     
     var title: String? {
         didSet {
-            titleLabel.text = title ?? TrackersHeaderView.defaultTitle
+            titleLabel.text = title ?? HeaderConstants.defaultTitle
         }
     }
     
-    // MARK: - Private Properties
+    // MARK: - Private Enumerations
     
-    private static var defaultTitle = "Без названия"
+    private enum HeaderConstants {
+        static let defaultTitle = "Без названия"
+    }
+    
+    // MARK: - Private Properties
 
     private static var viewXPadding = 28.0
     private static var viewYPadding = 12.0
@@ -45,7 +44,7 @@ final class TrackersHeaderView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(titleLabel)
         
         setConstraints()
@@ -61,19 +60,19 @@ final class TrackersHeaderView: UICollectionReusableView {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
-                constant: TrackersHeaderView.viewXPadding
+                constant: HeaderView.viewXPadding
             ),
             titleLabel.topAnchor.constraint(
                 equalTo: topAnchor,
-                constant: TrackersHeaderView.viewYPadding
+                constant: HeaderView.viewYPadding
             ),
             titleLabel.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
-                constant: -TrackersHeaderView.viewXPadding
+                constant: -HeaderView.viewXPadding
             ),
             titleLabel.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: -TrackersHeaderView.viewYPadding
+                constant: -HeaderView.viewYPadding
             ),
         ])
     }
@@ -82,7 +81,7 @@ final class TrackersHeaderView: UICollectionReusableView {
     
     private static func getTitleLabel() -> UILabel {
         let titleLabel = UILabel()
-        titleLabel.text = TrackersHeaderView.defaultTitle
+        titleLabel.text = HeaderConstants.defaultTitle
         titleLabel.font = .systemFont(ofSize: 19, weight: .bold)
         titleLabel.numberOfLines = 1
         titleLabel.adjustsFontSizeToFitWidth = false

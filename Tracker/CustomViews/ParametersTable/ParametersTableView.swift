@@ -31,7 +31,7 @@ final class ParametersTableView: UITableView {
         
         layer.masksToBounds = true
         layer.cornerRadius = 16
-        backgroundColor = .AppColors.lightGray
+        backgroundColor = .AppColors.background
         isScrollEnabled = false
         // Удаление верхнего сепаратора.
         tableHeaderView = UIView(

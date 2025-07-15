@@ -15,7 +15,7 @@ final class OneLineTextField: UIView {
     private lazy var textField: TextFieldWithPadding = {
         let textField = TextFieldWithPadding()
         textField.textPadding = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
-        textField.backgroundColor = .AppColors.lightGray
+        textField.backgroundColor = .AppColors.background
         textField.clearButtonMode = .whileEditing
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 16
@@ -30,6 +30,7 @@ final class OneLineTextField: UIView {
             self,
             action: #selector(editingChanged(sender:)),
             for: .editingChanged)
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     } ()
     

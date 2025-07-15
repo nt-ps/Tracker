@@ -60,10 +60,25 @@ final class TrackersNavigationItem: UIViewController {
     
     private(set) var selectedDate: Date = Date()
     
+    // MARK: - Private Properties
+    
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerStore = TrackerStore()
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TODO: Пока категорий нет, тут добавляется дефолтная категория.
+        // Удалить этот фрагмент когда появится создание категорий.
+        do {
+            try trackerCategoryStore.addCategory(
+                TrackersMockData.defaultCategoryTitle
+            )
+        } catch {}
+        
+        trackerStore.delegate = self
         
         navigationItem.title = "Трекеры"
         
@@ -94,11 +109,8 @@ final class TrackersNavigationItem: UIViewController {
     // MARK: - UI Updates
     
     func updateCollection() {
-        let categories = filterCategories(
-            TrackersMockData.share.data,
-            by: selectedDate
-        )
-        
+        trackerStore.setFetchRequest(for: selectedDate)
+        let categories = trackerStore.trackersByCategory
         if categories.isEmpty {
             showStub()
         } else {
@@ -134,54 +146,26 @@ final class TrackersNavigationItem: UIViewController {
         
         collectionView.reloadData()
     }
-    
-    // MARK: - Private Methods
-    
-    private func filterCategories(
-        _ categories: [TrackerCategory],
-        by date: Date
-    ) -> [TrackerCategory] {
-        let filteredCategories: [TrackerCategory] = categories.reduce(
-            into: []
-        ) { (result, category) in
-            
-            let filteredTrackers: [Tracker] = filterTrackers(
-                category.trackers,
-                by: date
-            )
-            
-            if !filteredTrackers.isEmpty {
-                let newCategory = TrackerCategory(
-                    title: category.title,
-                    trackers: filteredTrackers
-                )
-                result.append(newCategory)
-            }
+}
+
+extension TrackersNavigationItem: TrackerStoreDelegate {
+    func didUpdate(_ update: TrackerStoreUpdate) {
+        let newCategories = trackerStore.trackersByCategory
+        
+        guard !newCategories.isEmpty else {
+            showStub()
+            return
         }
         
-        return filteredCategories
-    }
-    
-    private func filterTrackers(
-        _ trackers: [Tracker],
-        by date: Date
-    ) -> [Tracker] {
-        var dayNumber = Calendar.current.component(.weekday, from: date)
-        dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
-        
-        let filteredTrackers: [Tracker] = trackers.reduce(
-            into: []
-        ) { (result, tracker) in
-            switch tracker.type {
-            case .event:
-                result.append(tracker)
-            case .habit(let schedule):
-                if schedule.contains(dayNumber: dayNumber) {
-                    result.append(tracker)
-                }
+        guard collectionView.categories.isEmpty else {
+            collectionView.categories = newCategories
+            collectionView.performBatchUpdates {
+                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexPaths)
             }
+            return
         }
-        
-        return filteredTrackers
+
+        showCollectionView(with: newCategories)
     }
 }
