@@ -40,14 +40,14 @@ final class ScheduleEditorViewController: UIViewController {
     } ()
     
     private lazy var doneButton: SolidButton = {
-        let createButton = SolidButton()
-        createButton.setTitle("Готово", for: .normal)
-        createButton.addTarget(
+        let doneButton = SolidButton()
+        doneButton.setTitle("Готово", for: .normal)
+        doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
             for: .touchUpInside
         )
-        return createButton
+        return doneButton
     } ()
     
     // MARK: - Internal Properties
