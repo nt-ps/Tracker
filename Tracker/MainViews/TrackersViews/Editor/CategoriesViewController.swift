@@ -26,24 +26,10 @@ final class CategoriesViewController: UIViewController {
     private lazy var categoriesTableView: ParametersTableView = {
         let categoriesTableView = ParametersTableView()
         categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
-        /*var parameters = [
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell(),
-            CheckmarkTableViewCell()
-        ]
-        categoriesTableView.updateParameters(parameters)*/
+        categoriesTableView.updateSelectedValue = { [weak self] title in
+            self?.trackerEditorView?.trackerCategory = title as? String
+            self?.navigationController?.popViewController(animated: true)
+        }
         return categoriesTableView
     } ()
     
@@ -68,6 +54,7 @@ final class CategoriesViewController: UIViewController {
     // MARK: - Internal Properties
     
     weak var trackerEditorView: TrackerEditorViewController?
+    var selectedCategory: String?
     
     // MARK: - Private Properties
     
@@ -77,6 +64,8 @@ final class CategoriesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        trackerCategoryStore.delegate = self
         
         view.backgroundColor = .white
         
@@ -93,6 +82,8 @@ final class CategoriesViewController: UIViewController {
     
     @objc
     private func didTapAddCategoryButton() {
+        let categoryEditorViewController = CategoryEditorViewController()
+        navigationController?.pushViewController(categoryEditorViewController, animated: true)
     }
     
     // MARK: - UI Updates
@@ -130,6 +121,7 @@ final class CategoriesViewController: UIViewController {
             cell.title = $0
             return cell
         }
+        categoriesTableView.selectedValue = selectedCategory
         categoriesTableView.updateParameters(parameters)
         
         view.addSubview(scrollView)

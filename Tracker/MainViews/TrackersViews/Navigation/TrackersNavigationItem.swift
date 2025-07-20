@@ -72,15 +72,6 @@ final class TrackersNavigationItem: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: Пока категорий нет, тут добавляется дефолтная категория.
-        // Удалить этот фрагмент когда появится создание категорий.
-        /*do {
-            try trackerCategoryStore.addCategory(
-                TrackersMockData.defaultCategoryTitle
-            )
-        } catch {}
-        */
-        
         trackerStore.delegate = self
         
         navigationItem.title = "Трекеры"
@@ -153,7 +144,20 @@ final class TrackersNavigationItem: UIViewController {
 
 extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
+        let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
+
+        // TODO: Определение индексов новых категорий.
+        // Написано грубо, переписать.
+        let newCategoriesIndeces: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
+            into: []
+        ) { (result, data) in
+            let title = data.title
+            if !oldCategories.contains(where: { $0.title == title }) {
+                guard let index = newCategories.firstIndex(where: { $0.title == title }) else { return }
+                result.append(index)
+            }
+        } : []
         
         guard !newCategories.isEmpty else {
             showStub()
@@ -163,8 +167,11 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         guard collectionView.categories.isEmpty else {
             collectionView.categories = newCategories
             collectionView.performBatchUpdates {
-                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-                collectionView.insertItems(at: insertedIndexPaths)
+                newCategoriesIndeces.forEach {
+                    collectionView.insertSections(IndexSet(integer: $0))
+                }
+                //let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0.item, section: $0.section) }
+                collectionView.insertItems(at: update.insertedIndexes)
             }
             return
         }

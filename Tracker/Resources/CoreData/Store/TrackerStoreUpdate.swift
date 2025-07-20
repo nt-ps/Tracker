@@ -1,6 +1,6 @@
 import Foundation
 
 struct TrackerStoreUpdate {
-    let insertedIndexes: IndexSet
+    let insertedIndexes: [IndexPath] // IndexSet
     // TODO: В будущем помещать сюда остальные изменения типа удаления, перемещения и т.д.
 }

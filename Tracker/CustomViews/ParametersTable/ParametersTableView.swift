@@ -20,10 +20,19 @@ final class ParametersTableView: UITableView {
         )
     }
     
+    // MARK: - Internal Properties
+    
+    var selectedValue: Any?
+    var updateSelectedValue: ((Any?) -> Void)?
+    
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
-    private var selectedCell: CheckmarkTableViewCell?
+    private var selectedCell: CheckmarkTableViewCell? {
+        didSet {
+            updateSelectedValue?(selectedCell?.title)
+        }
+    }
     
     // MARK: - Initializers
     
@@ -108,6 +117,15 @@ extension ParametersTableView: UITableViewDataSource {
     ) -> UITableViewCell {
         let index = indexPath.row
         let cell = parameterCells[index]
+        
+        // TODO: Переписать установку выбранного значения по-нормальному.
+        if
+            let checkmarkCell = cell as? CheckmarkTableViewCell,
+            let selectedValue = selectedValue as? String,
+            checkmarkCell.title == selectedValue
+        {
+            checkmarkCell.isChecked = true
+        }
         
         if indexPath.row == parameterCells.count - 1 {
             // Удаление последнего сепаратора.

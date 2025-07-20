@@ -51,7 +51,7 @@ final class TrackerStore: NSObject {
         return fetchedResultsController
     } ()
 
-    private var insertedIndexes: IndexSet = IndexSet()
+    private var insertedIndexes: [IndexPath] = []
     
     // MARK: - Initializers
     
@@ -161,7 +161,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         switch type {
         case .insert:
             if let indexPath = newIndexPath {
-                insertedIndexes.insert(indexPath.item)
+                insertedIndexes.append(indexPath)
             }
         default:
             break

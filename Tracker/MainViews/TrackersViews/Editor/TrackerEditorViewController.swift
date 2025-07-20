@@ -50,6 +50,7 @@ final class TrackerEditorViewController: UIViewController {
         return parametersTableView
     } ()
     
+    // TODO: При выборе категории кнопка сохранения почему-то не всегда делается активной.
     private lazy var categoryButton: ButtonTableViewCell = {
         let categoryButton = ButtonTableViewCell()
         categoryButton.title = "Категория"
@@ -143,6 +144,12 @@ final class TrackerEditorViewController: UIViewController {
     
     var trackerName: String? { nameTextField.text }
     
+    var trackerCategory: String? {
+        didSet {
+            categoryButton.subtitle = trackerCategory
+        }
+    }
+    
     var trackerType: TrackerType? {
         didSet {
             if let trackerType {
@@ -192,14 +199,15 @@ final class TrackerEditorViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
+        // TODO: В будущем выводить алерт с ошибкой.
+        guard let trackerCategory else { return }
         let tracker = Tracker(
             name: trackerName ?? "Без названия",
             color: trackerColor ?? .black,
             emoji: trackerEmoji ?? " ",
             type: trackerType ?? .event
         )
-        // TODO: В будущем выводить алерт с ошибкой.
-        try? trackerStore.addTracker(tracker, to: TrackersMockData.defaultCategoryTitle)
+        try? trackerStore.addTracker(tracker, to: trackerCategory)
         dismiss(animated: true)
     }
     
@@ -209,6 +217,7 @@ final class TrackerEditorViewController: UIViewController {
         if
             let trackerName,
             !trackerName.isEmpty,
+            trackerCategory != nil,
             trackerEmoji != nil,
             trackerColor != nil
         {
@@ -241,6 +250,7 @@ final class TrackerEditorViewController: UIViewController {
     private func showCategories() {
         let categoriesViewController = CategoriesViewController()
         categoriesViewController.trackerEditorView = self
+        categoriesViewController.selectedCategory = trackerCategory ?? nil
         navigationController?.pushViewController(categoriesViewController, animated: true)
     }
 

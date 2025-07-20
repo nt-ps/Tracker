@@ -101,10 +101,12 @@ final class TrackersCollectionView: UICollectionView {
 }
 
 extension TrackersCollectionView: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int { categories.count }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
-    ) -> Int { categories[0].trackers.count }
+    ) -> Int { categories[section].trackers.count }
     
     func collectionView(
         _ collectionView: UICollectionView,
