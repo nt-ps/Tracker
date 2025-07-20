@@ -53,6 +53,9 @@ final class TrackerEditorViewController: UIViewController {
     private lazy var categoryButton: ButtonTableViewCell = {
         let categoryButton = ButtonTableViewCell()
         categoryButton.title = "Категория"
+        categoryButton.tapAction = { [weak self] in
+            self?.showCategories()
+        }
         return categoryButton
     } ()
     
@@ -233,6 +236,12 @@ final class TrackerEditorViewController: UIViewController {
             break
         }
         navigationController?.pushViewController(scheduleEditorViewController, animated: true)
+    }
+    
+    private func showCategories() {
+        let categoriesViewController = CategoriesViewController()
+        categoriesViewController.trackerEditorView = self
+        navigationController?.pushViewController(categoriesViewController, animated: true)
     }
 
     private func setConstraints() {

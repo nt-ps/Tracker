@@ -23,6 +23,7 @@ final class ParametersTableView: UITableView {
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
+    private var selectedCell: CheckmarkTableViewCell?
     
     // MARK: - Initializers
     
@@ -33,6 +34,7 @@ final class ParametersTableView: UITableView {
         layer.cornerRadius = 16
         backgroundColor = .AppColors.background
         isScrollEnabled = false
+        
         // Удаление верхнего сепаратора.
         tableHeaderView = UIView(
             frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 1)
@@ -48,6 +50,10 @@ final class ParametersTableView: UITableView {
         register(
             SwitchTableViewCell.self,
             forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier
+        )
+        register(
+            CheckmarkTableViewCell.self,
+            forCellReuseIdentifier: CheckmarkTableViewCell.reuseIdentifier
         )
     }
     
@@ -77,6 +83,12 @@ extension ParametersTableView: UITableViewDelegate {
             let action = cell.tapAction
         {
             action()
+        } else if
+            let cell = tableView.cellForRow(at: indexPath) as? CheckmarkTableViewCell
+        {
+            selectedCell?.isChecked = false
+            cell.isChecked = true
+            selectedCell = cell
         }
     }
     

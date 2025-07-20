@@ -45,14 +45,16 @@ final class TrackersNavigationItem: UIViewController {
         return collectionView
     } ()
     
-    private lazy var stubView: TrackersStubView = {
-        let stubView = TrackersStubView()
+    private lazy var stubView: StubView = {
+        let stubView = StubView()
+        stubView.labelText = stubLabelText
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
     } ()
     
     // MARK: - UI Properties
     
+    private let stubLabelText = "Что будем отслеживать?"
     private let addButtonIconName = "Icons/Plus"
     private let dateButtonSpace = 6.0
     
@@ -72,11 +74,12 @@ final class TrackersNavigationItem: UIViewController {
         
         // TODO: Пока категорий нет, тут добавляется дефолтная категория.
         // Удалить этот фрагмент когда появится создание категорий.
-        do {
+        /*do {
             try trackerCategoryStore.addCategory(
                 TrackersMockData.defaultCategoryTitle
             )
         } catch {}
+        */
         
         trackerStore.delegate = self
         
