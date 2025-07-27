@@ -57,8 +57,6 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         }
     }
     
-    // MARK: - Private Properties
-    
     var tapAction: (() -> Void)?
     
     // MARK: - Initializers

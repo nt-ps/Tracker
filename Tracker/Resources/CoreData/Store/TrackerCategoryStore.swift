@@ -1,11 +1,11 @@
 import CoreData
 import UIKit
 
-final class TrackerCategoryStore: NSObject {
+final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
     
     // MARK: - Internal Properties
     
-    weak var delegate: TrackerCategoryStoreDelegate?
+    weak var delegate: CategoriesSourceDelegate?
     
     var categories: [String] {
         guard let categories = fetchedResultsController?.fetchedObjects else { return [] }
@@ -73,16 +73,16 @@ final class TrackerCategoryStore: NSObject {
         try updateExistingCategory(trackerCategoryCoreData, with: title)
         try context.save()
     }
-
-    func updateExistingCategory(
+    
+    // MARK: - Private Methods
+    
+    private func updateExistingCategory(
         _ trackerCategoryCoreData: TrackerCategoryCoreData,
         with title: String
     ) throws {
         trackerCategoryCoreData.title = title
         trackerCategoryCoreData.trackers = []
     }
-    
-    // MARK: - Private Methods
     
     private func getCategoryCoreData(_ title: String) throws -> TrackerCategoryCoreData? {
         guard let context else {
@@ -111,7 +111,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
-            TrackerCategoryStoreUpdate(insertedIndexes: insertedIndexes)
+            CategoriesSourceUpdate(insertedIndexes: insertedIndexes)
         )
         insertedIndexes.removeAll()
     }

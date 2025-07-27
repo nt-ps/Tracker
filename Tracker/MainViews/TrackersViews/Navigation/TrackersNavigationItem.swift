@@ -90,7 +90,8 @@ final class TrackersNavigationItem: UIViewController {
     @objc
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
-        trackerEditorNavigationController.trackersNavigationItem = self
+        trackerEditorNavigationController.trackersSource = trackerStore
+        // trackerEditorNavigationController.trackersNavigationItem = self
         present(trackerEditorNavigationController, animated: true)
     }
     

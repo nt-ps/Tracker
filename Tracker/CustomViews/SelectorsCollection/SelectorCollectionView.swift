@@ -5,8 +5,9 @@ final class SelectorCollectionView: UICollectionView {
     // MARK: - Internal Properties
 
     var title: String = "Без названия"
-    var selectAction: (() -> Void)?
-    private(set) var selectedItem: Any?
+    
+    private(set) var selectedValue: Any?
+    var selectionAction: (() -> Void)?
     
     // MARK: - Private Properties
     
@@ -57,11 +58,11 @@ final class SelectorCollectionView: UICollectionView {
     
     // MARK: - Internal Methods
     
-    func addValues(_ values: [Character]) {
+    func addValues(_ values: [Character]?) {
         addSection(values)
     }
     
-    func addValues(_ values: [UIColor]) {
+    func addValues(_ values: [UIColor]?) {
         addSection(values)
     }
     
@@ -82,7 +83,8 @@ final class SelectorCollectionView: UICollectionView {
     
     // MARK: - Private Methods
     
-    private func addSection(_ values: [Any]) {
+    private func addSection(_ values: [Any]?) {
+        guard let values else { return }
         values.forEach { self.values.append($0) }
     }
 }
@@ -153,17 +155,19 @@ extension SelectorCollectionView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        selectedItem = values[indexPath.item]
-        selectAction?()
+        selectedValue = values[indexPath.item]
+        selectionAction?()
     }
 
+    /*
     func collectionView(
         _ collectionView: UICollectionView,
         didDeselectItemAt indexPath: IndexPath
     ) {
-        selectedItem = nil
-        selectAction?()
+        selectedValue = nil
+        selectionAction?()
     }
+     */
     
     func collectionView(
         _ collectionView: UICollectionView,

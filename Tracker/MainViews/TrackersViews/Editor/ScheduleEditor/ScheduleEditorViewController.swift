@@ -33,7 +33,12 @@ final class ScheduleEditorViewController: UIViewController {
         WeekDay.allCases.forEach {
             let switchCell = SwitchTableViewCell()
             switchCell.title = $0.name
-            switchCell.isOn = false
+            switchCell.isOn = viewModel?.days.contains($0) ?? false
+            switchCell.value = $0
+            switchCell.tapAction = { [weak self] day, included in
+                guard let day = day as? WeekDay else { return }
+                self?.viewModel?.updateSchedule(day, included: included)
+            }
             switches[$0] = switchCell
         }
         return switches.sorted { $0.key.rawValue < $1.key.rawValue }
@@ -52,8 +57,9 @@ final class ScheduleEditorViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    weak var trackerEditorView: TrackerEditorViewController?
+    // weak var trackerEditorView: TrackerEditorViewController?
     
+    /*
     var days: [WeekDay] {
         get {
             Array(
@@ -68,6 +74,11 @@ final class ScheduleEditorViewController: UIViewController {
             }
         }
     }
+     */
+    
+    // MARK: - View Model
+    
+    private var viewModel: ScheduleEditorViewModel?
     
     // MARK: - Lifecycle
     
@@ -86,11 +97,25 @@ final class ScheduleEditorViewController: UIViewController {
         setConstraints()
     }
     
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: ScheduleEditorViewModel) {
+        self.viewModel = viewModel
+        //bind()
+    }
+    
+    /*
+    private func bind() {
+        guard let viewModel = viewModel else { return }
+
+    }
+     */
+    
     // MARK: - Button Actions
     
     @objc
     private func didTapDoneButton() {
-        trackerEditorView?.updateSchedule(from: days)
+        //trackerEditorView?.updateSchedule(from: days)
         navigationController?.popViewController(animated: true)
     }
     

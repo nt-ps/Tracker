@@ -26,10 +26,10 @@ final class CategoriesViewController: UIViewController {
     private lazy var categoriesTableView: ParametersTableView = {
         let categoriesTableView = ParametersTableView()
         categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
-        categoriesTableView.updateSelectedValue = { [weak self] title in
+        categoriesTableView.selectionAction = categoryDidSelected /*{ [weak self] title in
             self?.trackerEditorView?.trackerCategory = title as? String
             self?.navigationController?.popViewController(animated: true)
-        }
+        }*/
         return categoriesTableView
     } ()
     
@@ -53,19 +53,17 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    weak var trackerEditorView: TrackerEditorViewController?
-    var selectedCategory: String?
+    // weak var trackerEditorView: TrackerEditorViewController?
+    // var selectedCategory: String?
     
-    // MARK: - Private Properties
+    // MARK: - View Model
     
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private var viewModel: CategoriesViewModel?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        trackerCategoryStore.delegate = self
         
         view.backgroundColor = .white
         
@@ -82,19 +80,52 @@ final class CategoriesViewController: UIViewController {
     
     @objc
     private func didTapAddCategoryButton() {
+        guard let viewModel else { return }
+        
         let categoryEditorViewController = CategoryEditorViewController()
+        
+        let categoryEditorModel = CategoryEditorModel()
+        let categoryEditorViewModel = CategoryEditorViewModel(
+            for: categoryEditorModel,
+            with: viewModel.categoriesSource
+        )
+        categoryEditorViewController.setViewModel(categoryEditorViewModel)
+        
         navigationController?.pushViewController(categoryEditorViewController, animated: true)
+    }
+    
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: CategoriesViewModel) {
+        self.viewModel = viewModel
+        bind()
+    }
+    
+    private func bind() {
+        guard let viewModel = viewModel else { return }
+        
+        viewModel.onCategoriesListStateChange = { [weak self] categories in
+            self?.updateCategories(categories)
+        }
     }
     
     // MARK: - UI Updates
     
     func updateCategories() {
-        let categories = trackerCategoryStore.categories
-        if categories.isEmpty {
+        let categories = viewModel?.categories
+        updateCategories(categories)
+    }
+    
+    func updateCategories(_ categories: [String]?) {
+        guard
+            let categories,
+            !categories.isEmpty
+        else {
             showStub()
-        } else {
-            showCategoriesTableView(with: categories)
+            return
         }
+        
+        showCategoriesTableView(with: categories)
     }
     
     private func showStub() {
@@ -121,7 +152,7 @@ final class CategoriesViewController: UIViewController {
             cell.title = $0
             return cell
         }
-        categoriesTableView.selectedValue = selectedCategory
+        categoriesTableView.selectedValue = viewModel?.selectedCategory
         categoriesTableView.updateParameters(parameters)
         
         view.addSubview(scrollView)
@@ -158,6 +189,12 @@ final class CategoriesViewController: UIViewController {
         ])
     }
 
+    private func categoryDidSelected() {
+        let value = categoriesTableView.selectedValue as? String
+        viewModel?.categoryDidSelected(value)
+        navigationController?.popViewController(animated: true)
+    }
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             addCategoryButton.leadingAnchor.constraint(
@@ -177,17 +214,12 @@ final class CategoriesViewController: UIViewController {
     }
 }
 
-extension CategoriesViewController: TrackerCategoryStoreDelegate {
-    func didUpdate(_ update: TrackerCategoryStoreUpdate) {
-        let newCategories = trackerCategoryStore.categories
-        
-        guard !newCategories.isEmpty else {
-            showStub()
-            return
-        }
-    
-        // TODO: Переписать не с полным обновлением таблицы, а с добавлением только нового элемента.
-
-        showCategoriesTableView(with: newCategories)
-    }
-}
+/*
+ extension CategoriesViewController: TrackerCategoryStoreDelegate {
+ // TODO: Перебросить на VIewModel.
+ func didUpdate(_ update: TrackerCategoryStoreUpdate) {
+ // TODO: Переписать не с полным обновлением таблицы, а с добавлением только нового элемента.
+ updateCategories()
+ }
+ }
+ */

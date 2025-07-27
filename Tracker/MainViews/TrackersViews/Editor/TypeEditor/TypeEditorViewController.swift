@@ -1,6 +1,6 @@
 import UIKit
 
-final class TrackerTypeViewController: UIViewController {
+final class TypeEditorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -36,7 +36,12 @@ final class TrackerTypeViewController: UIViewController {
     
     // MARK: - Internal Properties
     
-    weak var trackersNavigationItem: TrackersNavigationItem?
+    // TODO: Возможно не понадобится после перехода на MVVM.
+    // weak var trackersNavigationItem: TrackersNavigationItem?
+    
+    // MARK: - View Model
+    
+    private var viewModel: TypeEditorViewModel?
     
     // MARK: - Lifecycle
     
@@ -51,27 +56,52 @@ final class TrackerTypeViewController: UIViewController {
         setConstraints()
     }
     
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: TypeEditorViewModel) {
+        self.viewModel = viewModel
+        bind()
+    }
+    
+    private func bind() {
+        guard let viewModel = viewModel else { return }
+
+        viewModel.onTypeSelectedStateChange = { [weak self] in
+            self?.showMainEditor()
+        }
+    }
+    
     // MARK: - Button Actions
     
     @objc
     private func didTapHabitButton() {
-        let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigationItem
-        trackerEditorViewController.trackerType = .habit(Schedule())
-        trackerEditorViewController.viewTitle = "Новая привычка"
-        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+        viewModel?.setHabitType()
     }
 
     @objc
     private func didTapEventButton() {
-        let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigationItem
-        trackerEditorViewController.trackerType = .event
-        trackerEditorViewController.viewTitle = "Новое нерегулярное событие"
-        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+        viewModel?.setEventType()
     }
     
     // MARK: - UI Updates
+    
+    private func showMainEditor() {
+        guard let trackerEditorViewModel = viewModel?.trackerEditorViewModel else { return }
+        
+        let mainEditorViewController = MainEditorViewController()
+        
+        let mainEditorViewModel = MainEditorViewModel(
+            from: trackerEditorViewModel
+        )
+        mainEditorViewController.setViewModel(mainEditorViewModel)
+        
+        // TODO: Должно устанавливаться в главном редакторе из модели.
+        // trackerEditorViewController.trackerType = .habit(Schedule())
+        // trackerEditorViewController.viewTitle = "Новая привычка"
+        // TODO: После перехода на MVVM возможно можно будет убрать.
+        // trackerEditorViewController.trackersNavigator = trackersNavigationItem
+        navigationController?.pushViewController(mainEditorViewController, animated: true)
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([

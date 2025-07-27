@@ -19,6 +19,10 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         switchView.isOn = false
         switchView.onTintColor = .AppColors.blue
         switchView.translatesAutoresizingMaskIntoConstraints = false
+        switchView.addTarget(
+            self,
+            action: #selector(switcherChanged(sender:)),
+            for: .valueChanged)
         return switchView
     } ()
     
@@ -27,6 +31,8 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     static let reuseIdentifier = String(describing: SwitchTableViewCell.self)
     
     // MARK: - Internal Properties
+    
+    // TODO: Продумать архитектуру ячеек таблицы параметров, и их взаимодействие с другими элементами.
     
     var title: String? {
         didSet {
@@ -38,6 +44,10 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         get { switchView.isOn }
         set { switchView.isOn = newValue }
     }
+    
+    var value: Any? // TODO: При инициализации ячейки задавать ей значение, за которое она отвечает.
+    
+    var tapAction: ((Any?, Bool) -> Void)?
     
     // MARK: - Initializers
 
@@ -55,6 +65,12 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("SwitchTableViewCell.init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Switcher Actions
+    
+    @objc private func switcherChanged(sender: UISwitch) {
+        tapAction?(value, sender.isOn)
     }
 
     // MARK: - UI Updates

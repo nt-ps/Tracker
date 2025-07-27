@@ -1,4 +1,6 @@
 struct Schedule {
+    var isEmpty: Bool { days.isEmpty }
+    
     private(set) var days: [WeekDay]
     
     init(days: [WeekDay] = []) {
@@ -25,4 +27,5 @@ struct Schedule {
         let result = array.joined(separator: ", ")
         return result
     }
+    
 }

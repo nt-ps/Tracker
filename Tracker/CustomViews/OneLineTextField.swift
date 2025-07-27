@@ -5,7 +5,7 @@ final class OneLineTextField: UIView {
     // MARK: - UI Views
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [textField, limitLabel])
+        let stackView = UIStackView(arrangedSubviews: [textField, messageLabel])
         stackView.axis = .vertical
         stackView.spacing = 8.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -34,15 +34,15 @@ final class OneLineTextField: UIView {
         return textField
     } ()
     
-    private lazy var limitLabel: UILabel = {
-        let limitLabel = UILabel()
-        limitLabel.textAlignment = .center
-        limitLabel.text = "Ограничение \(maxLength) символов"
-        limitLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        limitLabel.textColor = .AppColors.red
-        limitLabel.translatesAutoresizingMaskIntoConstraints = false
-        limitLabel.isHidden = true
-        return limitLabel
+    private lazy var messageLabel: UILabel = {
+        let messageLabel = UILabel()
+        messageLabel.textAlignment = .center
+        // messageLabel.text = "Ограничение \(maxLength) символов"
+        messageLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        messageLabel.textColor = .AppColors.red
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.isHidden = true
+        return messageLabel
     } ()
     
     // MARK: - Internal Properties
@@ -53,13 +53,28 @@ final class OneLineTextField: UIView {
         }
     }
     
-    var text: String? { textField.text }
+    var text: String? {
+        get { textField.text }
+        set { textField.text = newValue }
+    }
+    
+    var message: String? {
+        didSet {
+            guard let message, !message.isEmpty else {
+                messageLabel.isHidden = true
+                return
+            }
+            
+            messageLabel.isHidden = false
+            messageLabel.text = message
+        }
+    }
     
     var editingAction: (() -> Void)?
     
     // MARK: - Private Properties
     
-    private let maxLength = 38
+    // private let maxLength = 38
     
     // MARK: - Initializers
     
@@ -78,17 +93,20 @@ final class OneLineTextField: UIView {
     
     @objc
     private func editingChanged(sender: UITextField) {
+        /*
         if
             let text = sender.text,
             text.count > maxLength
         {
             sender.text = String(text.dropLast(text.count - maxLength))
-            limitLabel.isHidden = false
+            messageLabel.isHidden = false
             return
         } else {
             editingAction?()
-            limitLabel.isHidden = true
+            messageLabel.isHidden = true
         }
+        */
+        editingAction?()
     }
 
     // MARK: - UI Updates

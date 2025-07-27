@@ -1,7 +1,7 @@
 import CoreData
 import UIKit
 
-final class TrackerStore: NSObject {
+final class TrackerStore: NSObject, TrackersSourceProtocol {
     
     // MARK: - Internal Properties
     

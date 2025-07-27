@@ -23,14 +23,15 @@ final class ParametersTableView: UITableView {
     // MARK: - Internal Properties
     
     var selectedValue: Any?
-    var updateSelectedValue: ((Any?) -> Void)?
+    var selectionAction: (() -> Void)?
     
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
     private var selectedCell: CheckmarkTableViewCell? {
         didSet {
-            updateSelectedValue?(selectedCell?.title)
+            selectedValue = selectedCell?.title
+            selectionAction?()
         }
     }
     
