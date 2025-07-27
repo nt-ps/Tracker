@@ -23,25 +23,8 @@ final class ScheduleEditorViewController: UIViewController {
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
-        var parameters = daySwitches.map { $0.value }
-        parametersTableView.updateParameters(parameters)
+        parametersTableView.updateParameters(viewModel?.days)
         return parametersTableView
-    } ()
-    
-    private lazy var daySwitches: [Dictionary<WeekDay, SwitchTableViewCell>.Element] = {
-        var switches: [WeekDay: SwitchTableViewCell] = [:]
-        WeekDay.allCases.forEach {
-            let switchCell = SwitchTableViewCell()
-            switchCell.title = $0.name
-            switchCell.isOn = viewModel?.days.contains($0) ?? false
-            switchCell.value = $0
-            switchCell.tapAction = { [weak self] day, included in
-                guard let day = day as? WeekDay else { return }
-                self?.viewModel?.updateSchedule(day, included: included)
-            }
-            switches[$0] = switchCell
-        }
-        return switches.sorted { $0.key.rawValue < $1.key.rawValue }
     } ()
     
     private lazy var doneButton: SolidButton = {
@@ -54,27 +37,6 @@ final class ScheduleEditorViewController: UIViewController {
         )
         return doneButton
     } ()
-    
-    // MARK: - Internal Properties
-    
-    // weak var trackerEditorView: TrackerEditorViewController?
-    
-    /*
-    var days: [WeekDay] {
-        get {
-            Array(
-                daySwitches
-                    .filter{ $0.value.isOn }
-                    .map{ $0.key }
-            )
-        }
-        set {
-            daySwitches.forEach {
-                $0.value.isOn = newValue.contains($0.key)
-            }
-        }
-    }
-     */
     
     // MARK: - View Model
     
@@ -101,21 +63,13 @@ final class ScheduleEditorViewController: UIViewController {
     
     func setViewModel(_ viewModel: ScheduleEditorViewModel) {
         self.viewModel = viewModel
-        //bind()
     }
-    
-    /*
-    private func bind() {
-        guard let viewModel = viewModel else { return }
-
-    }
-     */
     
     // MARK: - Button Actions
     
     @objc
     private func didTapDoneButton() {
-        //trackerEditorView?.updateSchedule(from: days)
+        viewModel?.saveSchedule()
         navigationController?.popViewController(animated: true)
     }
     

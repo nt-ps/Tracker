@@ -158,16 +158,6 @@ extension SelectorCollectionView: UICollectionViewDelegateFlowLayout {
         selectedValue = values[indexPath.item]
         selectionAction?()
     }
-
-    /*
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didDeselectItemAt indexPath: IndexPath
-    ) {
-        selectedValue = nil
-        selectionAction?()
-    }
-     */
     
     func collectionView(
         _ collectionView: UICollectionView,

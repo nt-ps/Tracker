@@ -1,4 +1,4 @@
-final class CategoryEditorModel {
+final class CategoryBuilder {
     // MARK: - Category Data
     
     private(set) var title: String?

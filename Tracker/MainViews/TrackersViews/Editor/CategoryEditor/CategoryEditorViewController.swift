@@ -25,15 +25,6 @@ final class CategoryEditorViewController: UIViewController {
         return createButton
     } ()
     
-    // MARK: - Private Properties
-    
-    private let trackerCategoryStore = TrackerCategoryStore()
-    
-    // MARK: - Internal Properties
-    
-    // weak var trackersNavigator: TrackersNavigationItem?
-    // var categoryTitle: String? { titleTextField.text }
-    
     // MARK: - View Model
     
     private var viewModel: CategoryEditorViewModel?
@@ -64,36 +55,27 @@ final class CategoryEditorViewController: UIViewController {
         guard let viewModel = viewModel else { return }
         
         viewModel.onTitleErrorStateChange = { [weak self] message in
-            self?.setTitleError(message)
+            self?.titleTextField.message = message
         }
         
         viewModel.onCategoryCreationAllowedStateChange = { [weak self] isCreationAllowed in
-            self?.setCreateButton(enabled: isCreationAllowed)
+            self?.createButton.isEnabled = isCreationAllowed
         }
     }
     
-    // MARK: - Button Actions
+    // MARK: - UI Actions
     
     @objc
     private func didTapCreateButton() {
-        guard let viewModel, let title = titleTextField.text else { return }
-        viewModel.addCategory()
+        viewModel?.addCategory()
         navigationController?.popViewController(animated: true)
-    }
-    
-    // MARK: - UI Updates
-    
-    private func setTitleError(_ message: String?) {
-        titleTextField.message = message
-    }
-    
-    private func setCreateButton(enabled: Bool) {
-        createButton.isEnabled = enabled
     }
     
     private func titleDidChange() {
         viewModel?.didTitleEnter(titleTextField.text)
     }
+    
+    // MARK: - UI Updates
 
     private func setConstraints() {
         NSLayoutConstraint.activate([

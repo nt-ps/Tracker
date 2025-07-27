@@ -1,6 +1,6 @@
 import UIKit
 
-final class CheckmarkTableViewCell: UITableViewCell, ParametersTableViewCellProtocol {
+final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol {
     
     // MARK: - UI Views
     
@@ -17,7 +17,7 @@ final class CheckmarkTableViewCell: UITableViewCell, ParametersTableViewCellProt
     
     // MARK: - Static Properties
     
-    static let reuseIdentifier = String(describing: CheckmarkTableViewCell.self)
+    static let reuseIdentifier = String(describing: CheckmarkCellView.self)
     
     // MARK: - Internal Properties
     
@@ -50,7 +50,7 @@ final class CheckmarkTableViewCell: UITableViewCell, ParametersTableViewCellProt
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        print("CheckmarkTableViewCell.init(coder:) has not been implemented")
+        print("CheckmarkCellView.init(coder:) has not been implemented")
     }
 
     // MARK: - UI Updates

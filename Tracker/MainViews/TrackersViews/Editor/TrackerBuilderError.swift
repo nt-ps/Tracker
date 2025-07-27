@@ -1,6 +1,6 @@
 import Foundation
 
-enum TrackerEditorError: Error {
+enum TrackerBuilderError: Error {
     case emptyName
     case longName(Int)
     case trackerIsNotFull

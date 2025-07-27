@@ -28,7 +28,7 @@ final class ParametersTableView: UITableView {
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
-    private var selectedCell: CheckmarkTableViewCell? {
+    private var selectedCell: CheckmarkCellView? {
         didSet {
             selectedValue = selectedCell?.title
             selectionAction?()
@@ -54,16 +54,16 @@ final class ParametersTableView: UITableView {
         dataSource = self
 
         register(
-            ButtonTableViewCell.self,
-            forCellReuseIdentifier: ButtonTableViewCell.reuseIdentifier
+            ButtonCellView.self,
+            forCellReuseIdentifier: ButtonCellView.reuseIdentifier
         )
         register(
-            SwitchTableViewCell.self,
-            forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier
+            SwitcherCellView.self,
+            forCellReuseIdentifier: SwitcherCellView.reuseIdentifier
         )
         register(
-            CheckmarkTableViewCell.self,
-            forCellReuseIdentifier: CheckmarkTableViewCell.reuseIdentifier
+            CheckmarkCellView.self,
+            forCellReuseIdentifier: CheckmarkCellView.reuseIdentifier
         )
     }
     
@@ -75,6 +75,19 @@ final class ParametersTableView: UITableView {
     
     func updateParameters(_ parameters: [ParametersTableViewCellProtocol]) {
         parameterCells = parameters
+        reloadData()
+    }
+    
+    // Пока написал отдельный метод для свитчеров, потому что
+    // для них определена ViewModel. Когда допишу ViewModel для
+    // других ячеек, тогда сделаю единый метод.
+    func updateParameters( _ viewModels: [SwitcherCellViewModel]?) {
+        guard let viewModels else { return }
+        viewModels.forEach { [weak self] viewModel in
+            let switcherCellView = SwitcherCellView()
+            switcherCellView.setViewModel(viewModel)
+            self?.parameterCells.append(switcherCellView)
+        }
         reloadData()
     }
 }
@@ -89,12 +102,12 @@ extension ParametersTableView: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath) {
         if
-            let cell = tableView.cellForRow(at: indexPath) as? ButtonTableViewCell,
+            let cell = tableView.cellForRow(at: indexPath) as? ButtonCellView,
             let action = cell.tapAction
         {
             action()
         } else if
-            let cell = tableView.cellForRow(at: indexPath) as? CheckmarkTableViewCell
+            let cell = tableView.cellForRow(at: indexPath) as? CheckmarkCellView
         {
             selectedCell?.isChecked = false
             cell.isChecked = true
@@ -121,7 +134,7 @@ extension ParametersTableView: UITableViewDataSource {
         
         // TODO: Переписать установку выбранного значения по-нормальному.
         if
-            let checkmarkCell = cell as? CheckmarkTableViewCell,
+            let checkmarkCell = cell as? CheckmarkCellView,
             let selectedValue = selectedValue as? String,
             checkmarkCell.title == selectedValue
         {

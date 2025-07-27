@@ -4,57 +4,105 @@ final class MainEditorViewModel {
     
     // MARK: - Bindings
     
-    var onTrackerCreationAllowedStateChange: Binding<Bool>? {
-        get { trackerEditorViewModel.onTrackerCreationAllowedStateChange }
-        set { trackerEditorViewModel.onTrackerCreationAllowedStateChange = newValue }
+    var onTrackerCreationAllowedStateChange: Binding<Bool>?
+    var onNameErrorStateChange: Binding<String?>?
+    var onCategorySelectionStateChange: Binding<String?>?
+    var onScheduleStateChange: Binding<String?>?
+    
+    // MARK: - Internal Properties
+    
+    var emojiValues: [Character] { TrackerEditorData.emoji }
+    var colorValues: [UIColor] { TrackerEditorData.colors }
+    
+    var mainEditorTitle: String? {
+        switch model.type {
+        case .habit: "Новая привычка"
+        case .event: "Новое нерегулярное событие"
+        default: ""
+        }
     }
-    var onNameErrorStateChange: Binding<String?>? {
-        get { trackerEditorViewModel.onNameErrorStateChange }
-        set { trackerEditorViewModel.onNameErrorStateChange = newValue }
-    }
-    var onCategorySelectionStateChange: Binding<String?>? {
-        get { trackerEditorViewModel.onCategorySelectionStateChange }
-        set { trackerEditorViewModel.onCategorySelectionStateChange = newValue }
-    }
-    var onScheduleStateChange: Binding<String?>? {
-        get { trackerEditorViewModel.onScheduleStateChange }
-        set { trackerEditorViewModel.onScheduleStateChange = newValue }
+    
+    var isScheduleAvailable: Bool {
+        switch model.type {
+        case .habit: true
+        default: false
+        }
     }
     
-    // MARK: - Data Sources
+    var categoriesViewModel: CategoriesViewModel {
+        let categoriesViewModel = CategoriesViewModel(for: model)
+        categoriesViewModel.onCategorySelectionStateChange = { [weak self] category in
+            self?.onCategorySelectionStateChange?(category)
+            self?.validate()
+        }
+        return categoriesViewModel
+    }
     
-    var emojiValues: [Character] { TrackerViewData.emoji }
-    var colorValues: [UIColor] { TrackerViewData.colors }
+    var scheduleEditorViewModel: ScheduleEditorViewModel {
+        let scheduleEditorViewModel = ScheduleEditorViewModel(for: model)
+        scheduleEditorViewModel.onScheduleStateChange = { [weak self] schedule in
+            self?.onScheduleStateChange?(schedule)
+            self?.validate()
+        }
+        return scheduleEditorViewModel
+    }
     
-    var mainEditorTitle: String? { trackerEditorViewModel.mainEditorTitle }
-    var isScheduleAvailable: Bool { trackerEditorViewModel.isScheduleAvailable }
-    var schedule: Schedule? { trackerEditorViewModel.schedule }
+    // MARK: - Model
     
-    // MARK: - Tracker Editor View Model
+    private let model: TrackerBuilder
     
-    let trackerEditorViewModel: TrackerEditorViewModel
+    // MARK: - Trackers Source
+    
+    private var trackersSource: TrackersSourceProtocol
     
     // MARK: - Initializers
     
-    init(from trackerEditorViewModel: TrackerEditorViewModel) {
-        self.trackerEditorViewModel = trackerEditorViewModel
+    init(for model: TrackerBuilder) {
+        self.model = model
+        self.trackersSource = TrackerStore()
     }
     
     // MARK: - Internal Methods
     
     func didNameEnter(_ name: String?) {
-        trackerEditorViewModel.didNameEnter(name)
+        let result = model.didNameEnter(name)
+        
+        switch result {
+        case .success:
+            onNameErrorStateChange?(nil)
+        case .failure(let error):
+            if let error = error as? TrackerBuilderError {
+                onNameErrorStateChange?(error.localizedDescription)
+            }
+        }
+        
+        validate()
     }
     
     func emojiDidChange(_ emoji: Character?) {
-        trackerEditorViewModel.emojiDidChange(emoji)
+        model.emoji = emoji
+        validate()
     }
     
     func colorDidChange(_ color: UIColor?) {
-        trackerEditorViewModel.colorDidChange(color)
+        model.color = color
+        validate()
     }
     
     func addTracker() {
-        trackerEditorViewModel.addTracker()
+        // TODO: В будущем пробросить ошибки.
+        guard
+            let tracker = try? model.getTracker(),
+            let category = model.category
+        else { return }
+        
+        try? trackersSource.addTracker(tracker, to: category)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func validate() {
+        let isCreationAllowed = model.validate()
+        onTrackerCreationAllowedStateChange?(isCreationAllowed)
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-final class TypeEditorViewController: UIViewController {
+final class TypeSelectorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -34,14 +34,9 @@ final class TypeEditorViewController: UIViewController {
         return eventButton
     } ()
     
-    // MARK: - Internal Properties
-    
-    // TODO: Возможно не понадобится после перехода на MVVM.
-    // weak var trackersNavigationItem: TrackersNavigationItem?
-    
     // MARK: - View Model
     
-    private var viewModel: TypeEditorViewModel?
+    private var viewModel: TypeSelectorViewModel?
     
     // MARK: - Lifecycle
     
@@ -58,7 +53,7 @@ final class TypeEditorViewController: UIViewController {
     
     // MARK: - View Model Methods
     
-    func setViewModel(_ viewModel: TypeEditorViewModel) {
+    func setViewModel(_ viewModel: TypeSelectorViewModel) {
         self.viewModel = viewModel
         bind()
     }
@@ -86,20 +81,13 @@ final class TypeEditorViewController: UIViewController {
     // MARK: - UI Updates
     
     private func showMainEditor() {
-        guard let trackerEditorViewModel = viewModel?.trackerEditorViewModel else { return }
+        guard let viewModel else { return }
         
         let mainEditorViewController = MainEditorViewController()
         
-        let mainEditorViewModel = MainEditorViewModel(
-            from: trackerEditorViewModel
-        )
+        let mainEditorViewModel = viewModel.mainEditorViewModel
         mainEditorViewController.setViewModel(mainEditorViewModel)
         
-        // TODO: Должно устанавливаться в главном редакторе из модели.
-        // trackerEditorViewController.trackerType = .habit(Schedule())
-        // trackerEditorViewController.viewTitle = "Новая привычка"
-        // TODO: После перехода на MVVM возможно можно будет убрать.
-        // trackerEditorViewController.trackersNavigator = trackersNavigationItem
         navigationController?.pushViewController(mainEditorViewController, animated: true)
     }
     

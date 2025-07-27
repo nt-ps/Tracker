@@ -19,13 +19,13 @@ final class CategoryEditorViewModel {
     
     // MARK: - Model
     
-    private let model: CategoryEditorModel
+    private let model: CategoryBuilder
     
     // MARK: - Initializers
     
     init(
-        for model: CategoryEditorModel,
-        with categoriesSource: CategoriesSourceProtocol
+        for model: CategoryBuilder,
+        categoriesSource: CategoriesSourceProtocol
     ) {
         self.model = model
         self.categoriesSource = categoriesSource

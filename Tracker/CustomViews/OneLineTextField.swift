@@ -37,7 +37,6 @@ final class OneLineTextField: UIView {
     private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
         messageLabel.textAlignment = .center
-        // messageLabel.text = "Ограничение \(maxLength) символов"
         messageLabel.font = .systemFont(ofSize: 17, weight: .regular)
         messageLabel.textColor = .AppColors.red
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -72,10 +71,6 @@ final class OneLineTextField: UIView {
     
     var editingAction: (() -> Void)?
     
-    // MARK: - Private Properties
-    
-    // private let maxLength = 38
-    
     // MARK: - Initializers
     
     override init(frame: CGRect) {
@@ -93,19 +88,6 @@ final class OneLineTextField: UIView {
     
     @objc
     private func editingChanged(sender: UITextField) {
-        /*
-        if
-            let text = sender.text,
-            text.count > maxLength
-        {
-            sender.text = String(text.dropLast(text.count - maxLength))
-            messageLabel.isHidden = false
-            return
-        } else {
-            editingAction?()
-            messageLabel.isHidden = true
-        }
-        */
         editingAction?()
     }
 

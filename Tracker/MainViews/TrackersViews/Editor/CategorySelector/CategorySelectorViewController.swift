@@ -26,10 +26,7 @@ final class CategoriesViewController: UIViewController {
     private lazy var categoriesTableView: ParametersTableView = {
         let categoriesTableView = ParametersTableView()
         categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
-        categoriesTableView.selectionAction = categoryDidSelected /*{ [weak self] title in
-            self?.trackerEditorView?.trackerCategory = title as? String
-            self?.navigationController?.popViewController(animated: true)
-        }*/
+        categoriesTableView.selectionAction = categoryDidSelected
         return categoriesTableView
     } ()
     
@@ -51,11 +48,6 @@ final class CategoriesViewController: UIViewController {
         return doneButton
     } ()
     
-    // MARK: - Internal Properties
-    
-    // weak var trackerEditorView: TrackerEditorViewController?
-    // var selectedCategory: String?
-    
     // MARK: - View Model
     
     private var viewModel: CategoriesViewModel?
@@ -76,24 +68,6 @@ final class CategoriesViewController: UIViewController {
         updateCategories()
     }
     
-    // MARK: - Button Actions
-    
-    @objc
-    private func didTapAddCategoryButton() {
-        guard let viewModel else { return }
-        
-        let categoryEditorViewController = CategoryEditorViewController()
-        
-        let categoryEditorModel = CategoryEditorModel()
-        let categoryEditorViewModel = CategoryEditorViewModel(
-            for: categoryEditorModel,
-            with: viewModel.categoriesSource
-        )
-        categoryEditorViewController.setViewModel(categoryEditorViewModel)
-        
-        navigationController?.pushViewController(categoryEditorViewController, animated: true)
-    }
-    
     // MARK: - View Model Methods
     
     func setViewModel(_ viewModel: CategoriesViewModel) {
@@ -107,6 +81,26 @@ final class CategoriesViewController: UIViewController {
         viewModel.onCategoriesListStateChange = { [weak self] categories in
             self?.updateCategories(categories)
         }
+    }
+    
+    // MARK: - UI Actions
+    
+    @objc
+    private func didTapAddCategoryButton() {
+        guard let viewModel else { return }
+        
+        let categoryEditorViewController = CategoryEditorViewController()
+
+        let categoryEditorViewModel = viewModel.categoryEditorViewModelForCreation
+        categoryEditorViewController.setViewModel(categoryEditorViewModel)
+        
+        navigationController?.pushViewController(categoryEditorViewController, animated: true)
+    }
+    
+    private func categoryDidSelected() {
+        let value = categoriesTableView.selectedValue as? String
+        viewModel?.categoryDidSelected(value)
+        navigationController?.popViewController(animated: true)
     }
     
     // MARK: - UI Updates
@@ -148,7 +142,7 @@ final class CategoriesViewController: UIViewController {
         stubView.removeFromSuperview()
         
         let parameters = categories.map {
-            let cell = CheckmarkTableViewCell()
+            let cell = CheckmarkCellView()
             cell.title = $0
             return cell
         }
@@ -188,12 +182,6 @@ final class CategoriesViewController: UIViewController {
             ),
         ])
     }
-
-    private func categoryDidSelected() {
-        let value = categoriesTableView.selectedValue as? String
-        viewModel?.categoryDidSelected(value)
-        navigationController?.popViewController(animated: true)
-    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
@@ -213,13 +201,3 @@ final class CategoriesViewController: UIViewController {
         ])
     }
 }
-
-/*
- extension CategoriesViewController: TrackerCategoryStoreDelegate {
- // TODO: Перебросить на VIewModel.
- func didUpdate(_ update: TrackerCategoryStoreUpdate) {
- // TODO: Переписать не с полным обновлением таблицы, а с добавлением только нового элемента.
- updateCategories()
- }
- }
- */

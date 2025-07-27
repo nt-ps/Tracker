@@ -46,17 +46,16 @@ final class MainEditorViewController: UIViewController {
         parametersTableView.updateParameters(parameters)
         return parametersTableView
     } ()
-    
-    // TODO: При выборе категории кнопка сохранения почему-то не всегда делается активной.
-    private lazy var categoryButton: ButtonTableViewCell = {
-        let categoryButton = ButtonTableViewCell()
+
+    private lazy var categoryButton: ButtonCellView = {
+        let categoryButton = ButtonCellView()
         categoryButton.title = "Категория"
         categoryButton.tapAction = showCategories
         return categoryButton
     } ()
     
-    private lazy var scheduleButton: ButtonTableViewCell = {
-        let scheduleButton = ButtonTableViewCell()
+    private lazy var scheduleButton: ButtonCellView = {
+        let scheduleButton = ButtonCellView()
         scheduleButton.title = "Расписание"
         scheduleButton.tapAction = showScheduleEditor
         return scheduleButton
@@ -125,50 +124,9 @@ final class MainEditorViewController: UIViewController {
     private let stackItemXSpacing = 16.0
     private let stackItemYSpacing = 24.0
     
-    // MARK: - Internal Properties
-    
-    // TODO: Возможно не понадобится после перехода на MVVM.
-    // weak var trackersNavigator: TrackersNavigationItem?
-    
-    // var viewTitle: String?
-    
-    // var trackerName: String? { nameTextField.text }
-    
-    /*
-    var trackerCategory: String? {
-        didSet {
-            categoryButton.subtitle = trackerCategory
-        }
-    }
-     */
-    
-    /*
-    var trackerType: TrackerType? {
-        didSet {
-            if let trackerType {
-                switch trackerType{
-                case .habit(let schedule):
-                    scheduleButton.subtitle = schedule.toString()
-                    // updateCreateButton()
-                    break
-                default:
-                    break
-                }
-            }
-        }
-    }
-     */
-    
-    // var trackerEmoji: Character? { emojiCollectionView.selectedItem as? Character }
-    // var trackerColor: UIColor? { colorCollectionView.selectedItem as? UIColor }
-    
     // MARK: - View Model
     
     private var viewModel: MainEditorViewModel?
-    
-    // MARK: - Private Properties
-    
-    private let trackerStore = TrackerStore()
      
     // MARK: - Lifecycle
     
@@ -199,23 +157,23 @@ final class MainEditorViewController: UIViewController {
         guard let viewModel = viewModel else { return }
 
         viewModel.onTrackerCreationAllowedStateChange = { [weak self] isCreationAllowed in
-            self?.setCreateButton(enabled: isCreationAllowed)
+            self?.createButton.isEnabled = isCreationAllowed
         }
         
         viewModel.onNameErrorStateChange = { [weak self] message in
-            self?.setNameError(message)
+            self?.nameTextField.message = message
         }
         
         viewModel.onCategorySelectionStateChange = { [weak self] category in
-            self?.setCategory(category)
+            self?.categoryButton.subtitle = category
         }
         
         viewModel.onScheduleStateChange = { [weak self] schedule in
-            self?.setSchedule(schedule)
+            self?.scheduleButton.subtitle = schedule
         }
     }
     
-    // MARK: - Button Actions
+    // MARK: - UI Actions
     
     @objc
     private func didTapCancelButton() {
@@ -224,43 +182,12 @@ final class MainEditorViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
-        /*
-        // TODO: В будущем выводить алерт с ошибкой.
-        guard let trackerCategory else { return }
-        let tracker = Tracker(
-            name: trackerName ?? "Без названия",
-            color: trackerColor ?? .black,
-            emoji: trackerEmoji ?? " ",
-            type: trackerType ?? .event
-        )
-        try? trackerStore.addTracker(tracker, to: trackerCategory)
-        dismiss(animated: true)
-         */
-        
         viewModel?.addTracker()
         dismiss(animated: true)
     }
     
-    // MARK: - UI Updates
-    
-    private func setCreateButton(enabled: Bool) {
-        createButton.isEnabled = enabled
-    }
-    
     private func nameDidChange() {
         viewModel?.didNameEnter(nameTextField.text)
-    }
-    
-    private func setNameError(_ message: String?) {
-        nameTextField.message = message
-    }
-    
-    private func setCategory(_ category: String?) {
-        categoryButton.subtitle = category
-    }
-    
-    private func setSchedule(_ schedule: String?) {
-        scheduleButton.subtitle = schedule
     }
     
     private func emojiDidChange() {
@@ -273,42 +200,27 @@ final class MainEditorViewController: UIViewController {
         viewModel?.colorDidChange(value)
     }
     
+    // MARK: - UI Updates
+    
     private func showScheduleEditor() {
-        guard let trackerEditorViewModel = viewModel?.trackerEditorViewModel else { return }
+        guard let viewModel else { return }
         
         let scheduleEditorViewController = ScheduleEditorViewController()
         
-        let scheduleEditorViewModel = ScheduleEditorViewModel(from: trackerEditorViewModel)
+        let scheduleEditorViewModel = viewModel.scheduleEditorViewModel
         scheduleEditorViewController.setViewModel(scheduleEditorViewModel)
         
-        // scheduleEditorViewController.trackerEditorView = self
-        /*
-        switch trackerType {
-        case .habit(let schedule):
-            scheduleEditorViewController.days = schedule.days
-            break
-        default:
-            break
-        }
-         */
         navigationController?.pushViewController(scheduleEditorViewController, animated: true)
     }
     
     private func showCategories() {
-        guard let trackerEditorViewModel = viewModel?.trackerEditorViewModel else { return }
+        guard let viewModel else { return }
         
         let categoriesViewController = CategoriesViewController()
         
-        let trackerCategoryStore = TrackerCategoryStore()
-        
-        let categoriesViewModel = CategoriesViewModel(
-            from: trackerEditorViewModel,
-            with: trackerCategoryStore
-        )
+        let categoriesViewModel = viewModel.categoriesViewModel
         categoriesViewController.setViewModel(categoriesViewModel)
         
-        //categoriesViewController.trackerEditorView = self
-        //categoriesViewController.selectedCategory = trackerCategory ?? nil
         navigationController?.pushViewController(categoriesViewController, animated: true)
     }
 
@@ -403,20 +315,5 @@ final class MainEditorViewController: UIViewController {
         )
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
-    }
-    
-    // MARK: - Internal Methods
-    
-    func updateSchedule(from newValues: [WeekDay]) {
-        /*
-        switch trackerType {
-        case .habit:
-            let newSchedule = Schedule(days: newValues)
-            trackerType = .habit(newSchedule)
-            break
-        default:
-            break
-        }
-         */
     }
 }

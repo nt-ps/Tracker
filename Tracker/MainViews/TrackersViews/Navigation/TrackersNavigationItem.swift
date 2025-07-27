@@ -63,8 +63,7 @@ final class TrackersNavigationItem: UIViewController {
     private(set) var selectedDate: Date = Date()
     
     // MARK: - Private Properties
-    
-    private let trackerCategoryStore = TrackerCategoryStore()
+
     private let trackerStore = TrackerStore()
     
     // MARK: - Lifecycle
@@ -90,7 +89,7 @@ final class TrackersNavigationItem: UIViewController {
     @objc
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
-        trackerEditorNavigationController.trackersSource = trackerStore
+        // trackerEditorNavigationController.trackersSource = trackerStore
         // trackerEditorNavigationController.trackersNavigationItem = self
         present(trackerEditorNavigationController, animated: true)
     }
