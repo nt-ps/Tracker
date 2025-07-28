@@ -37,7 +37,10 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(
             entityName: String(describing: TrackerCoreData.self)
         )
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "category.title", ascending: false),
+            NSSortDescriptor(key: "name", ascending: true),
+        ]
         
         fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -157,7 +160,13 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         insertedIndexes.removeAll()
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         switch type {
         case .insert:
             if let indexPath = newIndexPath {

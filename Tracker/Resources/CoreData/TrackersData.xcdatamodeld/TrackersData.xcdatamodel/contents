@@ -10,7 +10,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="trackerId" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="type" attributeType="String" valueTransformerName="TrackerTypeWrapperTransformer" customClassName="TrackerTypeWrapper"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
+        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
     </entity>
     <entity name="TrackerRecordCoreData" representedClassName="TrackerRecordCoreData" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
