@@ -89,8 +89,6 @@ final class TrackersNavigationItem: UIViewController {
     @objc
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
-        // trackerEditorNavigationController.trackersSource = trackerStore
-        // trackerEditorNavigationController.trackersNavigationItem = self
         present(trackerEditorNavigationController, animated: true)
     }
     
@@ -147,8 +145,6 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
 
-        // TODO: Определение индексов новых категорий.
-        // Написано грубо, переписать.
         let newCategoriesIndeces: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
             into: []
         ) { (result, data) in
@@ -170,7 +166,6 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
                 newCategoriesIndeces.forEach {
                     collectionView.insertSections(IndexSet(integer: $0))
                 }
-                //let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0.item, section: $0.section) }
                 collectionView.insertItems(at: update.insertedIndexes)
             }
             return

@@ -147,12 +147,6 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         
         return UICollectionViewCell()
     }
-
-    // На будущее. Метод выделения ячейки.
-    // func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) { }
-    
-    // На будущее. Метод снятия выделения.
-    // func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) { }
     
     // На будущее. Метод вызова контекстного меню.
     //func collectionView(_ collectionView: UICollectionView,contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? { }

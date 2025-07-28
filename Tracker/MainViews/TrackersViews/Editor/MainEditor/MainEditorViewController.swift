@@ -124,6 +124,11 @@ final class MainEditorViewController: UIViewController {
     private let stackItemXSpacing = 16.0
     private let stackItemYSpacing = 24.0
     
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 0.0 : 24.0
+    private let buttonsHeight = 68.0
+    
     // MARK: - View Model
     
     private var viewModel: MainEditorViewModel?
@@ -165,7 +170,9 @@ final class MainEditorViewController: UIViewController {
         }
         
         viewModel.onCategorySelectionStateChange = { [weak self] category in
-            self?.categoryButton.subtitle = category
+            guard let self else { return }
+            self.categoryButton.subtitle = category
+            self.navigationController?.popToViewController(self, animated: true)
         }
         
         viewModel.onScheduleStateChange = { [weak self] schedule in
@@ -284,26 +291,28 @@ final class MainEditorViewController: UIViewController {
             
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: stackItemXSpacing
+                constant: buttonsXSpacing
             ),
             buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -stackItemXSpacing
+                constant: -buttonsXSpacing
             ),
             buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? 0 : -stackItemYSpacing
+                constant: -buttonsBottomSpacing
             ),
-            buttonsStackView.heightAnchor.constraint(equalToConstant: 68),
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
             
             cancelButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
-                constant: 8
+                constant: buttonsTopSpacing
             ),
             
             createButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
-                constant: 8
+                constant: buttonsTopSpacing
             )
         ])
     }

@@ -65,7 +65,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .clear
-        accessoryType = .disclosureIndicator // В будущем для ячейки с галочкой установить в .checkmark.
+        accessoryType = .disclosureIndicator
         selectionStyle = .none
         
         contentView.addSubview(stackView)

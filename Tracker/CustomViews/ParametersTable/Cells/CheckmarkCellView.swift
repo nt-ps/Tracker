@@ -6,7 +6,6 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
-        // titleLabel.text = "fvevfvee лотло дтдлтд лдтд vve erewrwerwerewer wr we wr ew rweere" // TODO: Удалить!!!
         titleLabel.font = .systemFont(ofSize: 17, weight: .regular)
         titleLabel.textColor = .AppColors.black
         titleLabel.lineBreakMode = .byTruncatingTail
@@ -19,21 +18,9 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     
     static let reuseIdentifier = String(describing: CheckmarkCellView.self)
     
-    // MARK: - Internal Properties
+    // MARK: - View Model
     
-    var title: String? {
-        didSet {
-            titleLabel.text = title
-        }
-    }
-    
-    var isChecked: Bool? {
-        didSet {
-            if let isChecked {
-                accessoryType = isChecked ? .checkmark : .none
-            }
-        }
-    }
+    private var viewModel: CheckmarkCellViewModel?
     
     // MARK: - Initializers
 
@@ -53,7 +40,25 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
         print("CheckmarkCellView.init(coder:) has not been implemented")
     }
 
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: CheckmarkCellViewModel) {
+        self.viewModel = viewModel
+        updateView()
+    }
+    
     // MARK: - UI Updates
+    
+    func didSelect() {
+        viewModel?.updateModel(isSelected)
+    }
+    
+    private func updateView() {
+        guard let viewModel else { return }
+        
+        titleLabel.text = viewModel.title
+        accessoryType = viewModel.isSelected ? .checkmark : .none
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([

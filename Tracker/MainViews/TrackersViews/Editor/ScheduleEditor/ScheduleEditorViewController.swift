@@ -27,6 +27,15 @@ final class ScheduleEditorViewController: UIViewController {
         return parametersTableView
     } ()
     
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView(arrangedSubviews: [doneButton])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = 8.0
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsStackView
+    } ()
+    
     private lazy var doneButton: SolidButton = {
         let doneButton = SolidButton()
         doneButton.setTitle("Готово", for: .normal)
@@ -37,6 +46,17 @@ final class ScheduleEditorViewController: UIViewController {
         )
         return doneButton
     } ()
+    
+    // MARK: - UI Properties
+    
+    private let stackViewXSpacing = 16.0
+    private let stackViewYSpacing = 24.0
+    
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 16.0 : 24.0
+    private let buttonsHeight = 68.0
+    
     
     // MARK: - View Model
     
@@ -55,7 +75,7 @@ final class ScheduleEditorViewController: UIViewController {
         scrollView.addSubview(stackView)
         view.addSubview(scrollView)
         
-        view.addSubview(doneButton)
+        view.addSubview(buttonsStackView)
         setConstraints()
     }
     
@@ -84,38 +104,45 @@ final class ScheduleEditorViewController: UIViewController {
             
             stackView.topAnchor.constraint(
                 equalTo: scrollView.topAnchor,
-                constant: 24
+                constant: stackViewYSpacing
             ),
             stackView.bottomAnchor.constraint(
                 equalTo: scrollView.bottomAnchor,
-                constant: -24
+                constant: -stackViewYSpacing
             ),
             stackView.leadingAnchor.constraint(
                 equalTo: scrollView.leadingAnchor,
-                constant: 16
+                constant: stackViewXSpacing
             ),
             stackView.trailingAnchor.constraint(
                 equalTo: scrollView.trailingAnchor,
-                constant: -16
+                constant: -stackViewXSpacing
             ),
             stackView.widthAnchor.constraint(
                 equalTo: scrollView.widthAnchor,
-                constant: -32
+                constant: -stackViewXSpacing * 2
             ),
              
-            doneButton.leadingAnchor.constraint(
+            buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
+                constant: buttonsXSpacing
             ),
-            doneButton.trailingAnchor.constraint(
+            buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -16
+                constant: -buttonsXSpacing
             ),
-            doneButton.bottomAnchor.constraint(
+            buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? 0 : -24
+                constant: -buttonsBottomSpacing
             ),
-            doneButton.heightAnchor.constraint(equalToConstant: 60)
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
+            
+            doneButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: buttonsTopSpacing
+            )
         ])
     }
 }

@@ -20,20 +20,9 @@ final class ParametersTableView: UITableView {
         )
     }
     
-    // MARK: - Internal Properties
-    
-    var selectedValue: Any?
-    var selectionAction: (() -> Void)?
-    
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
-    private var selectedCell: CheckmarkCellView? {
-        didSet {
-            selectedValue = selectedCell?.title
-            selectionAction?()
-        }
-    }
     
     // MARK: - Initializers
     
@@ -78,15 +67,24 @@ final class ParametersTableView: UITableView {
         reloadData()
     }
     
-    // Пока написал отдельный метод для свитчеров, потому что
-    // для них определена ViewModel. Когда допишу ViewModel для
-    // других ячеек, тогда сделаю единый метод.
     func updateParameters( _ viewModels: [SwitcherCellViewModel]?) {
         guard let viewModels else { return }
+        parameterCells.removeAll()
         viewModels.forEach { [weak self] viewModel in
             let switcherCellView = SwitcherCellView()
             switcherCellView.setViewModel(viewModel)
             self?.parameterCells.append(switcherCellView)
+        }
+        reloadData()
+    }
+    
+    func updateParameters( _ viewModels: [CheckmarkCellViewModel]?) {
+        guard let viewModels else { return }
+        parameterCells.removeAll()
+        viewModels.forEach { [weak self] viewModel in
+            let checkmarkCellViewModel = CheckmarkCellView()
+            checkmarkCellViewModel.setViewModel(viewModel)
+            self?.parameterCells.append(checkmarkCellViewModel)
         }
         reloadData()
     }
@@ -109,9 +107,7 @@ extension ParametersTableView: UITableViewDelegate {
         } else if
             let cell = tableView.cellForRow(at: indexPath) as? CheckmarkCellView
         {
-            selectedCell?.isChecked = false
-            cell.isChecked = true
-            selectedCell = cell
+            cell.didSelect()
         }
     }
     
@@ -132,20 +128,11 @@ extension ParametersTableView: UITableViewDataSource {
         let index = indexPath.row
         let cell = parameterCells[index]
         
-        // TODO: Переписать установку выбранного значения по-нормальному.
-        if
-            let checkmarkCell = cell as? CheckmarkCellView,
-            let selectedValue = selectedValue as? String,
-            checkmarkCell.title == selectedValue
-        {
-            checkmarkCell.isChecked = true
-        }
-        
         if indexPath.row == parameterCells.count - 1 {
             // Удаление последнего сепаратора.
             cell.separatorInset = UIEdgeInsets.init(
                 top: 0,
-                left: cell.frame.width,
+                left: cell.frame.width * 2,
                 bottom: 0,
                 right: 0
             )

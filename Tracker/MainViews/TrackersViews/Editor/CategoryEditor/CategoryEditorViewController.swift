@@ -13,6 +13,15 @@ final class CategoryEditorViewController: UIViewController {
         return titleTextField
     } ()
     
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView(arrangedSubviews: [createButton])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = 8.0
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsStackView
+    } ()
+    
     private lazy var createButton: SolidButton = {
         let createButton = SolidButton()
         createButton.setTitle("Готово", for: .normal)
@@ -24,6 +33,16 @@ final class CategoryEditorViewController: UIViewController {
         createButton.isEnabled = false
         return createButton
     } ()
+    
+    // MARK: - UI Properties
+    
+    private let textFieldXSpacing = 16.0
+    private let textFieldYSpacing = 24.0
+    
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 16.0 : 24.0
+    private let buttonsHeight = 68.0
     
     // MARK: - View Model
     
@@ -40,7 +59,7 @@ final class CategoryEditorViewController: UIViewController {
         navigationItem.setHidesBackButton(true, animated: true)
 
         view.addSubview(titleTextField)
-        view.addSubview(createButton)
+        view.addSubview(buttonsStackView)
         setConstraints()
     }
     
@@ -81,33 +100,40 @@ final class CategoryEditorViewController: UIViewController {
         NSLayoutConstraint.activate([
             titleTextField.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
+                constant: textFieldXSpacing
             ),
             titleTextField.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: 24
+                constant: textFieldYSpacing
             ),
             titleTextField.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -16
+                constant: -textFieldXSpacing
             ),
             titleTextField.bottomAnchor.constraint(
                 lessThanOrEqualTo: createButton.topAnchor
             ),
             
-            createButton.leadingAnchor.constraint(
+            buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 20
+                constant: buttonsXSpacing
             ),
-            createButton.trailingAnchor.constraint(
+            buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -20
+                constant: -buttonsXSpacing
             ),
-            createButton.bottomAnchor.constraint(
+            buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: -16
+                constant: -buttonsBottomSpacing
             ),
-            createButton.heightAnchor.constraint(equalToConstant: 60)
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
+            
+            createButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: buttonsTopSpacing
+            )
         ])
     }
 }

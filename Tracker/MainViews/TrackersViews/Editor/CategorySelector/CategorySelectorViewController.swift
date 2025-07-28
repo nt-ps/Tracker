@@ -26,7 +26,6 @@ final class CategoriesViewController: UIViewController {
     private lazy var categoriesTableView: ParametersTableView = {
         let categoriesTableView = ParametersTableView()
         categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
-        categoriesTableView.selectionAction = categoryDidSelected
         return categoriesTableView
     } ()
     
@@ -35,6 +34,15 @@ final class CategoriesViewController: UIViewController {
         stubView.labelText = "Привычки и события можно\nобъединить по смыслу"
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
+    } ()
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView(arrangedSubviews: [addCategoryButton])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = 8.0
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsStackView
     } ()
     
     private lazy var addCategoryButton: SolidButton = {
@@ -47,6 +55,16 @@ final class CategoriesViewController: UIViewController {
         )
         return doneButton
     } ()
+    
+    // MARK: - UI Properties
+    
+    private let stackViewXSpacing = 16.0
+    private let stackViewYSpacing = 24.0
+    
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 16.0 : 24.0
+    private let buttonsHeight = 68.0
     
     // MARK: - View Model
     
@@ -62,7 +80,7 @@ final class CategoriesViewController: UIViewController {
         navigationItem.title = "Категория"
         navigationItem.setHidesBackButton(true, animated: true)
         
-        view.addSubview(addCategoryButton)
+        view.addSubview(buttonsStackView)
         setConstraints()
         
         updateCategories()
@@ -97,29 +115,23 @@ final class CategoriesViewController: UIViewController {
         navigationController?.pushViewController(categoryEditorViewController, animated: true)
     }
     
-    private func categoryDidSelected() {
-        let value = categoriesTableView.selectedValue as? String
-        viewModel?.categoryDidSelected(value)
-        navigationController?.popViewController(animated: true)
-    }
-    
     // MARK: - UI Updates
     
     func updateCategories() {
-        let categories = viewModel?.categories
-        updateCategories(categories)
+        let categoryCellViewModels = viewModel?.categories
+        updateCategories(categoryCellViewModels)
     }
     
-    func updateCategories(_ categories: [String]?) {
+    func updateCategories(_ viewModels: [CheckmarkCellViewModel]?) {
         guard
-            let categories,
-            !categories.isEmpty
+            let viewModels,
+            !viewModels.isEmpty
         else {
             showStub()
             return
         }
         
-        showCategoriesTableView(with: categories)
+        showCategoriesTableView(with: viewModels)
     }
     
     private func showStub() {
@@ -132,72 +144,70 @@ final class CategoriesViewController: UIViewController {
             stubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stubView.centerYAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.centerYAnchor,
-                constant: ScreenType.shared.isWithIsland ? -84 : -102 // TODO: Считать центр автоматически с учетом кнопки снизу.
+                constant: -buttonsHeight - buttonsBottomSpacing
             )
         ])
     }
     
-    private func showCategoriesTableView(with categories: [String]) {
+    private func showCategoriesTableView(with viewModels: [CheckmarkCellViewModel]) {
         stubView.willMove(toSuperview: nil)
         stubView.removeFromSuperview()
         
-        let parameters = categories.map {
-            let cell = CheckmarkCellView()
-            cell.title = $0
-            return cell
-        }
-        categoriesTableView.selectedValue = viewModel?.selectedCategory
-        categoriesTableView.updateParameters(parameters)
+        categoriesTableView.updateParameters(viewModels)
         
         view.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(
-                equalTo: addCategoryButton.topAnchor,
-                constant: -8 // TODO: На всех экранах редактора добавить отступ между списком и кнопками!
-            ),
+            scrollView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             
             stackView.topAnchor.constraint(
                 equalTo: scrollView.topAnchor,
-                constant: 24
+                constant: stackViewYSpacing
             ),
             stackView.bottomAnchor.constraint(
                 equalTo: scrollView.bottomAnchor,
-                constant: -24
+                constant: -stackViewYSpacing
             ),
             stackView.leadingAnchor.constraint(
                 equalTo: scrollView.leadingAnchor,
-                constant: 16
+                constant: stackViewXSpacing
             ),
             stackView.trailingAnchor.constraint(
                 equalTo: scrollView.trailingAnchor,
-                constant: -16
+                constant: -stackViewXSpacing
             ),
             stackView.widthAnchor.constraint(
                 equalTo: scrollView.widthAnchor,
-                constant: -32
+                constant: -stackViewXSpacing * 2
             ),
         ])
     }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            addCategoryButton.leadingAnchor.constraint(
+            buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
+                constant: buttonsXSpacing
             ),
-            addCategoryButton.trailingAnchor.constraint(
+            buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -16
+                constant: -buttonsXSpacing
             ),
-            addCategoryButton.bottomAnchor.constraint(
+            buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? -16 : -24 // TODO: На всех экранах редактора сверить отступы кнопок с макетом!
+                constant: -buttonsBottomSpacing
             ),
-            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
+            
+            addCategoryButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: buttonsTopSpacing
+            )
         ])
     }
 }
