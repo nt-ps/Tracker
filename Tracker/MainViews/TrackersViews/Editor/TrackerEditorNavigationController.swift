@@ -1,9 +1,6 @@
 import UIKit
 
 final class TrackerEditorNavigationController: UINavigationController {
-    
-    weak var trackersNavigationItem: TrackersNavigationItem?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -13,9 +10,12 @@ final class TrackerEditorNavigationController: UINavigationController {
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
         
-        let trackerTypeViewController = TrackerTypeViewController()
-        trackerTypeViewController.trackersNavigationItem = trackersNavigationItem
+        let typeEditorViewController = TypeSelectorViewController()
         
-        viewControllers = [ trackerTypeViewController ]
+        let trackerBuilder = TrackerBuilder()
+        let typeEditorViewModel = TypeSelectorViewModel(for: trackerBuilder)
+        typeEditorViewController.setViewModel(typeEditorViewModel)
+        
+        viewControllers = [ typeEditorViewController ]
     }
 }

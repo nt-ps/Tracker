@@ -1,7 +1,7 @@
 import CoreData
 import UIKit
 
-final class TrackerStore: NSObject {
+final class TrackerStore: NSObject, TrackersSourceProtocol {
     
     // MARK: - Internal Properties
     
@@ -37,7 +37,10 @@ final class TrackerStore: NSObject {
         let fetchRequest = NSFetchRequest<TrackerCoreData>(
             entityName: String(describing: TrackerCoreData.self)
         )
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "category.title", ascending: false),
+            NSSortDescriptor(key: "name", ascending: true),
+        ]
         
         fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -51,7 +54,7 @@ final class TrackerStore: NSObject {
         return fetchedResultsController
     } ()
 
-    private var insertedIndexes: IndexSet = IndexSet()
+    private var insertedIndexes: [IndexPath] = []
     
     // MARK: - Initializers
     
@@ -157,11 +160,17 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         insertedIndexes.removeAll()
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         switch type {
         case .insert:
             if let indexPath = newIndexPath {
-                insertedIndexes.insert(indexPath.item)
+                insertedIndexes.append(indexPath)
             }
         default:
             break

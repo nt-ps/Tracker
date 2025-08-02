@@ -1,6 +1,6 @@
 import UIKit
 
-final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtocol {
+final class SwitcherCellView: UITableViewCell, ParametersTableViewCellProtocol {
     
     // MARK: - UI Views
     
@@ -16,28 +16,22 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     // чтобы можно было настроить констрейнты.
     private lazy var switchView: UISwitch = {
         let switchView = UISwitch()
-        switchView.isOn = false
         switchView.onTintColor = .AppColors.blue
         switchView.translatesAutoresizingMaskIntoConstraints = false
+        switchView.addTarget(
+            self,
+            action: #selector(switcherChanged(sender:)),
+            for: .valueChanged)
         return switchView
     } ()
     
     // MARK: - Static Properties
     
-    static let reuseIdentifier = String(describing: SwitchTableViewCell.self)
+    static let reuseIdentifier = String(describing: SwitcherCellView.self)
     
-    // MARK: - Internal Properties
+    // MARK: - View Model
     
-    var title: String? {
-        didSet {
-            titleLabel.text = title
-        }
-    }
-     
-    var isOn: Bool {
-        get { switchView.isOn }
-        set { switchView.isOn = newValue }
-    }
+    private var viewModel: SwitcherCellViewModel?
     
     // MARK: - Initializers
 
@@ -54,10 +48,30 @@ final class SwitchTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        print("SwitchTableViewCell.init(coder:) has not been implemented")
+        print("SwitcherCellView.init(coder:) has not been implemented")
+    }
+    
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: SwitcherCellViewModel) {
+        self.viewModel = viewModel
+        updateView()
+    }
+    
+    // MARK: - Switcher Actions
+    
+    @objc private func switcherChanged(sender: UISwitch) {
+        viewModel?.updateModel(sender.isOn)
     }
 
     // MARK: - UI Updates
+    
+    private func updateView() {
+        guard let viewModel else { return }
+        
+        titleLabel.text = viewModel.title
+        switchView.isOn = viewModel.isOn
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([

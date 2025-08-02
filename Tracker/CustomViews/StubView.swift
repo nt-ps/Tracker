@@ -1,6 +1,6 @@
 import UIKit
 
-final class TrackersStubView: UIView {
+final class StubView: UIView {
     
     // MARK: - Views
     
@@ -16,6 +16,8 @@ final class TrackersStubView: UIView {
         labelView.text = labelText
         labelView.font = UIFont.systemFont(ofSize: labelSize, weight: .medium)
         labelView.textColor = .AppColors.black
+        labelView.textAlignment = .center
+        labelView.numberOfLines = 2
         labelView.translatesAutoresizingMaskIntoConstraints = false
         return labelView
     } ()
@@ -23,8 +25,15 @@ final class TrackersStubView: UIView {
     // MARK: - UI Properties
     
     private let imageResource: ImageResource = .trackersStub
-    private let labelText = "Что будем отслеживать?"
     private let labelSize = 12.0
+    
+    // MARK: - Internal Properties
+    
+    var labelText: String? {
+        didSet {
+            labelView.text = labelText
+        }
+    }
     
     // MARK: - Initializers
     
@@ -39,7 +48,6 @@ final class TrackersStubView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        fatalError("TrackersStubView.init(coder:) has not been implemented")
     }
     
     // MARK: - UI Updates

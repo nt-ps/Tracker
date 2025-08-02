@@ -33,6 +33,7 @@ final class ParametersTableView: UITableView {
         layer.cornerRadius = 16
         backgroundColor = .AppColors.background
         isScrollEnabled = false
+        
         // Удаление верхнего сепаратора.
         tableHeaderView = UIView(
             frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 1)
@@ -42,12 +43,16 @@ final class ParametersTableView: UITableView {
         dataSource = self
 
         register(
-            ButtonTableViewCell.self,
-            forCellReuseIdentifier: ButtonTableViewCell.reuseIdentifier
+            ButtonCellView.self,
+            forCellReuseIdentifier: ButtonCellView.reuseIdentifier
         )
         register(
-            SwitchTableViewCell.self,
-            forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier
+            SwitcherCellView.self,
+            forCellReuseIdentifier: SwitcherCellView.reuseIdentifier
+        )
+        register(
+            CheckmarkCellView.self,
+            forCellReuseIdentifier: CheckmarkCellView.reuseIdentifier
         )
     }
     
@@ -59,6 +64,28 @@ final class ParametersTableView: UITableView {
     
     func updateParameters(_ parameters: [ParametersTableViewCellProtocol]) {
         parameterCells = parameters
+        reloadData()
+    }
+    
+    func updateParameters( _ viewModels: [SwitcherCellViewModel]?) {
+        guard let viewModels else { return }
+        parameterCells.removeAll()
+        viewModels.forEach { [weak self] viewModel in
+            let switcherCellView = SwitcherCellView()
+            switcherCellView.setViewModel(viewModel)
+            self?.parameterCells.append(switcherCellView)
+        }
+        reloadData()
+    }
+    
+    func updateParameters( _ viewModels: [CheckmarkCellViewModel]?) {
+        guard let viewModels else { return }
+        parameterCells.removeAll()
+        viewModels.forEach { [weak self] viewModel in
+            let checkmarkCellViewModel = CheckmarkCellView()
+            checkmarkCellViewModel.setViewModel(viewModel)
+            self?.parameterCells.append(checkmarkCellViewModel)
+        }
         reloadData()
     }
 }
@@ -73,10 +100,14 @@ extension ParametersTableView: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath) {
         if
-            let cell = tableView.cellForRow(at: indexPath) as? ButtonTableViewCell,
+            let cell = tableView.cellForRow(at: indexPath) as? ButtonCellView,
             let action = cell.tapAction
         {
             action()
+        } else if
+            let cell = tableView.cellForRow(at: indexPath) as? CheckmarkCellView
+        {
+            cell.didSelect()
         }
     }
     
@@ -101,7 +132,7 @@ extension ParametersTableView: UITableViewDataSource {
             // Удаление последнего сепаратора.
             cell.separatorInset = UIEdgeInsets.init(
                 top: 0,
-                left: cell.frame.width,
+                left: cell.frame.width * 2,
                 bottom: 0,
                 right: 0
             )

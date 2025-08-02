@@ -23,51 +23,44 @@ final class ScheduleEditorViewController: UIViewController {
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
-        var parameters = daySwitches.map { $0.value }
-        parametersTableView.updateParameters(parameters)
+        parametersTableView.updateParameters(viewModel?.days)
         return parametersTableView
     } ()
     
-    private lazy var daySwitches: [Dictionary<WeekDay, SwitchTableViewCell>.Element] = {
-        var switches: [WeekDay: SwitchTableViewCell] = [:]
-        WeekDay.allCases.forEach {
-            let switchCell = SwitchTableViewCell()
-            switchCell.title = $0.name
-            switchCell.isOn = false
-            switches[$0] = switchCell
-        }
-        return switches.sorted { $0.key.rawValue < $1.key.rawValue }
+    private lazy var buttonsStackView: UIStackView = {
+        let buttonsStackView = UIStackView(arrangedSubviews: [doneButton])
+        buttonsStackView.axis = .horizontal
+        buttonsStackView.spacing = 8.0
+        buttonsStackView.distribution = .fillEqually
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsStackView
     } ()
     
     private lazy var doneButton: SolidButton = {
-        let createButton = SolidButton()
-        createButton.setTitle("Готово", for: .normal)
-        createButton.addTarget(
+        let doneButton = SolidButton()
+        doneButton.setTitle("Готово", for: .normal)
+        doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
             for: .touchUpInside
         )
-        return createButton
+        return doneButton
     } ()
     
-    // MARK: - Internal Properties
+    // MARK: - UI Properties
     
-    weak var trackerEditorView: TrackerEditorViewController?
+    private let stackViewXSpacing = 16.0
+    private let stackViewYSpacing = 24.0
     
-    var days: [WeekDay] {
-        get {
-            Array(
-                daySwitches
-                    .filter{ $0.value.isOn }
-                    .map{ $0.key }
-            )
-        }
-        set {
-            daySwitches.forEach {
-                $0.value.isOn = newValue.contains($0.key)
-            }
-        }
-    }
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 16.0 : 24.0
+    private let buttonsHeight = 68.0
+    
+    
+    // MARK: - View Model
+    
+    private var viewModel: ScheduleEditorViewModel?
     
     // MARK: - Lifecycle
     
@@ -82,15 +75,21 @@ final class ScheduleEditorViewController: UIViewController {
         scrollView.addSubview(stackView)
         view.addSubview(scrollView)
         
-        view.addSubview(doneButton)
+        view.addSubview(buttonsStackView)
         setConstraints()
+    }
+    
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: ScheduleEditorViewModel) {
+        self.viewModel = viewModel
     }
     
     // MARK: - Button Actions
     
     @objc
     private func didTapDoneButton() {
-        trackerEditorView?.updateSchedule(from: days)
+        viewModel?.saveSchedule()
         navigationController?.popViewController(animated: true)
     }
     
@@ -105,38 +104,45 @@ final class ScheduleEditorViewController: UIViewController {
             
             stackView.topAnchor.constraint(
                 equalTo: scrollView.topAnchor,
-                constant: 24
+                constant: stackViewYSpacing
             ),
             stackView.bottomAnchor.constraint(
                 equalTo: scrollView.bottomAnchor,
-                constant: -24
+                constant: -stackViewYSpacing
             ),
             stackView.leadingAnchor.constraint(
                 equalTo: scrollView.leadingAnchor,
-                constant: 16
+                constant: stackViewXSpacing
             ),
             stackView.trailingAnchor.constraint(
                 equalTo: scrollView.trailingAnchor,
-                constant: -16
+                constant: -stackViewXSpacing
             ),
             stackView.widthAnchor.constraint(
                 equalTo: scrollView.widthAnchor,
-                constant: -32
+                constant: -stackViewXSpacing * 2
             ),
              
-            doneButton.leadingAnchor.constraint(
+            buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 16
+                constant: buttonsXSpacing
             ),
-            doneButton.trailingAnchor.constraint(
+            buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -16
+                constant: -buttonsXSpacing
             ),
-            doneButton.bottomAnchor.constraint(
+            buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? 0 : -24
+                constant: -buttonsBottomSpacing
             ),
-            doneButton.heightAnchor.constraint(equalToConstant: 60)
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
+            
+            doneButton.topAnchor.constraint(
+                equalTo: buttonsStackView.topAnchor,
+                constant: buttonsTopSpacing
+            )
         ])
     }
 }

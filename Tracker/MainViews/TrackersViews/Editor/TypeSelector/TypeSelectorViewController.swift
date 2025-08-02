@@ -1,6 +1,6 @@
 import UIKit
 
-final class TrackerTypeViewController: UIViewController {
+final class TypeSelectorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -34,9 +34,9 @@ final class TrackerTypeViewController: UIViewController {
         return eventButton
     } ()
     
-    // MARK: - Internal Properties
+    // MARK: - View Model
     
-    weak var trackersNavigationItem: TrackersNavigationItem?
+    private var viewModel: TypeSelectorViewModel?
     
     // MARK: - Lifecycle
     
@@ -51,27 +51,45 @@ final class TrackerTypeViewController: UIViewController {
         setConstraints()
     }
     
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: TypeSelectorViewModel) {
+        self.viewModel = viewModel
+        bind()
+    }
+    
+    private func bind() {
+        guard let viewModel = viewModel else { return }
+
+        viewModel.onTypeSelectedStateChange = { [weak self] in
+            self?.showMainEditor()
+        }
+    }
+    
     // MARK: - Button Actions
     
     @objc
     private func didTapHabitButton() {
-        let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigationItem
-        trackerEditorViewController.trackerType = .habit(Schedule())
-        trackerEditorViewController.viewTitle = "Новая привычка"
-        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+        viewModel?.setHabitType()
     }
 
     @objc
     private func didTapEventButton() {
-        let trackerEditorViewController = TrackerEditorViewController()
-        trackerEditorViewController.trackersNavigator = trackersNavigationItem
-        trackerEditorViewController.trackerType = .event
-        trackerEditorViewController.viewTitle = "Новое нерегулярное событие"
-        navigationController?.pushViewController(trackerEditorViewController, animated: true)
+        viewModel?.setEventType()
     }
     
     // MARK: - UI Updates
+    
+    private func showMainEditor() {
+        guard let viewModel else { return }
+        
+        let mainEditorViewController = MainEditorViewController()
+        
+        let mainEditorViewModel = viewModel.mainEditorViewModel
+        mainEditorViewController.setViewModel(mainEditorViewModel)
+        
+        navigationController?.pushViewController(mainEditorViewController, animated: true)
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([

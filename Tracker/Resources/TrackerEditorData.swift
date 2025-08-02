@@ -1,6 +1,6 @@
 import UIKit
 
-enum TrackerViewData {
+enum TrackerEditorData {
     static let emoji: [Character] = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
         "😇", "😡", "🥶", "🤔", "🙌", "🍔",

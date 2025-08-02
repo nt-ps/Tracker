@@ -1,15 +1,54 @@
 import CoreData
 import UIKit
 
-final class TrackerCategoryStore {
+final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
+    
+    // MARK: - Internal Properties
+    
+    weak var delegate: CategoriesSourceDelegate?
+    
+    var categories: [String] {
+        guard let categories = fetchedResultsController?.fetchedObjects else { return [] }
+    
+        let trackerCategories: [String] = categories.reduce(
+            into: []
+        ) { (result, data) in
+            if let title = data.title {
+                result.append(title)
+            }
+        }
+        
+        return trackerCategories
+    }
     
     // MARK: - Private Properties
     
     private let context: NSManagedObjectContext?
+    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>? = {
+        guard let context else { return nil }
+        
+        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(
+            entityName: String(describing: TrackerCategoryCoreData.self)
+        )
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: false)]
+        
+        fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        fetchedResultsController?.delegate = self
+        try? fetchedResultsController?.performFetch()
+        
+        return fetchedResultsController
+    } ()
+    
+    private var insertedIndexes: IndexSet = IndexSet()
     
     // MARK: - Initializers
     
-    convenience init() {
+    convenience override init() {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         let context = appDelegate?.persistentContainer.viewContext
         self.init(context: context)
@@ -34,16 +73,16 @@ final class TrackerCategoryStore {
         try updateExistingCategory(trackerCategoryCoreData, with: title)
         try context.save()
     }
-
-    func updateExistingCategory(
+    
+    // MARK: - Private Methods
+    
+    private func updateExistingCategory(
         _ trackerCategoryCoreData: TrackerCategoryCoreData,
         with title: String
     ) throws {
         trackerCategoryCoreData.title = title
         trackerCategoryCoreData.trackers = []
     }
-    
-    // MARK: - Private Methods
     
     private func getCategoryCoreData(_ title: String) throws -> TrackerCategoryCoreData? {
         guard let context else {
@@ -62,5 +101,29 @@ final class TrackerCategoryStore {
         let category = try context.fetch(request).first
         
         return category
+    }
+}
+
+extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexes.removeAll()
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.didUpdate(
+            CategoriesSourceUpdate(insertedIndexes: insertedIndexes)
+        )
+        insertedIndexes.removeAll()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            if let indexPath = newIndexPath {
+                insertedIndexes.insert(indexPath.item)
+            }
+        default:
+            break
+        }
     }
 }

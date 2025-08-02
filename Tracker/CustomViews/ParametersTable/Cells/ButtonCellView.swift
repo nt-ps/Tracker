@@ -1,6 +1,6 @@
 import UIKit
 
-final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtocol {
+final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
     
     // MARK: - UI Views
     
@@ -33,7 +33,7 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     
     // MARK: - Static Properties
     
-    static let reuseIdentifier = String(describing: ButtonTableViewCell.self)
+    static let reuseIdentifier = String(describing: ButtonCellView.self)
     
     // MARK: - Internal Properties
     
@@ -57,8 +57,6 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         }
     }
     
-    // MARK: - Private Properties
-    
     var tapAction: (() -> Void)?
     
     // MARK: - Initializers
@@ -67,7 +65,7 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .clear
-        accessoryType = .disclosureIndicator // В будущем для ячейки с галочкой установить в .checkmark.
+        accessoryType = .disclosureIndicator
         selectionStyle = .none
         
         contentView.addSubview(stackView)
@@ -76,7 +74,7 @@ final class ButtonTableViewCell: UITableViewCell, ParametersTableViewCellProtoco
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        print("ButtonTableViewCell.init(coder:) has not been implemented")
+        print("ButtonCellView.init(coder:) has not been implemented")
     }
 
     // MARK: - UI Updates

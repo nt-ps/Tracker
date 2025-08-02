@@ -1,6 +1,6 @@
 import UIKit
 
-final class TrackerEditorViewController: UIViewController {
+final class MainEditorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -31,7 +31,7 @@ final class TrackerEditorViewController: UIViewController {
     private lazy var nameTextField: OneLineTextField = {
         let nameTextField = OneLineTextField()
         nameTextField.placeholder = "Введите название трекера"
-        nameTextField.editingAction = updateCreateButton
+        nameTextField.editingAction = nameDidChange
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         return nameTextField
     } ()
@@ -40,28 +40,24 @@ final class TrackerEditorViewController: UIViewController {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
         var parameters = [categoryButton]
-        switch trackerType {
-        case .habit:
+        if let viewModel, viewModel.isScheduleAvailable {
             parameters.append(scheduleButton)
-        default:
-            break
         }
         parametersTableView.updateParameters(parameters)
         return parametersTableView
     } ()
-    
-    private lazy var categoryButton: ButtonTableViewCell = {
-        let categoryButton = ButtonTableViewCell()
+
+    private lazy var categoryButton: ButtonCellView = {
+        let categoryButton = ButtonCellView()
         categoryButton.title = "Категория"
+        categoryButton.tapAction = showCategories
         return categoryButton
     } ()
     
-    private lazy var scheduleButton: ButtonTableViewCell = {
-        let scheduleButton = ButtonTableViewCell()
+    private lazy var scheduleButton: ButtonCellView = {
+        let scheduleButton = ButtonCellView()
         scheduleButton.title = "Расписание"
-        scheduleButton.tapAction = { [weak self] in
-            self?.showScheduleEditor()
-        }
+        scheduleButton.tapAction = showScheduleEditor
         return scheduleButton
     } ()
     
@@ -72,10 +68,8 @@ final class TrackerEditorViewController: UIViewController {
             collectionViewLayout: layout
         )
         emojiCollectionView.title = "Emoji"
-        emojiCollectionView.addValues(TrackerViewData.emoji)
-        emojiCollectionView.selectAction = { [weak self] in
-            self?.updateCreateButton()
-        }
+        emojiCollectionView.addValues(viewModel?.emojiValues)
+        emojiCollectionView.selectionAction = emojiDidChange
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return emojiCollectionView
     } ()
@@ -87,10 +81,8 @@ final class TrackerEditorViewController: UIViewController {
             collectionViewLayout: layout
         )
         colorCollectionView.title = "Цвет"
-        colorCollectionView.addValues(TrackerViewData.colors)
-        colorCollectionView.selectAction = { [weak self] in
-            self?.updateCreateButton()
-        }
+        colorCollectionView.addValues(viewModel?.colorValues)
+        colorCollectionView.selectionAction = colorDidChange
         colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return colorCollectionView
     } ()
@@ -132,35 +124,14 @@ final class TrackerEditorViewController: UIViewController {
     private let stackItemXSpacing = 16.0
     private let stackItemYSpacing = 24.0
     
-    // MARK: - Internal Properties
+    private let buttonsXSpacing = 20.0
+    private let buttonsTopSpacing = 8.0
+    private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 0.0 : 24.0
+    private let buttonsHeight = 68.0
     
-    weak var trackersNavigator: TrackersNavigationItem?
+    // MARK: - View Model
     
-    var viewTitle: String?
-    
-    var trackerName: String? { nameTextField.text }
-    
-    var trackerType: TrackerType? {
-        didSet {
-            if let trackerType {
-                switch trackerType{
-                case .habit(let schedule):
-                    scheduleButton.subtitle = schedule.toString()
-                    updateCreateButton()
-                    break
-                default:
-                    break
-                }
-            }
-        }
-    }
-    
-    var trackerEmoji: Character? { emojiCollectionView.selectedItem as? Character }
-    var trackerColor: UIColor? { colorCollectionView.selectedItem as? UIColor }
-    
-    // MARK: - Private Properties
-    
-    private let trackerStore = TrackerStore()
+    private var viewModel: MainEditorViewModel?
      
     // MARK: - Lifecycle
     
@@ -169,7 +140,7 @@ final class TrackerEditorViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        navigationItem.title = viewTitle
+        navigationItem.title = viewModel?.mainEditorTitle
         navigationItem.setHidesBackButton(true, animated: true)
 
         scrollView.addSubview(parametersStackView)
@@ -180,7 +151,36 @@ final class TrackerEditorViewController: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
-    // MARK: - Button Actions
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: MainEditorViewModel) {
+        self.viewModel = viewModel
+        bind()
+    }
+    
+    private func bind() {
+        guard let viewModel = viewModel else { return }
+
+        viewModel.onTrackerCreationAllowedStateChange = { [weak self] isCreationAllowed in
+            self?.createButton.isEnabled = isCreationAllowed
+        }
+        
+        viewModel.onNameErrorStateChange = { [weak self] message in
+            self?.nameTextField.message = message
+        }
+        
+        viewModel.onCategorySelectionStateChange = { [weak self] category in
+            guard let self else { return }
+            self.categoryButton.subtitle = category
+            self.navigationController?.popToViewController(self, animated: true)
+        }
+        
+        viewModel.onScheduleStateChange = { [weak self] schedule in
+            self?.scheduleButton.subtitle = schedule
+        }
+    }
+    
+    // MARK: - UI Actions
     
     @objc
     private func didTapCancelButton() {
@@ -189,50 +189,46 @@ final class TrackerEditorViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
-        let tracker = Tracker(
-            name: trackerName ?? "Без названия",
-            color: trackerColor ?? .black,
-            emoji: trackerEmoji ?? " ",
-            type: trackerType ?? .event
-        )
-        // TODO: В будущем выводить алерт с ошибкой.
-        try? trackerStore.addTracker(tracker, to: TrackersMockData.defaultCategoryTitle)
+        viewModel?.addTracker()
         dismiss(animated: true)
+    }
+    
+    private func nameDidChange() {
+        viewModel?.didNameEnter(nameTextField.text)
+    }
+    
+    private func emojiDidChange() {
+        let value = emojiCollectionView.selectedValue as? Character
+        viewModel?.emojiDidChange(value)
+    }
+    
+    private func colorDidChange() {
+        let value = colorCollectionView.selectedValue as? UIColor
+        viewModel?.colorDidChange(value)
     }
     
     // MARK: - UI Updates
     
-    private func updateCreateButton() {
-        if
-            let trackerName,
-            !trackerName.isEmpty,
-            trackerEmoji != nil,
-            trackerColor != nil
-        {
-            switch trackerType{
-            case .habit(let schedule):
-                createButton.isEnabled = !schedule.days.isEmpty
-                break
-            default:
-                createButton.isEnabled = true
-                break
-            }
-        } else {
-            createButton.isEnabled = false
-        }
+    private func showScheduleEditor() {
+        guard let viewModel else { return }
+        
+        let scheduleEditorViewController = ScheduleEditorViewController()
+        
+        let scheduleEditorViewModel = viewModel.scheduleEditorViewModel
+        scheduleEditorViewController.setViewModel(scheduleEditorViewModel)
+        
+        navigationController?.pushViewController(scheduleEditorViewController, animated: true)
     }
     
-    private func showScheduleEditor() {
-        let scheduleEditorViewController = ScheduleEditorViewController()
-        scheduleEditorViewController.trackerEditorView = self
-        switch trackerType {
-        case .habit(let schedule):
-            scheduleEditorViewController.days = schedule.days
-            break
-        default:
-            break
-        }
-        navigationController?.pushViewController(scheduleEditorViewController, animated: true)
+    private func showCategories() {
+        guard let viewModel else { return }
+        
+        let categoriesViewController = CategoriesViewController()
+        
+        let categoriesViewModel = viewModel.categoriesViewModel
+        categoriesViewController.setViewModel(categoriesViewModel)
+        
+        navigationController?.pushViewController(categoriesViewController, animated: true)
     }
 
     private func setConstraints() {
@@ -295,26 +291,28 @@ final class TrackerEditorViewController: UIViewController {
             
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: stackItemXSpacing
+                constant: buttonsXSpacing
             ),
             buttonsStackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -stackItemXSpacing
+                constant: -buttonsXSpacing
             ),
             buttonsStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: ScreenType.shared.isWithIsland ? 0 : -stackItemYSpacing
+                constant: -buttonsBottomSpacing
             ),
-            buttonsStackView.heightAnchor.constraint(equalToConstant: 68),
+            buttonsStackView.heightAnchor.constraint(
+                equalToConstant: buttonsHeight
+            ),
             
             cancelButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
-                constant: 8
+                constant: buttonsTopSpacing
             ),
             
             createButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
-                constant: 8
+                constant: buttonsTopSpacing
             )
         ])
     }
@@ -326,18 +324,5 @@ final class TrackerEditorViewController: UIViewController {
         )
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
-    }
-    
-    // MARK: - Internal Methods
-    
-    func updateSchedule(from newValues: [WeekDay]) {
-        switch trackerType {
-        case .habit:
-            let newSchedule = Schedule(days: newValues)
-            trackerType = .habit(newSchedule)
-            break
-        default:
-            break
-        }
     }
 }

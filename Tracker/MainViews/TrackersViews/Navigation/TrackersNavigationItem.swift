@@ -45,14 +45,16 @@ final class TrackersNavigationItem: UIViewController {
         return collectionView
     } ()
     
-    private lazy var stubView: TrackersStubView = {
-        let stubView = TrackersStubView()
+    private lazy var stubView: StubView = {
+        let stubView = StubView()
+        stubView.labelText = stubLabelText
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
     } ()
     
     // MARK: - UI Properties
     
+    private let stubLabelText = "Что будем отслеживать?"
     private let addButtonIconName = "Icons/Plus"
     private let dateButtonSpace = 6.0
     
@@ -61,22 +63,13 @@ final class TrackersNavigationItem: UIViewController {
     private(set) var selectedDate: Date = Date()
     
     // MARK: - Private Properties
-    
-    private let trackerCategoryStore = TrackerCategoryStore()
+
     private let trackerStore = TrackerStore()
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // TODO: Пока категорий нет, тут добавляется дефолтная категория.
-        // Удалить этот фрагмент когда появится создание категорий.
-        do {
-            try trackerCategoryStore.addCategory(
-                TrackersMockData.defaultCategoryTitle
-            )
-        } catch {}
         
         trackerStore.delegate = self
         
@@ -96,7 +89,6 @@ final class TrackersNavigationItem: UIViewController {
     @objc
     private func didTapAddButton() {
         let trackerEditorNavigationController = TrackerEditorNavigationController()
-        trackerEditorNavigationController.trackersNavigationItem = self
         present(trackerEditorNavigationController, animated: true)
     }
     
@@ -150,7 +142,18 @@ final class TrackersNavigationItem: UIViewController {
 
 extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
+        let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
+
+        let newCategoriesIndices: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
+            into: []
+        ) { (result, data) in
+            let title = data.title
+            if !oldCategories.contains(where: { $0.title == title }) {
+                guard let index = newCategories.firstIndex(where: { $0.title == title }) else { return }
+                result.append(index)
+            }
+        } : []
         
         guard !newCategories.isEmpty else {
             showStub()
@@ -160,8 +163,10 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         guard collectionView.categories.isEmpty else {
             collectionView.categories = newCategories
             collectionView.performBatchUpdates {
-                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-                collectionView.insertItems(at: insertedIndexPaths)
+                newCategoriesIndices.forEach {
+                    collectionView.insertSections(IndexSet(integer: $0))
+                }
+                collectionView.insertItems(at: update.insertedIndexes)
             }
             return
         }
