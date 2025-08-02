@@ -133,7 +133,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     var daysNumber: Int? {
         didSet {
-            let daysString = getString(forDaysNumber: daysNumber)
+            let daysString = String.localizedStringWithFormat(
+                NSLocalizedString("numberOfDays", comment: "Number of days marked"),
+                daysNumber ?? 0
+            )
             updateText(inLabel: counterLabel, to: daysString)
         }
     }

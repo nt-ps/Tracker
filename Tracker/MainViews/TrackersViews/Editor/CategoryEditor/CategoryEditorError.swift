@@ -6,26 +6,13 @@ enum CategoryEditorError: Error {
     
     var localizedDescription: String? {
         switch self {
-        case .emptyTitle: nil
-        case .longTitle(let maxValue): getLongTitleErrorString(maxValue: maxValue)
+        case .emptyTitle:
+            return nil
+        case .longTitle(let maxValue):
+            return String.localizedStringWithFormat(
+                NSLocalizedString("stringLengthLimit", comment: "Number of characters entered"),
+                maxValue
+            )
         }
-    }
-    
-    private func getLongTitleErrorString(maxValue: Int) -> String {
-        var string = "Ограничение \(maxValue) "
-
-        switch maxValue % 10 {
-        case 1:
-            string += "символ"
-            break
-        case 2, 3, 4:
-            string += "символа"
-            break
-        default:
-            string += "символов"
-            break
-        }
-        
-        return string
     }
 }
