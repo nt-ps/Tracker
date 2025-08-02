@@ -145,7 +145,7 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
 
-        let newCategoriesIndeces: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
+        let newCategoriesIndices: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
             into: []
         ) { (result, data) in
             let title = data.title
@@ -163,7 +163,7 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         guard collectionView.categories.isEmpty else {
             collectionView.categories = newCategories
             collectionView.performBatchUpdates {
-                newCategoriesIndeces.forEach {
+                newCategoriesIndices.forEach {
                     collectionView.insertSections(IndexSet(integer: $0))
                 }
                 collectionView.insertItems(at: update.insertedIndexes)

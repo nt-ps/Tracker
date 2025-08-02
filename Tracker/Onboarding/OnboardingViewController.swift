@@ -4,10 +4,15 @@ final class OnboardingViewController: UIPageViewController {
     
     // MARK: - Views
     
-    lazy var pages: [UIViewController] = [
-        FirstOnboardingScreenViewController(),
-        SecondOnboardingScreenViewController()
-    ]
+    lazy var pages: [UIViewController] = {
+        let firstScreen = OnboardingScreenViewController()
+        firstScreen.backgroundImage = UIImage(resource: .Onboarding.firstScreenBackground)
+        firstScreen.labelText = "Отслеживайте только то, что хотите"
+        let secondScreen = OnboardingScreenViewController()
+        secondScreen.backgroundImage = UIImage(resource: .Onboarding.secondScreenBackground)
+        secondScreen.labelText = "Даже если это не литры воды и йога"
+        return [firstScreen, secondScreen]
+    } ()
     
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()

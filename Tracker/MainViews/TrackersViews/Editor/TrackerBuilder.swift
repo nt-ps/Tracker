@@ -59,9 +59,15 @@ final class TrackerBuilder {
     }
     
     func getTracker() throws -> Tracker {
-        guard validate() else { throw TrackerBuilderError.trackerIsNotFull }
-        // Допускаю анврап, потому что в validate проходит проверка на nil.
-        return Tracker(id: id, name: name!, color: color!, emoji: emoji!, type: type!)
+        guard
+            validate(),
+            let name,
+            let color,
+            let emoji,
+            let type
+        else { throw TrackerBuilderError.trackerIsNotFull }
+        
+        return Tracker(id: id, name: name, color: color, emoji: emoji, type: type)
     }
     
     // MARK: - Private Methods

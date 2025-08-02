@@ -1,12 +1,11 @@
 import UIKit
 
-final class SecondOnboardingScreenViewController: UIViewController {
+final class OnboardingScreenViewController: UIViewController {
     
     // MARK: - Views
     
     private lazy var backgroundView: UIImageView = {
-        let background = UIImage(resource: backgroundResource)
-        let backgroundView = UIImageView(image: background)
+        let backgroundView = UIImageView(image: backgroundImage)
         backgroundView.contentMode = .scaleAspectFill
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         return backgroundView
@@ -26,8 +25,8 @@ final class SecondOnboardingScreenViewController: UIViewController {
     
     // MARK: - UI Properties
     
-    private let backgroundResource: ImageResource = .Onboarding.secondScreenBackground
-    private let labelText = "Даже если это не литры воды и йога"
+    var backgroundImage: UIImage?
+    var labelText: String?
     
     // MARK: - Lifecycle
     
