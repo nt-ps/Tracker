@@ -9,7 +9,7 @@ struct Tracker {
     
     init(
         id: UUID = UUID(),
-        name: String = "Без названия",
+        name: String = NSLocalizedString("defaultTitle", comment: "Default title"),
         color: UIColor = .TrackerColors.color5,
         emoji: Character = "🥸",
         type: TrackerType = .event

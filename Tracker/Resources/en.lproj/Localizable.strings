@@ -1,0 +1,86 @@
+// MARK: - General.
+
+defaultTitle = "Untitled";
+
+doneButtonTitle = "Done";
+cancelButtonTitle = "Cancel";
+createButtonTitle = "Create";
+
+// MARK: - Days of the week.
+
+mondayFull = "Monday";
+mondayShort = "Mon";
+
+tuesdayFull = "Tuesday";
+tuesdayShort = "Tue";
+
+wednesdayFull = "Wednesday";
+wednesdayShort = "Wed";
+
+thursdayFull = "Thursday";
+thursdayShort = "Thu";
+
+fridayFull = "Friday";
+fridayShort = "Fri";
+
+saturdayFull = "Saturday";
+saturdayShort = "Sat";
+
+sundayFull = "Sunday";
+sundayShort = "Sun";
+
+// MARK: - Category Editor.
+
+categoryEditor.textFieldPlaceholder = "Enter category name";
+categoryEditor.newCategoryTitle = "New category";
+categoryEditor.editCategoryTitle = "Edit category";
+
+// MARK: - Category Selector.
+
+categorySelector.title = "Category";
+categorySelector.stubText = "Habits and events can be\ncombined by meaning";
+categorySelector.addButtonTitle = "Add category";
+
+// MARK: - Main Editor.
+
+mainEditor.newHabitEditorTitle = "New Habit";
+mainEditor.newEventEditorTitle = "New Irregular Event";
+mainEditor.nameFieldPlaceholder = "Enter tracker name";
+mainEditor.categoryButtonTitle = "Category";
+mainEditor.scheduleButtonTitle = "Schedule";
+mainEditor.emojiCollectionTitle = "Emoji";
+mainEditor.colorCollectionTitle = "Color";
+
+// MARK: - Schedule Editor.
+
+scheduleEditor.title = "Schedule";
+
+// MARK: - Type Selector.
+
+typeSelector.title = "Create tracker";
+typeSelector.habitButtonTitle = "Habit";
+typeSelector.eventButtonTitle = "Irregular event";
+
+// MARK: - Tracker Builder Errors.
+
+trackerBuilderErrors.trackerIsNotFull = "Tracker is not fully defined";
+
+// MARK: - Trackers View.
+
+trackersView.title = "Trackers";
+trackersView.stubText = "What will we track?";
+
+// MARK: - Main Tab Bar.
+
+mainTabBar.trackersTitle = "Trackers";
+mainTabBar.statisticsTitle = "Statistics";
+
+// MARK: - Schedule.
+
+schedule.everyDay = "Every day";
+
+// MARK: - Onboarding.
+
+onboarding.firstScreenText = "Track only what you want";
+onboarding.secondScreenText = "Even if it's not glasses of water and yoga";
+onboarding.buttonTitle = "Now that's technology!";

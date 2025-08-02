@@ -57,7 +57,8 @@ final class ParametersTableView: UITableView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("ParametersTableView.init(coder:) has not been implemented")
+        super.init(coder: coder)
+        print("ParametersTableView.init(coder:) has not been implemented")
     }
     
     // MARK: - UI Updates

@@ -14,7 +14,11 @@ final class TypeSelectorViewController: UIViewController {
     
     private lazy var habitButton: SolidButton = {
         let habitButton = SolidButton()
-        habitButton.setTitle("Привычка", for: .normal)
+        let buttonTitle = NSLocalizedString(
+            "typeSelector.habitButtonTitle",
+            comment: "Habit button title"
+        )
+        habitButton.setTitle(buttonTitle, for: .normal)
         habitButton.addTarget(
             self,
             action: #selector(didTapHabitButton),
@@ -25,7 +29,11 @@ final class TypeSelectorViewController: UIViewController {
     
     private lazy var eventButton: SolidButton = {
         let eventButton = SolidButton()
-        eventButton.setTitle("Нерегулярное событие", for: .normal)
+        let buttonTitle = NSLocalizedString(
+            "typeSelector.eventButtonTitle",
+            comment: "Event button title"
+        )
+        eventButton.setTitle(buttonTitle, for: .normal)
         eventButton.addTarget(
             self,
             action: #selector(didTapEventButton),
@@ -43,7 +51,7 @@ final class TypeSelectorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = NSLocalizedString("typeSelector.title", comment: "UI view title")
         navigationItem.setHidesBackButton(true, animated: true)
         
         view.addSubview(stackView)

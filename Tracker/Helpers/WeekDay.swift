@@ -1,3 +1,5 @@
+import Foundation
+
 enum WeekDay: Int, CaseIterable, Codable {
     case monday = 1
     case tuesday = 2
@@ -9,25 +11,25 @@ enum WeekDay: Int, CaseIterable, Codable {
     
     var name: String {
         switch self {
-        case .monday: "Понедельник"
-        case .tuesday: "Вторник"
-        case .wednesday: "Среда"
-        case .thursday: "Четверг"
-        case .friday: "Пятница"
-        case .saturday: "Суббота"
-        case .sunday: "Воскресенье"
+        case .monday: NSLocalizedString("mondayFull", comment: "Full name of monday")
+        case .tuesday: NSLocalizedString("tuesdayFull", comment: "Full name of tuesday")
+        case .wednesday: NSLocalizedString("wednesdayFull", comment: "Full name of wednesday")
+        case .thursday: NSLocalizedString("thursdayFull", comment: "Full name of thursday")
+        case .friday: NSLocalizedString("fridayFull", comment: "Full name of friday")
+        case .saturday: NSLocalizedString("saturdayFull", comment: "Full name of saturday")
+        case .sunday: NSLocalizedString("sundayFull", comment: "Full name of sunday")
         }
     }
     
     var shortName: String {
         switch self {
-        case .monday: "Пн"
-        case .tuesday: "Вт"
-        case .wednesday: "Ср"
-        case .thursday: "Чт"
-        case .friday: "Пт"
-        case .saturday: "Сб"
-        case .sunday: "Вс"
+        case .monday: NSLocalizedString("mondayShort", comment: "Short name of monday")
+        case .tuesday: NSLocalizedString("tuesdayShort", comment: "Short name of tuesday")
+        case .wednesday: NSLocalizedString("wednesdayShort", comment: "Short name of wednesday")
+        case .thursday: NSLocalizedString("thursdayShort", comment: "Short name of thursday")
+        case .friday: NSLocalizedString("fridayShort", comment: "Short name of friday")
+        case .saturday: NSLocalizedString("saturdayShort", comment: "Short name of saturday")
+        case .sunday: NSLocalizedString("sundayShort", comment: "Short name of sunday")
         }
     }
 }

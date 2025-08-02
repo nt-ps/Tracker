@@ -30,7 +30,10 @@ final class MainEditorViewController: UIViewController {
     
     private lazy var nameTextField: OneLineTextField = {
         let nameTextField = OneLineTextField()
-        nameTextField.placeholder = "Введите название трекера"
+        nameTextField.placeholder = NSLocalizedString(
+            "mainEditor.nameFieldPlaceholder",
+            comment: "Instruction to action with text field"
+        )
         nameTextField.editingAction = nameDidChange
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         return nameTextField
@@ -49,14 +52,20 @@ final class MainEditorViewController: UIViewController {
 
     private lazy var categoryButton: ButtonCellView = {
         let categoryButton = ButtonCellView()
-        categoryButton.title = "Категория"
+        categoryButton.title = NSLocalizedString(
+            "mainEditor.categoryButtonTitle",
+            comment: "Category button title"
+        )
         categoryButton.tapAction = showCategories
         return categoryButton
     } ()
     
     private lazy var scheduleButton: ButtonCellView = {
         let scheduleButton = ButtonCellView()
-        scheduleButton.title = "Расписание"
+        scheduleButton.title = NSLocalizedString(
+            "mainEditor.scheduleButtonTitle",
+            comment: "Schedule button title"
+        )
         scheduleButton.tapAction = showScheduleEditor
         return scheduleButton
     } ()
@@ -67,7 +76,10 @@ final class MainEditorViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: layout
         )
-        emojiCollectionView.title = "Emoji"
+        emojiCollectionView.title = NSLocalizedString(
+            "mainEditor.emojiCollectionTitle",
+            comment: "Emoji сollection title"
+        )
         emojiCollectionView.addValues(viewModel?.emojiValues)
         emojiCollectionView.selectionAction = emojiDidChange
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -80,7 +92,10 @@ final class MainEditorViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: layout
         )
-        colorCollectionView.title = "Цвет"
+        colorCollectionView.title = NSLocalizedString(
+            "mainEditor.colorCollectionTitle",
+            comment: "Color collection title"
+        )
         colorCollectionView.addValues(viewModel?.colorValues)
         colorCollectionView.selectionAction = colorDidChange
         colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -98,7 +113,8 @@ final class MainEditorViewController: UIViewController {
     
     private lazy var cancelButton: OutlineButton = {
         let cancelButton = OutlineButton()
-        cancelButton.setTitle("Отменить", for: .normal)
+        let buttonTitle = NSLocalizedString("cancelButtonTitle", comment: "Cancel button title")
+        cancelButton.setTitle(buttonTitle, for: .normal)
         cancelButton.addTarget(
             self,
             action: #selector(didTapCancelButton),
@@ -109,7 +125,8 @@ final class MainEditorViewController: UIViewController {
     
     private lazy var createButton: SolidButton = {
         let createButton = SolidButton()
-        createButton.setTitle("Создать", for: .normal)
+        let buttonTitle = NSLocalizedString("createButtonTitle", comment: "Create button title")
+        createButton.setTitle(buttonTitle, for: .normal)
         createButton.addTarget(
             self,
             action: #selector(didTapCreateButton),

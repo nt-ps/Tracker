@@ -7,10 +7,16 @@ final class OnboardingViewController: UIPageViewController {
     lazy var pages: [UIViewController] = {
         let firstScreen = OnboardingScreenViewController()
         firstScreen.backgroundImage = UIImage(resource: .Onboarding.firstScreenBackground)
-        firstScreen.labelText = "Отслеживайте только то, что хотите"
+        firstScreen.labelText = NSLocalizedString(
+            "onboarding.firstScreenText",
+            comment: "Text for the first page"
+        )
         let secondScreen = OnboardingScreenViewController()
         secondScreen.backgroundImage = UIImage(resource: .Onboarding.secondScreenBackground)
-        secondScreen.labelText = "Даже если это не литры воды и йога"
+        secondScreen.labelText = NSLocalizedString(
+            "onboarding.secondScreenText",
+            comment: "Text for the second page"
+        )
         return [firstScreen, secondScreen]
     } ()
     
@@ -28,7 +34,11 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var doneButton: SolidButton = {
         let doneButton = SolidButton()
-        doneButton.setTitle("Вот это технологии!", for: .normal)
+        let buttonTitle = NSLocalizedString(
+            "onboarding.buttonTitle",
+            comment: "Onboarding button title"
+        )
+        doneButton.setTitle(buttonTitle, for: .normal)
         doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),

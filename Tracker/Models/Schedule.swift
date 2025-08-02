@@ -1,3 +1,5 @@
+import Foundation
+
 struct Schedule {
     var isEmpty: Bool { days.isEmpty }
     
@@ -20,7 +22,7 @@ struct Schedule {
     
     func toString() -> String {
         if WeekDay.allCases.allSatisfy({ days.contains($0) }) {
-            return "Каждый день"
+            return NSLocalizedString("schedule.everyDay", comment: "Text when selecting all days")
         }
         
         let array = days.map{ $0.shortName }

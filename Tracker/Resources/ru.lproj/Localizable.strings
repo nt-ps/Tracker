@@ -1,0 +1,86 @@
+// MARK: - General.
+
+defaultTitle = "Без названия";
+
+doneButtonTitle = "Готово";
+cancelButtonTitle = "Отменить";
+createButtonTitle = "Создать";
+
+// MARK: - Days of the week.
+
+mondayFull = "Понедельник";
+mondayShort = "Пн";
+
+tuesdayFull = "Вторник";
+tuesdayShort = "Вт";
+
+wednesdayFull = "Среда";
+wednesdayShort = "Ср";
+
+thursdayFull = "Четверг";
+thursdayShort = "Чт";
+
+fridayFull = "Пятница";
+fridayShort = "Пт";
+
+saturdayFull = "Суббота";
+saturdayShort = "Сб";
+
+sundayFull = "Воскресенье";
+sundayShort = "Вс";
+
+// MARK: - Category Editor.
+
+categoryEditor.textFieldPlaceholder = "Введите название категории";
+categoryEditor.newCategoryTitle = "Новая категория";
+categoryEditor.editCategoryTitle = "Редактирование категории";
+
+// MARK: - Category Selector.
+
+categorySelector.title = "Категория";
+categorySelector.stubText = "Привычки и события можно\nобъединить по смыслу";
+categorySelector.addButtonTitle = "Добавить категорию";
+
+// MARK: - Main Editor.
+
+mainEditor.newHabitEditorTitle = "Новая привычка";
+mainEditor.newEventEditorTitle = "Новое нерегулярное событие";
+mainEditor.nameFieldPlaceholder = "Введите название трекера";
+mainEditor.categoryButtonTitle = "Категория";
+mainEditor.scheduleButtonTitle = "Расписание";
+mainEditor.emojiCollectionTitle = "Emoji";
+mainEditor.colorCollectionTitle = "Цвет";
+
+// MARK: - Schedule Editor.
+
+scheduleEditor.title = "Расписание";
+
+// MARK: - Type Selector.
+
+typeSelector.title = "Создание трекера";
+typeSelector.habitButtonTitle = "Привычка";
+typeSelector.eventButtonTitle = "Нерегулярное событие";
+
+// MARK: - Tracker Builder Errors.
+
+trackerBuilderErrors.trackerIsNotFull = "Трекер определен не полностью";
+
+// MARK: - Trackers View.
+
+trackersView.title = "Трекеры";
+trackersView.stubText = "Что будем отслеживать?";
+
+// MARK: - Main Tab Bar.
+
+mainTabBar.trackersTitle = "Трекеры";
+mainTabBar.statisticsTitle = "Статистика";
+
+// MARK: - Schedule.
+
+schedule.everyDay = "Каждый день";
+
+// MARK: - Onboarding.
+
+onboarding.firstScreenText = "Отслеживайте только то, что хотите";
+onboarding.secondScreenText = "Даже если это не литры воды и йога";
+onboarding.buttonTitle = "Вот это технологии!";

@@ -6,7 +6,7 @@ final class TrackersNavigationItem: UIViewController {
     
     private lazy var addBarButtonItem: UIBarButtonItem = {
         let addBarButtonItem = UIBarButtonItem(
-            image: UIImage(named: addButtonIconName),
+            image: UIImage(resource: addButtonIconResource),
             style: .plain,
             target: self,
             action: #selector(self.didTapAddButton)
@@ -54,8 +54,11 @@ final class TrackersNavigationItem: UIViewController {
     
     // MARK: - UI Properties
     
-    private let stubLabelText = "Что будем отслеживать?"
-    private let addButtonIconName = "Icons/Plus"
+    private let stubLabelText = NSLocalizedString(
+        "trackersView.stubText",
+        comment: "Display text when list is empty"
+    )
+    private let addButtonIconResource: ImageResource = .Icons.plus
     private let dateButtonSpace = 6.0
     
     // MARK: - Internal Properties
@@ -73,7 +76,7 @@ final class TrackersNavigationItem: UIViewController {
         
         trackerStore.delegate = self
         
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString("trackersView.title", comment: "UI view title")
         
         navigationItem.leftBarButtonItem = addBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem

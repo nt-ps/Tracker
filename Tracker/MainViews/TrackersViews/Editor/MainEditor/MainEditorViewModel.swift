@@ -16,8 +16,8 @@ final class MainEditorViewModel {
     
     var mainEditorTitle: String? {
         switch model.type {
-        case .habit: "Новая привычка"
-        case .event: "Новое нерегулярное событие"
+        case .habit: NSLocalizedString("mainEditor.newHabitEditorTitle", comment: "New habit editor title")
+        case .event: NSLocalizedString("mainEditor.newEventEditorTitle", comment: "New event editor title")
         default: ""
         }
     }

@@ -26,6 +26,7 @@ final class SolidButton: UIButton {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("SolidButton.init(coder:) has not been implemented")
+        super.init(coder: coder)
+        print("SolidButton.init(coder:) has not been implemented")
     }
 }

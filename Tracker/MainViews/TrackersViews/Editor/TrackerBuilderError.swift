@@ -15,7 +15,10 @@ enum TrackerBuilderError: Error {
                 maxValue
             )
         case .trackerIsNotFull:
-            return "Трекер определен не полностью"
+            return NSLocalizedString(
+                "trackerBuilderErrors.trackerIsNotFull",
+                comment: "Error description"
+            )
         }
     }
 }

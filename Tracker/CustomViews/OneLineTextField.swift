@@ -81,7 +81,8 @@ final class OneLineTextField: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("OneLineTextField.init(coder:) has not been implemented")
+        super.init(coder: coder)
+        print("OneLineTextField.init(coder:) has not been implemented")
     }
 
     // MARK: - Text Field Actions

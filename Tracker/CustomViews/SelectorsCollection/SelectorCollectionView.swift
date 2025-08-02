@@ -4,7 +4,7 @@ final class SelectorCollectionView: UICollectionView {
 
     // MARK: - Internal Properties
 
-    var title: String = "Без названия"
+    var title: String = NSLocalizedString("defaultTitle", comment: "Default title")
     
     private(set) var selectedValue: Any?
     var selectionAction: (() -> Void)?

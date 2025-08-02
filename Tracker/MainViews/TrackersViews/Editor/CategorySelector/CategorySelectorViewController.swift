@@ -31,7 +31,10 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var stubView: StubView = {
         let stubView = StubView()
-        stubView.labelText = "Привычки и события можно\nобъединить по смыслу"
+        stubView.labelText = NSLocalizedString(
+            "categorySelector.stubText",
+            comment: "Display text when list is empty"
+        )
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
     } ()
@@ -47,7 +50,11 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addCategoryButton: SolidButton = {
         let doneButton = SolidButton()
-        doneButton.setTitle("Добавить категорию", for: .normal)
+        let buttonTitle = NSLocalizedString(
+            "categorySelector.addButtonTitle",
+            comment: "Add category button title"
+        )
+        doneButton.setTitle(buttonTitle, for: .normal)
         doneButton.addTarget(
             self,
             action: #selector(didTapAddCategoryButton),
@@ -77,7 +84,7 @@ final class CategoriesViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        navigationItem.title = "Категория"
+        navigationItem.title = NSLocalizedString("categorySelector.title", comment: "UI view title")
         navigationItem.setHidesBackButton(true, animated: true)
         
         view.addSubview(buttonsStackView)

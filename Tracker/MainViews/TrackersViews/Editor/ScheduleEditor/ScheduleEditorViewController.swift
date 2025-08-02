@@ -38,7 +38,8 @@ final class ScheduleEditorViewController: UIViewController {
     
     private lazy var doneButton: SolidButton = {
         let doneButton = SolidButton()
-        doneButton.setTitle("Готово", for: .normal)
+        let buttonTitle = NSLocalizedString("doneButtonTitle", comment: "Done button title")
+        doneButton.setTitle(buttonTitle, for: .normal)
         doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
@@ -69,7 +70,7 @@ final class ScheduleEditorViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        navigationItem.title = "Расписание"
+        navigationItem.title = NSLocalizedString("scheduleEditor.title", comment: "UI view title")
         navigationItem.setHidesBackButton(true, animated: true)
         
         scrollView.addSubview(stackView)

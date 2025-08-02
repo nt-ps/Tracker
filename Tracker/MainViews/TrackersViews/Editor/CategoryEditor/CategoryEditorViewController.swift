@@ -6,7 +6,10 @@ final class CategoryEditorViewController: UIViewController {
     
     private lazy var titleTextField: OneLineTextField = {
         let titleTextField = OneLineTextField()
-        titleTextField.placeholder = "Введите название категории"
+        titleTextField.placeholder = NSLocalizedString(
+            "categoryEditor.textFieldPlaceholder",
+            comment: "Instruction to action with text field"
+        )
         titleTextField.text = viewModel?.categoryTitle
         titleTextField.editingAction = titleDidChange
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -24,7 +27,8 @@ final class CategoryEditorViewController: UIViewController {
     
     private lazy var createButton: SolidButton = {
         let createButton = SolidButton()
-        createButton.setTitle("Готово", for: .normal)
+        let buttonTitle = NSLocalizedString("doneButtonTitle", comment: "Done button title")
+        createButton.setTitle(buttonTitle, for: .normal)
         createButton.addTarget(
             self,
             action: #selector(didTapCreateButton),

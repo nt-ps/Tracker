@@ -125,7 +125,7 @@ final class TrackerRecordStore {
             format: "%K == %@ AND %K == %@",
             #keyPath(TrackerRecordCoreData.tracker.trackerId),
             "\(record.trackerId)",
-            #keyPath(TrackerRecordCoreData.date),
+            #keyPath(TrackerRecordCoreData.date.timeIntervalSince1970),
             date
         )
         

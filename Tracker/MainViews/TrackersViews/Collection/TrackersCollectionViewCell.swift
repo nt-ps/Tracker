@@ -312,29 +312,4 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             doneButtonIcon.heightAnchor.constraint(equalToConstant: iconSize.height)
         ])
     }
-    
-    // MARK: - Private Methods
-    
-    private func getString(forDaysNumber value: Int?) -> String {
-        let number = value ?? 0
-        
-        var dayString: String
-        if number % 100 / 10 < 2 {
-            dayString = "дней";
-        }
-
-        switch number % 10 {
-        case 1:
-            dayString = "день"
-            break
-        case 2, 3, 4:
-            dayString = "дня"
-            break
-        default:
-            dayString = "дней"
-            break
-        }
-        
-        return "\(number) \(dayString)"
-    }
 }

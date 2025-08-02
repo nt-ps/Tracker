@@ -28,6 +28,7 @@ final class OutlineButton: UIButton {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("OutlineButton.init(coder:) has not been implemented")
+        super.init(coder: coder)
+        print("OutlineButton.init(coder:) has not been implemented")
     }
 }

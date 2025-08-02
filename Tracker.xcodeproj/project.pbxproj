@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		3A53FFE22E3E4E9F00767D6E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 3A53FFE02E3E4E9F00767D6E /* Localizable.stringsdict */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		3A0BAA2E2E09CC2D00884FCF /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A53FFE12E3E4E9F00767D6E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = Tracker/Resources/ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,7 +45,6 @@
 		3A0BAA252E09CC2D00884FCF = {
 			isa = PBXGroup;
 			children = (
-				3A53FFE02E3E4E9F00767D6E /* Localizable.stringsdict */,
 				3A0BAA302E09CC2D00884FCF /* Tracker */,
 				3A0BAA2F2E09CC2D00884FCF /* Products */,
 			);
@@ -114,6 +108,8 @@
 			);
 			mainGroup = 3A0BAA252E09CC2D00884FCF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3A0BAA2F2E09CC2D00884FCF /* Products */;
 			projectDirPath = "";
@@ -129,7 +125,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A53FFE22E3E4E9F00767D6E /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,17 +139,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		3A53FFE02E3E4E9F00767D6E /* Localizable.stringsdict */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3A53FFE12E3E4E9F00767D6E /* ru */,
-			);
-			name = Localizable.stringsdict;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3A0BAA422E09CC2F00884FCF /* Debug */ = {

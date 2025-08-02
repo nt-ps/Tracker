@@ -1,3 +1,5 @@
+import Foundation
+
 final class CategoryEditorViewModel {
     
     // MARK: - Bindings
@@ -9,7 +11,9 @@ final class CategoryEditorViewModel {
     
     var categories: [String] { categoriesSource.categories }
     var editorTitle: String {
-        model.title == nil ? "Новая категория" : "Редактирование категории"
+        model.title == nil
+            ? NSLocalizedString("categoryEditor.newCategoryTitle", comment: "New category title")
+            : NSLocalizedString("categoryEditor.editCategoryTitle", comment: "Edit category title")
     }
     var categoryTitle: String? { model.title }
     
