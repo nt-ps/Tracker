@@ -29,13 +29,13 @@ final class MainEditorViewModel {
         }
     }
     
-    var categoriesViewModel: CategoriesViewModel {
-        let categoriesViewModel = CategoriesViewModel(for: model)
-        categoriesViewModel.onCategorySelectionStateChange = { [weak self] category in
+    var categorySelectorViewModel: CategorySelectorViewModel {
+        let categorySelectorViewModel = CategorySelectorViewModel(for: model)
+        categorySelectorViewModel.onCategorySelectionStateChange = { [weak self] category in
             self?.onCategorySelectionStateChange?(category)
             self?.validate()
         }
-        return categoriesViewModel
+        return categorySelectorViewModel
     }
     
     var scheduleEditorViewModel: ScheduleEditorViewModel {

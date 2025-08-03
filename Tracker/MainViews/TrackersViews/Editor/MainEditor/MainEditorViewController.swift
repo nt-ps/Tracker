@@ -240,9 +240,9 @@ final class MainEditorViewController: UIViewController {
     private func showCategories() {
         guard let viewModel else { return }
         
-        let categoriesViewController = CategoriesViewController()
+        let categoriesViewController = CategorySelectorViewController()
         
-        let categoriesViewModel = viewModel.categoriesViewModel
+        let categoriesViewModel = viewModel.categorySelectorViewModel
         categoriesViewController.setViewModel(categoriesViewModel)
         
         navigationController?.pushViewController(categoriesViewController, animated: true)

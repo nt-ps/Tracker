@@ -2,42 +2,12 @@ import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
-    // MARK: - Views
-    
-    private lazy var infoView: UIView = {
-        let infoView = UIView()
+     lazy var infoView: TrackerInfoView = {
+        let infoView = TrackerInfoView()
         infoView.layer.masksToBounds = true
         infoView.layer.cornerRadius = infoViewCornerRadius
         infoView.translatesAutoresizingMaskIntoConstraints = false
-        
-        infoView.addSubview(emojiLabel)
-        infoView.addSubview(nameLabel)
-        
         return infoView
-    } ()
-    
-    private lazy var emojiLabel: UILabel = {
-        let emojiLabel = UILabel()
-        // Установил 13 вместо 16, потому что при значении 16
-        // эмодзи слишком большое в сравнении с макетом.
-        emojiLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        emojiLabel.textAlignment = .center
-        emojiLabel.backgroundColor = .AppColors.white.withAlphaComponent(0.3)
-        emojiLabel.layer.masksToBounds = true
-        emojiLabel.layer.cornerRadius = emojiLabelCornerRadius
-        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        return emojiLabel
-    } ()
-    
-    private lazy var nameLabel: UILabel = {
-        let nameLabel = UILabel()
-        nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        nameLabel.numberOfLines = 2
-        nameLabel.adjustsFontSizeToFitWidth = false
-        nameLabel.lineBreakMode = .byTruncatingTail
-        nameLabel.textColor = .AppColors.white
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        return nameLabel
     } ()
     
     private lazy var controlView: UIView = {
@@ -80,10 +50,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     // MARK: - UI Properties
     
     private lazy var infoViewCornerRadius = 16.0
-    private lazy var infoViewPadding = 12.0
-    
-    private lazy var emojiLabelSize = 24.0
-    private lazy var emojiLabelCornerRadius = emojiLabelSize / 2
     
     private lazy var controlViewXPadding = 12.0
     private lazy var controlViewTopPadding = 8.0
@@ -120,24 +86,22 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     var emoji: Character? {
         didSet {
-            let emojiString = emoji != nil ? String(emoji!) : nil
-            updateText(inLabel: emojiLabel, to: emojiString)
+            infoView.emoji = emoji
         }
     }
     
     var name: String? {
         didSet {
-            updateText(inLabel: nameLabel, to: name)
+            infoView.name = name
         }
     }
     
     var daysNumber: Int? {
         didSet {
-            let daysString = String.localizedStringWithFormat(
+            counterLabel.text = String.localizedStringWithFormat(
                 NSLocalizedString("numberOfDays", comment: "Number of days marked"),
                 daysNumber ?? 0
             )
-            updateText(inLabel: counterLabel, to: daysString)
         }
     }
     
@@ -146,6 +110,24 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             let newValue = isDone ?? false
             updateDoneButton(isEnable: !newValue)
         }
+    }
+    
+    var contextMenuPreview: UIViewController? {
+        let vc = UIViewController()
+        
+        let size = self.infoView.bounds.size
+        vc.preferredContentSize = CGSize(width: size.width, height: size.height)
+        
+        let infoViewClone = infoView.clone
+        vc.view.addSubview(infoViewClone)
+        NSLayoutConstraint.activate([
+            infoViewClone.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor),
+            infoViewClone.topAnchor.constraint(equalTo: vc.view.topAnchor),
+            infoViewClone.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor),
+            infoViewClone.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor)
+        ])
+
+        return vc
     }
     
     // MARK: - Initializers
@@ -186,37 +168,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             infoView.topAnchor.constraint(equalTo: topAnchor),
             infoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             infoView.bottomAnchor.constraint(equalTo: controlView.topAnchor),
-            
-            emojiLabel.leadingAnchor.constraint(
-                equalTo: infoView.leadingAnchor,
-                constant: infoViewPadding
-            ),
-            emojiLabel.topAnchor.constraint(
-                equalTo: infoView.topAnchor,
-                constant: infoViewPadding
-            ),
-            emojiLabel.trailingAnchor.constraint(
-                lessThanOrEqualTo: infoView.trailingAnchor
-            ),
-            emojiLabel.topAnchor.constraint(lessThanOrEqualTo: infoView.topAnchor),
-            emojiLabel.widthAnchor.constraint(equalToConstant: emojiLabelSize),
-            emojiLabel.heightAnchor.constraint(equalTo: emojiLabel.widthAnchor),
-            
-            nameLabel.leadingAnchor.constraint(
-                equalTo: infoView.leadingAnchor,
-                constant: infoViewPadding
-            ),
-            nameLabel.topAnchor.constraint(
-                greaterThanOrEqualTo: emojiLabel.bottomAnchor
-            ),
-            nameLabel.trailingAnchor.constraint(
-                equalTo: infoView.trailingAnchor,
-                constant: -infoViewPadding
-            ),
-            nameLabel.bottomAnchor.constraint(
-                equalTo: infoView.bottomAnchor,
-                constant: -infoViewPadding
-            ),
         
             controlView.leadingAnchor.constraint(equalTo: leadingAnchor),
             controlView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -267,16 +218,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
                     equalTo: doneButton.centerYAnchor
                 )
             ])
-        }
-    }
-    
-    private func updateText(inLabel label: UILabel, to newValue: String?) {
-        if let newValue {
-            if newValue != label.text {
-                label.text = newValue
-            }
-        } else {
-            label.text = ""
         }
     }
     

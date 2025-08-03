@@ -147,9 +147,52 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         
         return UICollectionViewCell()
     }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard
+            let indexPath = indexPaths.first,
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        
+        return UIContextMenuConfiguration(
+            previewProvider: { trackerCell.contextMenuPreview },
+            actionProvider: { suggestedActions in
+                return UIMenu(children: [
+                    UIAction(
+                        title: NSLocalizedString("pinButtonTitle", comment: "Pin button title")
+                    ) { _ in /* TODO: action */ },
+                    UIAction(
+                        title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
+                    ) { _ in /* TODO: action */ },
+                    UIAction(
+                        title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
+                        attributes: .destructive
+                    ) { _ in /* TODO: action */ }
+                ])
+            }
+        )
+    }
     
-    // На будущее. Метод вызова контекстного меню.
-    //func collectionView(_ collectionView: UICollectionView,contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? { }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        highlightPreviewForItemAt indexPath: IndexPath
+    ) -> UITargetedPreview? {
+        guard
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        return UITargetedPreview(view: trackerCell.infoView)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        return UITargetedPreview(view: trackerCell.infoView)
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,

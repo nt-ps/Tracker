@@ -8,6 +8,10 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
     weak var delegate: TrackerStoreDelegate?
     
     var trackersByCategory: [TrackerCategory] {
+        // Добавил на случай, когда поменялся заголовок категории,
+        // Чтобы при обновлении до коллекции дошло новое имя.
+        try? fetchedResultsController?.performFetch()
+        
         guard let categories = fetchedResultsController?.sections else { return [] }
     
         let trackerCategories = categories.map {
@@ -55,6 +59,9 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
     } ()
 
     private var insertedIndexes: [IndexPath] = []
+    private var deletedIndexes: [IndexPath] = []
+    private var movedIndexes: [IndexPath] = []
+    private var updatedIndexes: [IndexPath] = []
     
     // MARK: - Initializers
     
@@ -151,13 +158,24 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes.removeAll()
+        deletedIndexes.removeAll()
+        movedIndexes.removeAll()
+        updatedIndexes.removeAll()
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
-            TrackerStoreUpdate(insertedIndexes: insertedIndexes)
+            TrackerStoreUpdate(
+                insertedIndexes: insertedIndexes,
+                deletedIndexes: deletedIndexes,
+                movedIndexes: movedIndexes,
+                updatedIndexes: updatedIndexes
+            )
         )
         insertedIndexes.removeAll()
+        deletedIndexes.removeAll()
+        movedIndexes.removeAll()
+        updatedIndexes.removeAll()
     }
     
     func controller(
@@ -171,6 +189,16 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .insert:
             if let indexPath = newIndexPath {
                 insertedIndexes.append(indexPath)
+            }
+        case .delete:
+            if let indexPath {
+                deletedIndexes.append(indexPath)
+            }
+        // case .move:
+        //    movedIndexes.append(indexPath)
+        case .update:
+            if let indexPath {
+                updatedIndexes.append(indexPath)
             }
         default:
             break

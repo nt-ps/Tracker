@@ -70,19 +70,47 @@ final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
         }
         
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
-        try updateExistingCategory(trackerCategoryCoreData, with: title)
+        trackerCategoryCoreData.title = title
+        trackerCategoryCoreData.trackers = []
+        try context.save()
+    }
+    
+    func updateCategory(_ oldTitle: String, newTitle: String) throws {
+        guard let context else {
+            throw TrackerCategoryStoreError.couldNotGetContext
+        }
+        
+        guard let trackerCategoryCoreData = try? getCategoryCoreData(oldTitle) else {
+            throw TrackerCategoryStoreError.categoryNotFound
+        }
+    
+        trackerCategoryCoreData.title = newTitle
+        
+        // Прописал так, чтобы приходило уведомление об обновлении в TrackerStoreDelegate.
+        // Иначе коллекция никак не узнает об изменении заголовка.
+        let trackers = trackerCategoryCoreData.trackers?.array as? [TrackerCoreData]
+        trackers?.forEach { $0.category = trackerCategoryCoreData }
+        try context.save()
+    }
+    
+    func deleteCategory(_ title: String) throws {
+        guard let context else {
+            throw TrackerCategoryStoreError.couldNotGetContext
+        }
+        
+        guard let trackerCategoryCoreData = try getCategoryCoreData(title) else {
+            throw TrackerCategoryStoreError.categoryNotFound
+        }
+        
+        context.delete(trackerCategoryCoreData)
+        
+        let trackers = trackerCategoryCoreData.trackers?.array as? [TrackerCoreData]
+        trackers?.forEach { context.delete($0) }
+        
         try context.save()
     }
     
     // MARK: - Private Methods
-    
-    private func updateExistingCategory(
-        _ trackerCategoryCoreData: TrackerCategoryCoreData,
-        with title: String
-    ) throws {
-        trackerCategoryCoreData.title = title
-        trackerCategoryCoreData.trackers = []
-    }
     
     private func getCategoryCoreData(_ title: String) throws -> TrackerCategoryCoreData? {
         guard let context else {

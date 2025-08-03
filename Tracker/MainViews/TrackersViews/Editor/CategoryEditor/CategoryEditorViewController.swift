@@ -34,7 +34,7 @@ final class CategoryEditorViewController: UIViewController {
             action: #selector(didTapCreateButton),
             for: .touchUpInside
         )
-        createButton.isEnabled = false
+        createButton.isEnabled = viewModel?.categoryTitle != nil
         return createButton
     } ()
     
@@ -90,7 +90,7 @@ final class CategoryEditorViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
-        viewModel?.addCategory()
+        viewModel?.updateCategory()
         navigationController?.popViewController(animated: true)
     }
     

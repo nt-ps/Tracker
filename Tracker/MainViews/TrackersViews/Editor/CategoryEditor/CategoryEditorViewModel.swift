@@ -5,17 +5,18 @@ final class CategoryEditorViewModel {
     // MARK: - Bindings
     
     var onCategoryCreationAllowedStateChange: Binding<Bool>?
+    var onSelectedCategoryStateChange: Binding<String>?
     var onTitleErrorStateChange: Binding<String?>?
     
     // MARK: - Data Sources
     
     var categories: [String] { categoriesSource.categories }
     var editorTitle: String {
-        model.title == nil
+        model.newTitle == nil
             ? NSLocalizedString("categoryEditor.newCategoryTitle", comment: "New category title")
             : NSLocalizedString("categoryEditor.editCategoryTitle", comment: "Edit category title")
     }
-    var categoryTitle: String? { model.title }
+    var categoryTitle: String? { model.newTitle }
     
     // MARK: - Categories Source
     
@@ -52,9 +53,16 @@ final class CategoryEditorViewModel {
         validate()
     }
     
-    func addCategory() {
+    func updateCategory() {
         guard let categoryTitle else { return }
-        try? categoriesSource.addCategory(categoryTitle) // TODO: В будущем пробросить ошибку.
+        
+        // TODO: В будущем пробросить ошибки.
+        if let oldTitle = model.oldTitle {
+            onSelectedCategoryStateChange?(categoryTitle)
+            try? categoriesSource.updateCategory(oldTitle, newTitle: categoryTitle)
+        } else {
+            try? categoriesSource.addCategory(categoryTitle)
+        }
     }
     
     // MARK: - Private Methods

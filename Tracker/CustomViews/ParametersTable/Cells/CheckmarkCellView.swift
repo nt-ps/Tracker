@@ -27,7 +27,7 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clear
+        backgroundColor = .AppColors.background
         accessoryType = .none
         selectionStyle = .none
         
@@ -51,6 +51,14 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     
     func didSelect() {
         viewModel?.updateModel(isSelected)
+    }
+    
+    func didDelete() {
+        viewModel?.delete()
+    }
+    
+    func didEdit() {
+        viewModel?.edit()
     }
     
     private func updateView() {

@@ -64,7 +64,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clear
+        backgroundColor = .AppColors.background
         accessoryType = .disclosureIndicator
         selectionStyle = .none
         

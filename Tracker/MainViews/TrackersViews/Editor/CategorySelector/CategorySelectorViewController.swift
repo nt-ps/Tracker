@@ -1,6 +1,6 @@
 import UIKit
 
-final class CategoriesViewController: UIViewController {
+final class CategorySelectorViewController: UIViewController {
     
     // MARK: - UI Views
     
@@ -26,6 +26,21 @@ final class CategoriesViewController: UIViewController {
     private lazy var categoriesTableView: ParametersTableView = {
         let categoriesTableView = ParametersTableView()
         categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
+        categoriesTableView.contextMenu = { [weak self] value in
+            UIMenu(children: [
+                UIAction(
+                    title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
+                ) { _ in
+                    self?.didTapEditCategoryButton(value)
+                },
+                UIAction(
+                    title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
+                    attributes: .destructive
+                ) { _ in
+                    self?.didTapDeleteCategoryButton(value)
+                }
+            ])
+        }
         return categoriesTableView
     } ()
     
@@ -75,7 +90,7 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - View Model
     
-    private var viewModel: CategoriesViewModel?
+    private var viewModel: CategorySelectorViewModel?
     
     // MARK: - Lifecycle
     
@@ -95,7 +110,7 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - View Model Methods
     
-    func setViewModel(_ viewModel: CategoriesViewModel) {
+    func setViewModel(_ viewModel: CategorySelectorViewModel) {
         self.viewModel = viewModel
         bind()
     }
@@ -105,6 +120,12 @@ final class CategoriesViewController: UIViewController {
         
         viewModel.onCategoriesListStateChange = { [weak self] categories in
             self?.updateCategories(categories)
+        }
+        
+        viewModel.onCategoryEditStateChange = { [weak self] viewModel in
+            let categoryEditorViewController = CategoryEditorViewController()
+            categoryEditorViewController.setViewModel(viewModel)
+            self?.navigationController?.pushViewController(categoryEditorViewController, animated: true)
         }
     }
     
@@ -120,6 +141,39 @@ final class CategoriesViewController: UIViewController {
         categoryEditorViewController.setViewModel(categoryEditorViewModel)
         
         navigationController?.pushViewController(categoryEditorViewController, animated: true)
+    }
+    
+    private func didTapEditCategoryButton(_ sender: Any) {
+        guard let cell = sender as? CheckmarkCellView else { return }
+        cell.didEdit()
+    }
+    
+    private func didTapDeleteCategoryButton(_ sender: Any) {
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString(
+                "categorySelector.deleteAlertMessage",
+                comment: "Delete alert message"
+            ),
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
+            style: .destructive
+        ) { _ in
+            guard let cell = sender as? CheckmarkCellView else { return }
+            cell.didDelete()
+        }
+        alert.addAction(deleteAction)
+        
+        let cancelAction = UIAlertAction(
+            title: NSLocalizedString("cancelButtonTitle", comment: "Cancel button title"),
+            style: .cancel
+        )
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
     }
     
     // MARK: - UI Updates

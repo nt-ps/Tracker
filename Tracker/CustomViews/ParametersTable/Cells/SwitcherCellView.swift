@@ -38,7 +38,7 @@ final class SwitcherCellView: UITableViewCell, ParametersTableViewCellProtocol {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clear
+        backgroundColor = .AppColors.background
         selectionStyle = .none
         
         contentView.addSubview(titleLabel)

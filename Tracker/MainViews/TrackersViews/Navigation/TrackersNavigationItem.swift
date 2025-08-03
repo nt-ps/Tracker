@@ -147,33 +147,54 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
-
-        let newCategoriesIndices: [Int] = newCategories.count > oldCategories.count ? newCategories.reduce(
-            into: []
-        ) { (result, data) in
-            let title = data.title
-            if !oldCategories.contains(where: { $0.title == title }) {
-                guard let index = newCategories.firstIndex(where: { $0.title == title }) else { return }
-                result.append(index)
-            }
-        } : []
         
         guard !newCategories.isEmpty else {
             showStub()
             return
         }
         
-        guard collectionView.categories.isEmpty else {
-            collectionView.categories = newCategories
+        guard !oldCategories.isEmpty else {
+            showCollectionView(with: newCategories)
+            return
+        }
+        
+        collectionView.categories = newCategories
+        
+        if !update.deletedIndexes.isEmpty {
             collectionView.performBatchUpdates {
-                newCategoriesIndices.forEach {
-                    collectionView.insertSections(IndexSet(integer: $0))
+                collectionView.deleteItems(at: update.deletedIndexes)
+                for i in 0...oldCategories.count - 1 {
+                    if !newCategories.contains(where: { oldCategories[i].title == $0.title }) {
+                        collectionView.deleteSections(IndexSet(integer: i))
+                    }
+                }
+            }
+        }
+        
+        if !update.insertedIndexes.isEmpty {
+            collectionView.performBatchUpdates {
+                for i in 0...newCategories.count - 1 {
+                    if !oldCategories.contains(where: { $0.title == newCategories[i].title }) {
+                        collectionView.insertSections(IndexSet(integer: i))
+                    }
                 }
                 collectionView.insertItems(at: update.insertedIndexes)
             }
-            return
         }
-
-        showCollectionView(with: newCategories)
+        
+        if !update.updatedIndexes.isEmpty {
+            collectionView.performBatchUpdates {
+                let updateSectionsIndexes: Set<Int> = update.updatedIndexes.reduce(
+                    into: []
+                ) { (result, indexPath) in
+                    result.insert(indexPath.section)
+                }
+                updateSectionsIndexes.forEach {
+                    collectionView.reloadSections(IndexSet(integer: $0))
+                }
+                collectionView.reloadItems(at: update.insertedIndexes)
+            }
+        }
+        
     }
 }

@@ -20,6 +20,10 @@ final class ParametersTableView: UITableView {
         )
     }
     
+    // MARK: - Internal Properties
+    
+    var contextMenu: ((Any) -> UIMenu)?
+    
     // MARK: - Private Properties
     
     private var parameterCells: [ParametersTableViewCellProtocol] = []
@@ -31,7 +35,7 @@ final class ParametersTableView: UITableView {
         
         layer.masksToBounds = true
         layer.cornerRadius = 16
-        backgroundColor = .AppColors.background
+        backgroundColor = .clear
         isScrollEnabled = false
         
         // Удаление верхнего сепаратора.
@@ -99,7 +103,8 @@ extension ParametersTableView: UITableViewDelegate {
     
     func tableView(
         _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath) {
+        didSelectRowAt indexPath: IndexPath
+    ) {
         if
             let cell = tableView.cellForRow(at: indexPath) as? ButtonCellView,
             let action = cell.tapAction
@@ -112,8 +117,22 @@ extension ParametersTableView: UITableViewDelegate {
         }
     }
     
-    // На будущее. Создание контекстного меню.
-    // func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? { }
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard
+            let checkmarkCell = cellForRow(at: indexPath) as? CheckmarkCellView
+        else { return nil }
+        
+        guard let contextMenu else { return nil }
+        
+        let actions = contextMenu(checkmarkCell)
+        return UIContextMenuConfiguration(actionProvider: { suggestedActions in
+            return actions
+        })
+    }
 }
 
 extension ParametersTableView: UITableViewDataSource {

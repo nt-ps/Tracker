@@ -5,6 +5,9 @@ defaultTitle = "Untitled";
 doneButtonTitle = "Done";
 cancelButtonTitle = "Cancel";
 createButtonTitle = "Create";
+editButtonTitle = "Edit";
+deleteButtonTitle = "Delete";
+pinButtonTitle = "Pin";
 
 // MARK: - Days of the week.
 
@@ -40,6 +43,7 @@ categoryEditor.editCategoryTitle = "Edit category";
 categorySelector.title = "Category";
 categorySelector.stubText = "Habits and events can be\ncombined by meaning";
 categorySelector.addButtonTitle = "Add category";
+categorySelector.deleteAlertMessage = "Are you sure this category is not needed?";
 
 // MARK: - Main Editor.
 
