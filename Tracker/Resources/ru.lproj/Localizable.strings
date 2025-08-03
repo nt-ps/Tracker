@@ -8,6 +8,7 @@ createButtonTitle = "Создать";
 editButtonTitle = "Редактировать";
 deleteButtonTitle = "Удалить";
 pinButtonTitle = "Закрепить";
+saveButtonTitle = "Сохранить";
 
 // MARK: - Days of the week.
 
@@ -47,8 +48,10 @@ categorySelector.deleteAlertMessage = "Эта категория точно не
 
 // MARK: - Main Editor.
 
-mainEditor.newHabitEditorTitle = "Новая привычка";
-mainEditor.newEventEditorTitle = "Новое нерегулярное событие";
+mainEditor.newHabitTitle = "Новая привычка";
+mainEditor.newEventTitle = "Новое нерегулярное событие";
+mainEditor.editingHabitTitle = "Редактирование привычки";
+mainEditor.editingEventTitle = "Редактирование нерегулярного события";
 mainEditor.nameFieldPlaceholder = "Введите название трекера";
 mainEditor.categoryButtonTitle = "Категория";
 mainEditor.scheduleButtonTitle = "Расписание";
@@ -73,6 +76,7 @@ trackerBuilderErrors.trackerIsNotFull = "Трекер определен не п
 
 trackersView.title = "Трекеры";
 trackersView.stubText = "Что будем отслеживать?";
+trackersView.deleteAlertMessage = "Уверены что хотите удалить трекер?";
 
 // MARK: - Main Tab Bar.
 

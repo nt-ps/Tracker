@@ -9,6 +9,7 @@ final class TrackerBuilder {
     var color: UIColor?
     var emoji: Character?
     var type: TrackerType?
+    private(set) var recordsNum: Int?
     private var id: UUID
     
     // MARK: - Private Properties
@@ -19,6 +20,16 @@ final class TrackerBuilder {
     
     init() {
         self.id = UUID()
+    }
+    
+    init(for tracker: Tracker, category: String, recordsNum: Int) {
+        self.id = tracker.id
+        self.name = tracker.name
+        self.category = category
+        self.color = tracker.color
+        self.emoji = tracker.emoji
+        self.type = tracker.type
+        self.recordsNum = recordsNum
     }
     
     // MARK: - Internal Methods

@@ -8,6 +8,7 @@ createButtonTitle = "Create";
 editButtonTitle = "Edit";
 deleteButtonTitle = "Delete";
 pinButtonTitle = "Pin";
+saveButtonTitle = "Save";
 
 // MARK: - Days of the week.
 
@@ -47,8 +48,10 @@ categorySelector.deleteAlertMessage = "Are you sure this category is not needed?
 
 // MARK: - Main Editor.
 
-mainEditor.newHabitEditorTitle = "New Habit";
-mainEditor.newEventEditorTitle = "New Irregular Event";
+mainEditor.newHabitTitle = "New habit";
+mainEditor.newEventTitle = "New irregular event";
+mainEditor.editingHabitTitle = "Editing habit";
+mainEditor.editingEventTitle = "Editing irregular event";
 mainEditor.nameFieldPlaceholder = "Enter tracker name";
 mainEditor.categoryButtonTitle = "Category";
 mainEditor.scheduleButtonTitle = "Schedule";
@@ -73,6 +76,7 @@ trackerBuilderErrors.trackerIsNotFull = "Tracker is not fully defined";
 
 trackersView.title = "Trackers";
 trackersView.stubText = "What will we track?";
+trackersView.deleteAlertMessage = "Are you sure you want to delete the tracker?";
 
 // MARK: - Main Tab Bar.
 

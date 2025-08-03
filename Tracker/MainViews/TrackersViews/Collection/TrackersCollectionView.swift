@@ -157,20 +157,35 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
             let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
         else { return nil }
         
+        let tracker = categories[indexPath.section].trackers[indexPath.item]
+        
         return UIContextMenuConfiguration(
             previewProvider: { trackerCell.contextMenuPreview },
             actionProvider: { suggestedActions in
                 return UIMenu(children: [
-                    UIAction(
+                    /*UIAction(
                         title: NSLocalizedString("pinButtonTitle", comment: "Pin button title")
-                    ) { _ in /* TODO: action */ },
+                    ) { _ in /* TODO: action */ },*/
                     UIAction(
                         title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
-                    ) { _ in /* TODO: action */ },
+                    ) { [weak self] _ in
+                        guard let self else { return }
+                        let category = self.categories[indexPath.section].title
+                        let recordsNum = self.completedTrackers.count { record in
+                            record.trackerId == tracker.id
+                        }
+                        self.navigationItem?.editTracker(
+                            tracker,
+                            category: category,
+                            recordsNum: recordsNum
+                        )
+                    },
                     UIAction(
                         title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
                         attributes: .destructive
-                    ) { _ in /* TODO: action */ }
+                    ) { [weak self] _ in
+                        self?.navigationItem?.deleteTracker(tracker)
+                    }
                 ])
             }
         )
@@ -187,7 +202,11 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         return UITargetedPreview(view: trackerCell.infoView)
     }
     
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        dismissalPreviewForItemAt indexPath: IndexPath
+    ) -> UITargetedPreview? {
         guard
             let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
         else { return nil }

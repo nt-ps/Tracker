@@ -84,6 +84,10 @@ final class TrackersNavigationItem: UIViewController {
         navigationItem.searchController = UISearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
         
+        view.addSubview(collectionView)
+        view.addSubview(stubView)
+        setConstraint()
+        
         updateCollection()
     }
     
@@ -101,7 +105,56 @@ final class TrackersNavigationItem: UIViewController {
         updateCollection()
     }
     
+    // MARK: - Internal Methods
+    
+    func deleteTracker(_ tracker: Tracker) {
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString(
+                "trackersView.deleteAlertMessage",
+                comment: "Delete alert message"
+            ),
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
+            style: .destructive
+        ) { [weak self] _ in
+            try? self?.trackerStore.deleteTracker(tracker)
+        }
+        alert.addAction(deleteAction)
+        
+        let cancelAction = UIAlertAction(
+            title: NSLocalizedString("cancelButtonTitle", comment: "Cancel button title"),
+            style: .cancel
+        )
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
+    }
+    
+    func editTracker(_ tracker: Tracker, category: String, recordsNum: Int) {
+        let trackerEditorNavigationController = TrackerEditorNavigationController()
+        trackerEditorNavigationController.trackerBuilder = TrackerBuilder(
+            for: tracker, category: category, recordsNum: recordsNum
+        )
+        present(trackerEditorNavigationController, animated: true)
+    }
+    
     // MARK: - UI Updates
+    
+    private func setConstraint() {
+        NSLayoutConstraint.activate([
+            stubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
     
     func updateCollection() {
         trackerStore.setFetchRequest(for: selectedDate)
@@ -114,31 +167,17 @@ final class TrackersNavigationItem: UIViewController {
     }
     
     private func showStub() {
-        collectionView.willMove(toSuperview: nil)
-        collectionView.removeFromSuperview()
-        
-        view.addSubview(stubView)
-
-        NSLayoutConstraint.activate([
-            stubView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+        collectionView.isHidden = true
+        stubView.isHidden = false
+        stubView.bringSubviewToFront(collectionView)
     }
     
     private func showCollectionView(with categories: [TrackerCategory]) {
-        stubView.willMove(toSuperview: nil)
-        stubView.removeFromSuperview()
+        collectionView.isHidden = false
+        stubView.isHidden = true
+        collectionView.bringSubviewToFront(stubView)
         
         collectionView.categories = categories
-        view.addSubview(collectionView)
-        
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
         collectionView.reloadData()
     }
 }
@@ -147,11 +186,6 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         let oldCategories = collectionView.categories
         let newCategories = trackerStore.trackersByCategory
-        
-        guard !newCategories.isEmpty else {
-            showStub()
-            return
-        }
         
         guard !oldCategories.isEmpty else {
             showCollectionView(with: newCategories)
@@ -190,11 +224,55 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
                     result.insert(indexPath.section)
                 }
                 updateSectionsIndexes.forEach {
-                    collectionView.reloadSections(IndexSet(integer: $0))
+                    let header = collectionView.supplementaryView(
+                        forElementKind: UICollectionView.elementKindSectionHeader,
+                        at: IndexPath(item: 0, section: $0)
+                    ) as? HeaderView
+                    header?.title = newCategories[$0].title
                 }
-                collectionView.reloadItems(at: update.insertedIndexes)
+                collectionView.reloadItems(at: update.updatedIndexes)
             }
         }
         
+        // Не комментируйте это, пожалуйста, никак...
+        // Мне сложно объяснить, что я тут понаписал, но это работает для всех случаев перемещения.
+        // Когда удаляются секции, когда создаются новые, когда секции не трогаются.
+        // И ячейки обновляются при перемещении. Короче больше никак, иначе ругается.
+        if !update.movedIndexes.isEmpty {
+            collectionView.performBatchUpdates {
+                for i in 0...oldCategories.count - 1 {
+                    if !newCategories.contains(where: { oldCategories[i].title == $0.title }) {
+                        collectionView.deleteSections(IndexSet(integer: i))
+                    }
+                }
+                
+                for i in 0...newCategories.count - 1 {
+                    if !oldCategories.contains(where: { $0.title == newCategories[i].title }) {
+                        collectionView.insertSections(IndexSet(integer: i))
+                    }
+                }
+                
+                update.movedIndexes.forEach { indexes in
+                    if let oldSectionByNewData = newCategories.firstIndex(
+                        where: {$0.title == oldCategories[indexes.0.section].title}
+                    ) {
+                        collectionView.moveItem(
+                            at: IndexPath(item: indexes.0.item, section: oldSectionByNewData),
+                            to: indexes.1
+                        )
+                    } else {
+                        collectionView.insertItems(at: [indexes.1])
+                    }
+                }
+            }
+            
+            collectionView.performBatchUpdates {
+                collectionView.reloadItems(at: update.movedIndexes.map { $0.1 })
+            }
+        }
+        
+        if newCategories.isEmpty {
+            showStub()
+        }
     }
 }

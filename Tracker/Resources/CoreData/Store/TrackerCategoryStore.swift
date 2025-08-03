@@ -105,7 +105,11 @@ final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
         context.delete(trackerCategoryCoreData)
         
         let trackers = trackerCategoryCoreData.trackers?.array as? [TrackerCoreData]
-        trackers?.forEach { context.delete($0) }
+        trackers?.forEach { tracker in
+            let records = tracker.records?.allObjects as? [TrackerRecordCoreData]
+            records?.forEach { context.delete($0) }
+            context.delete(tracker)
+        }
         
         try context.save()
     }

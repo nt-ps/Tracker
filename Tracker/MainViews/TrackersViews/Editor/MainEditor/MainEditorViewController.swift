@@ -13,19 +13,28 @@ final class MainEditorViewController: UIViewController {
     } ()
     
     private lazy var parametersStackView: UIStackView = {
-        let parametersStackView = UIStackView(
-            arrangedSubviews: [
-                nameTextField,
-                parametersTableView,
-                emojiCollectionView,
-                colorCollectionView
-            ]
-        )
+        let parametersStackView = UIStackView(arrangedSubviews: [
+            nameTextField, parametersTableView,
+            emojiCollectionView, colorCollectionView
+        ])
+        if viewModel?.showRecordCounter ?? false {
+            parametersStackView.insertArrangedSubview(recordCounterLabel, at: 0)
+            parametersStackView.setCustomSpacing(40.0, after: recordCounterLabel)
+        }
         parametersStackView.axis = .vertical
         parametersStackView.spacing = stackItemYSpacing
         parametersStackView.translatesAutoresizingMaskIntoConstraints = false
         parametersStackView.isLayoutMarginsRelativeArrangement = true
         return parametersStackView
+    } ()
+    
+    private lazy var recordCounterLabel: UILabel = {
+        let recordCounterLabel = UILabel()
+        recordCounterLabel.font = .systemFont(ofSize: 32, weight: .bold)
+        recordCounterLabel.textColor = .AppColors.black
+        recordCounterLabel.textAlignment = .center
+        recordCounterLabel.translatesAutoresizingMaskIntoConstraints = false
+        return recordCounterLabel
     } ()
     
     private lazy var nameTextField: OneLineTextField = {
@@ -103,7 +112,7 @@ final class MainEditorViewController: UIViewController {
     } ()
     
     private lazy var buttonsStackView: UIStackView = {
-        let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
+        let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, saveButton])
         buttonsStackView.axis = .horizontal
         buttonsStackView.spacing = 8.0
         buttonsStackView.distribution = .fillEqually
@@ -123,17 +132,17 @@ final class MainEditorViewController: UIViewController {
         return cancelButton
     } ()
     
-    private lazy var createButton: SolidButton = {
-        let createButton = SolidButton()
-        let buttonTitle = NSLocalizedString("createButtonTitle", comment: "Create button title")
-        createButton.setTitle(buttonTitle, for: .normal)
-        createButton.addTarget(
+    private lazy var saveButton: SolidButton = {
+        let saveButton = SolidButton()
+        let buttonTitle = viewModel?.saveButtonTitle
+        saveButton.setTitle(buttonTitle, for: .normal)
+        saveButton.addTarget(
             self,
-            action: #selector(didTapCreateButton),
+            action: #selector(didTapSaveButton),
             for: .touchUpInside
         )
-        createButton.isEnabled = false
-        return createButton
+        saveButton.isEnabled = false
+        return saveButton
     } ()
     
     // MARK: - UI Properties
@@ -179,11 +188,21 @@ final class MainEditorViewController: UIViewController {
         guard let viewModel = viewModel else { return }
 
         viewModel.onTrackerCreationAllowedStateChange = { [weak self] isCreationAllowed in
-            self?.createButton.isEnabled = isCreationAllowed
+            self?.saveButton.isEnabled = isCreationAllowed
+        }
+        
+        if viewModel.showRecordCounter {
+            viewModel.onRecordCounterStateChange = { [weak self] text in
+                self?.recordCounterLabel.text = text
+            }
         }
         
         viewModel.onNameErrorStateChange = { [weak self] message in
             self?.nameTextField.message = message
+        }
+        
+        viewModel.onNameStateChange = { [weak self] text in
+            self?.nameTextField.text = text
         }
         
         viewModel.onCategorySelectionStateChange = { [weak self] category in
@@ -195,6 +214,16 @@ final class MainEditorViewController: UIViewController {
         viewModel.onScheduleStateChange = { [weak self] schedule in
             self?.scheduleButton.subtitle = schedule
         }
+        
+        viewModel.onEmojiStateChange = { [weak self] emoji in
+            self?.emojiCollectionView.selectedValue = emoji
+        }
+        
+        viewModel.onColorStateChange = { [weak self] color in
+            self?.colorCollectionView.selectedValue = color
+        }
+        
+        viewModel.updateData()
     }
     
     // MARK: - UI Actions
@@ -205,8 +234,8 @@ final class MainEditorViewController: UIViewController {
     }
     
     @objc
-    private func didTapCreateButton() {
-        viewModel?.addTracker()
+    private func didTapSaveButton() {
+        viewModel?.saveTracker()
         dismiss(animated: true)
     }
     
@@ -327,7 +356,7 @@ final class MainEditorViewController: UIViewController {
                 constant: buttonsTopSpacing
             ),
             
-            createButton.topAnchor.constraint(
+            saveButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
                 constant: buttonsTopSpacing
             )

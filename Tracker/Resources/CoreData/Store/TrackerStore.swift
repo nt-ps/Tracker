@@ -43,7 +43,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         )
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "category.title", ascending: false),
-            NSSortDescriptor(key: "name", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true)
         ]
         
         fetchedResultsController = NSFetchedResultsController(
@@ -60,7 +60,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
 
     private var insertedIndexes: [IndexPath] = []
     private var deletedIndexes: [IndexPath] = []
-    private var movedIndexes: [IndexPath] = []
+    private var movedIndexes: [(IndexPath, IndexPath)] = []
     private var updatedIndexes: [IndexPath] = []
     
     // MARK: - Initializers
@@ -90,25 +90,49 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         try? fetchedResultsController?.performFetch()
     }
     
-    func addTracker(_ tracker: Tracker, to categoryTitle: String) throws {
+    func saveTracker(_ tracker: Tracker, to categoryTitle: String) throws {
         guard let context else {
             throw TrackerStoreError.couldNotGetContext
         }
-        let trackerCoreData = TrackerCoreData(context: context)
-        updateExistingTracker(trackerCoreData, with: tracker)
-        guard let categoryCoreData = try? getCategoryCoreData(categoryTitle) else {
-            throw TrackerCategoryStoreError.categoryNotFound
+        
+        let trackerCoreData = try getTrackerCoreData(tracker) ?? TrackerCoreData(context: context)
+        try updateExistingTracker(trackerCoreData, with: tracker, category: categoryTitle)
+        
+        try context.save()
+    }
+    
+    func deleteTracker(_ tracker: Tracker) throws {
+        guard let context else {
+            throw TrackerStoreError.couldNotGetContext
         }
-        categoryCoreData.addToTrackers(trackerCoreData)
+        
+        guard let trackerCoreData = try? getTrackerCoreData(tracker) else {
+            throw TrackerStoreError.trackerNotFound
+        }
+        
+        context.delete(trackerCoreData)
+        
+        let records = trackerCoreData.records?.allObjects as? [TrackerRecordCoreData]
+        records?.forEach { context.delete($0) }
+        
         try context.save()
     }
 
-    func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
+    func updateExistingTracker(
+        _ trackerCoreData: TrackerCoreData,
+        with tracker: Tracker,
+        category: String
+    ) throws {
         trackerCoreData.trackerId = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.color = tracker.color.toHexString()
         trackerCoreData.emoji = String(tracker.emoji)
         trackerCoreData.type = tracker.type.toString()
+        
+        guard let categoryCoreData = try getCategoryCoreData(category) else {
+            throw TrackerStoreError.categoryNotFound
+        }
+        categoryCoreData.addToTrackers(trackerCoreData)
     }
     
     // MARK: - Private Methods
@@ -138,7 +162,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
     //   это не хорошо.
     private func getCategoryCoreData(_ title: String) throws -> TrackerCategoryCoreData? {
         guard let context else {
-            throw TrackerCategoryStoreError.couldNotGetContext
+            throw TrackerStoreError.couldNotGetContext
         }
         
         let request = NSFetchRequest<TrackerCategoryCoreData>(
@@ -149,6 +173,24 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
             format: "%K == %@",
             #keyPath(TrackerCategoryCoreData.title),
             title
+        )
+
+        return try context.fetch(request).first
+    }
+    
+    private func getTrackerCoreData(_ tracker: Tracker) throws -> TrackerCoreData? {
+        guard let context else {
+            throw TrackerStoreError.couldNotGetContext
+        }
+        
+        let request = NSFetchRequest<TrackerCoreData>(
+            entityName: String(describing: TrackerCoreData.self)
+        )
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCoreData.trackerId),
+            "\(tracker.id)"
         )
 
         return try context.fetch(request).first
@@ -194,8 +236,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             if let indexPath {
                 deletedIndexes.append(indexPath)
             }
-        // case .move:
-        //    movedIndexes.append(indexPath)
+        case .move:
+            if let indexPath, let newIndexPath {
+                movedIndexes.append((indexPath, newIndexPath))
+            }
         case .update:
             if let indexPath {
                 updatedIndexes.append(indexPath)
@@ -204,4 +248,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             break
         }
     }
+    
+    /*
+    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange sectionInfo: any NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        let t = 0
+    }
+     */
 }
