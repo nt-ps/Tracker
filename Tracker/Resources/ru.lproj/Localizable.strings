@@ -77,6 +77,15 @@ trackerBuilderErrors.trackerIsNotFull = "Трекер определен не п
 trackersView.title = "Трекеры";
 trackersView.stubText = "Что будем отслеживать?";
 trackersView.deleteAlertMessage = "Уверены что хотите удалить трекер?";
+trackersView.filters = "Фильтры";
+
+// MARK: - Filters View.
+
+filtersView.title = "Фильтры";
+filtersView.allTrackersButtonTitle = "Все трекеры";
+filtersView.trackersForTodayButtonTitle = "Трекеры на сегодня";
+filtersView.finishedTrackersCheckmarkTitle = "Завершенные";
+filtersView.unfinishedTrackersCheckmarkTitle = "Не завершенные";
 
 // MARK: - Main Tab Bar.
 

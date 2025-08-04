@@ -77,6 +77,15 @@ trackerBuilderErrors.trackerIsNotFull = "Tracker is not fully defined";
 trackersView.title = "Trackers";
 trackersView.stubText = "What will we track?";
 trackersView.deleteAlertMessage = "Are you sure you want to delete the tracker?";
+trackersView.filters = "Filters";
+
+// MARK: - Filters View.
+
+filtersView.title = "Filters";
+filtersView.allTrackersButtonTitle = "All trackers";
+filtersView.trackersForTodayButtonTitle = "Trackers for today";
+filtersView.finishedTrackersCheckmarkTitle = "Finished";
+filtersView.unfinishedTrackersCheckmarkTitle = "Unfinished";
 
 // MARK: - Main Tab Bar.
 

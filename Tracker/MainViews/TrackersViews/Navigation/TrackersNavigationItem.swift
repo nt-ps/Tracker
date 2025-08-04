@@ -42,6 +42,7 @@ final class TrackersNavigationItem: UIViewController {
         )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.navigationItem = self
+        collectionView.contentInset.bottom = filtersButtonHeight + filtersButtonXPadding * 2
         return collectionView
     } ()
     
@@ -52,6 +53,27 @@ final class TrackersNavigationItem: UIViewController {
         return stubView
     } ()
     
+    private lazy var filtersButton: UIButton = {
+        let filtersButton = UIButton()
+        let title = NSLocalizedString(
+            "trackersView.filters",
+            comment: "Filter button title"
+        )
+        filtersButton.setTitle(title, for: .normal)
+        filtersButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        filtersButton.setTitleColor(.AppColors.white, for: .normal)
+        filtersButton.backgroundColor = .AppColors.blue
+        filtersButton.layer.masksToBounds = true
+        filtersButton.layer.cornerRadius = 16
+        filtersButton.translatesAutoresizingMaskIntoConstraints = false
+        filtersButton.addTarget(
+            self,
+            action: #selector(didFiltersButton),
+            for: .touchUpInside
+        )
+        return filtersButton
+    } ()
+    
     // MARK: - UI Properties
     
     private let stubLabelText = NSLocalizedString(
@@ -60,6 +82,10 @@ final class TrackersNavigationItem: UIViewController {
     )
     private let addButtonIconResource: ImageResource = .Icons.plus
     private let dateButtonSpace = 6.0
+    
+    private let filtersButtonHeight = 50.0
+    private let filtersButtonXPadding = 20.0
+    private let filtersButtonYSpacing = 16.0
     
     // MARK: - Internal Properties
     
@@ -86,6 +112,7 @@ final class TrackersNavigationItem: UIViewController {
         
         view.addSubview(collectionView)
         view.addSubview(stubView)
+        view.addSubview(filtersButton)
         setConstraint()
         
         updateCollection()
@@ -103,6 +130,12 @@ final class TrackersNavigationItem: UIViewController {
     private func dateChanged(_ sender: UIDatePicker) {
         selectedDate = sender.date
         updateCollection()
+    }
+    
+    @objc
+    private func didFiltersButton() {
+        let filtersNavigationController = FiltersNavigationController()
+        present(filtersNavigationController, animated: true)
     }
     
     // MARK: - Internal Methods
@@ -152,8 +185,22 @@ final class TrackersNavigationItem: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            filtersButton.heightAnchor.constraint(equalToConstant: filtersButtonHeight),
+            filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filtersButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -filtersButtonYSpacing
+            )
         ])
+        
+        if let filtersButtonLabel = filtersButton.titleLabel {
+            filtersButton.widthAnchor.constraint(
+                equalTo: filtersButtonLabel.widthAnchor,
+                constant: filtersButtonXPadding * 2
+            ).isActive = true
+        }
     }
     
     func updateCollection() {
