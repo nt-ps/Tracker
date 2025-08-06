@@ -20,37 +20,34 @@ final class FiltersViewController: UIViewController {
 
     private lazy var allTrackersButton: ButtonCellView = {
         let allTrackersButton = ButtonCellView()
-        allTrackersButton.title = NSLocalizedString(
-            "filtersView.allTrackersButtonTitle",
-            comment: "All trackers button title"
-        )
+        allTrackersButton.title = viewModel?.allTrackersButtonTitle
         allTrackersButton.isAccessoryHidden = true
-        // allTrackersButton.tapAction = showCategories
+        allTrackersButton.tapAction = { [weak self] in
+            self?.viewModel?.setAllTrackersFilter()
+        }
         return allTrackersButton
     } ()
     
     private lazy var trackersForTodayButton: ButtonCellView = {
         let trackersForTodayButton = ButtonCellView()
-        trackersForTodayButton.title = NSLocalizedString(
-            "filtersView.trackersForTodayButtonTitle",
-            comment: "Trackers for today button title"
-        )
+        trackersForTodayButton.title = viewModel?.trackersForTodayButtonTitle
         trackersForTodayButton.isAccessoryHidden = true
-        // trackersForTodayButton.tapAction = showCategories
+        trackersForTodayButton.tapAction = { [weak self] in
+            self?.viewModel?.setForTodayFilter()
+        }
         return trackersForTodayButton
     } ()
     
     private lazy var finishedTrackersCheckmark: CheckmarkCellView = {
         let finishedTrackersCheckmark = CheckmarkCellView()
-        let title = NSLocalizedString(
-            "filtersView.finishedTrackersCheckmarkTitle",
-            comment: "Finished trackers checkmark title"
-        )
+        let title = viewModel?.finishedTrackersCheckmarkTitle
         let viewModel = CheckmarkCellViewModel(
             title: title,
             value: false,
-            isSelected: false,
-            selectAction: nil
+            isSelected: viewModel?.isFinishedCheckmarkSelected ?? false,
+            selectAction: { [weak self] _ in
+                self?.viewModel?.setFinishedFilter()
+            }
         )
         finishedTrackersCheckmark.setViewModel(viewModel)
         return finishedTrackersCheckmark
@@ -58,15 +55,14 @@ final class FiltersViewController: UIViewController {
     
     private lazy var unfinishedTrackersCheckmark: CheckmarkCellView = {
         let unfinishedTrackersCheckmark = CheckmarkCellView()
-        let title = NSLocalizedString(
-            "filtersView.unfinishedTrackersCheckmarkTitle",
-            comment: "Unfinished trackers checkmark title"
-        )
+        let title = viewModel?.unfinishedTrackersCheckmarkTitle
         let viewModel = CheckmarkCellViewModel(
             title: title,
             value: false,
-            isSelected: false,
-            selectAction: nil
+            isSelected: viewModel?.isUnfinishedCheckmarkSelected ?? false,
+            selectAction: { [weak self] _ in
+                self?.viewModel?.setUnfinishedFilter()
+            }
         )
         unfinishedTrackersCheckmark.setViewModel(viewModel)
         return unfinishedTrackersCheckmark
@@ -77,6 +73,10 @@ final class FiltersViewController: UIViewController {
     private let tableItemXSpacing = 16.0
     private let tableItemYSpacing = 24.0
     
+    // MARK: - View Model
+    
+    private var viewModel: FiltersViewModel?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -84,17 +84,18 @@ final class FiltersViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        navigationItem.title = NSLocalizedString(
-            "filtersView.title",
-            comment: "Filters view title"
-        )
+        navigationItem.title = viewModel?.viewTitle
         navigationItem.setHidesBackButton(true, animated: true)
 
         view.addSubview(filtersTableView)
         setConstraints()
     }
     
-    // MARK: - UI Actions
+    // MARK: - View Model Methods
+    
+    func setViewModel(_ viewModel: FiltersViewModel) {
+        self.viewModel = viewModel
+    }
     
     // MARK: - UI Updates
 

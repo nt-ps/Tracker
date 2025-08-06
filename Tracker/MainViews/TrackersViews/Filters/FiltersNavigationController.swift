@@ -2,7 +2,7 @@ import UIKit
 
 final class FiltersNavigationController: UINavigationController {
     
-    var trackerBuilder: TrackerBuilder?
+    var viewModel: FiltersViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,6 +14,9 @@ final class FiltersNavigationController: UINavigationController {
         ]
 
         let filtersViewController = FiltersViewController()
+        if let viewModel {
+            filtersViewController.setViewModel(viewModel)
+        }
         viewControllers = [ filtersViewController ]
     }
 }

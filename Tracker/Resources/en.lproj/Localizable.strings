@@ -75,7 +75,8 @@ trackerBuilderErrors.trackerIsNotFull = "Tracker is not fully defined";
 // MARK: - Trackers View.
 
 trackersView.title = "Trackers";
-trackersView.stubText = "What will we track?";
+trackersView.emptyStubText = "What will we track?";
+trackersView.notFoundStubText = "Nothing found";
 trackersView.deleteAlertMessage = "Are you sure you want to delete the tracker?";
 trackersView.filters = "Filters";
 

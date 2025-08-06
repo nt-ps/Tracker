@@ -115,8 +115,6 @@ final class TrackerRecordStore {
             throw TrackerCategoryStoreError.couldNotGetContext
         }
         
-        let date = NSDate(timeIntervalSince1970: record.date.timeIntervalSince1970)
-        
         let request = NSFetchRequest<TrackerRecordCoreData>(
             entityName: String(describing: TrackerRecordCoreData.self)
         )
@@ -125,8 +123,8 @@ final class TrackerRecordStore {
             format: "%K == %@ AND %K == %@",
             #keyPath(TrackerRecordCoreData.tracker.trackerId),
             "\(record.trackerId)",
-            #keyPath(TrackerRecordCoreData.date.timeIntervalSince1970),
-            date
+            #keyPath(TrackerRecordCoreData.date),
+            record.date as CVarArg
         )
         
         return try context.fetch(request).first

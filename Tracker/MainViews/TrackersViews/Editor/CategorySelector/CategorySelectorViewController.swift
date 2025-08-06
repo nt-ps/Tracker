@@ -50,6 +50,7 @@ final class CategorySelectorViewController: UIViewController {
             "categorySelector.stubText",
             comment: "Display text when list is empty"
         )
+        stubView.imageResource = .StubImages.emptyList
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
     } ()

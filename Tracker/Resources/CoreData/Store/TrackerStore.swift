@@ -77,18 +77,113 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
     
     // MARK: - Internal Methods
 
-    func setFetchRequest(for date: Date) {
-        var dayNumber = Calendar.current.component(.weekday, from: date)
+    func setFetchRequest(for filter: Filter) {
+        var dayNumber = Calendar.current.component(.weekday, from: filter.date)
         dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
         
-        fetchedResultsController?.fetchRequest.predicate = NSPredicate(
+        let datePredicate = NSPredicate(
             format: "%K CONTAINS[n] %@",
             #keyPath(TrackerCoreData.type),
             "\(dayNumber)"
         )
         
+        if let isFinished = filter.isFinished {
+            guard
+                let startOfDay = Calendar.current.date(
+                    from: Calendar.current.dateComponents([.year, .month, .day], from: filter.date)
+                ),
+                let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)
+            else { return }
+            
+            let predicateForStartOfDay = NSPredicate(
+                format: "ANY %K.%K >= %@",
+                #keyPath(TrackerCoreData.records),
+                #keyPath(TrackerRecordCoreData.date),
+                startOfDay as CVarArg
+            )
+            let predicateForEndOfDay = NSPredicate(
+                format: "ANY %K.%K < %@",
+                #keyPath(TrackerCoreData.records),
+                #keyPath(TrackerRecordCoreData.date),
+                endOfDay as CVarArg
+            )
+            
+            var predicate = NSCompoundPredicate(
+                andPredicateWithSubpredicates: [predicateForStartOfDay, predicateForEndOfDay]
+            )
+            
+            if !isFinished {
+                let isEmptyPredicate = NSPredicate(
+                    format: "%K.@count < 1",
+                    #keyPath(TrackerCoreData.records)
+                )
+                
+                predicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicate)
+                predicate = NSCompoundPredicate(
+                    orPredicateWithSubpredicates: [isEmptyPredicate, predicate]
+                )
+            }
+            
+            predicate = NSCompoundPredicate(
+                andPredicateWithSubpredicates: [datePredicate, predicate]
+            )
+            
+            fetchedResultsController?.fetchRequest.predicate = predicate
+        } else {
+            fetchedResultsController?.fetchRequest.predicate = datePredicate
+        }
+        
         try? fetchedResultsController?.performFetch()
     }
+    
+    /*
+    func setFetchRequest(for date: Date) {
+        var dayNumber = Calendar.current.component(.weekday, from: date)
+        dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
+        
+        /*
+        fetchedResultsController?.fetchRequest.predicate = NSPredicate(
+            format: "%K CONTAINS[n] %@",
+            #keyPath(TrackerCoreData.type),
+            "\(dayNumber)"
+        )
+         */
+
+        
+        guard
+            let day = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: Date.now)),
+            let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: day)
+        else {
+            return
+        }
+        
+        let zero = NSPredicate(
+            format: "%K.@count < 1",
+            #keyPath(TrackerCoreData.records)
+        )
+        let first = NSPredicate(
+            format: "ANY %K.%K >= %@",
+            #keyPath(TrackerCoreData.records),
+            #keyPath(TrackerRecordCoreData.date),
+            day as CVarArg
+        )
+        let second = NSPredicate(
+            format: "ANY %K.%K < %@",
+            #keyPath(TrackerCoreData.records),
+            #keyPath(TrackerRecordCoreData.date),
+            nextDay as CVarArg
+        )
+        
+        let third = NSCompoundPredicate(andPredicateWithSubpredicates: [first, second])
+        let third2 = NSCompoundPredicate(notPredicateWithSubpredicate: third)
+        let third3 = NSCompoundPredicate(orPredicateWithSubpredicates: [zero, third2])
+        
+        fetchedResultsController?.fetchRequest.predicate = third3
+        
+        
+        try? fetchedResultsController?.performFetch()
+    }
+    */
     
     func saveTracker(_ tracker: Tracker, to categoryTitle: String) throws {
         guard let context else {
@@ -248,10 +343,4 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             break
         }
     }
-    
-    /*
-    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange sectionInfo: any NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
-        let t = 0
-    }
-     */
 }

@@ -12,14 +12,14 @@ final class CheckmarkCellViewModel {
     // MARK: - Initializer
     
     init(
-        title: String,
+        title: String?,
         value: Any,
         isSelected: Bool,
         selectAction: ((Any?) -> Void)? = nil,
         deleteAction: ((Any?) -> Void)? = nil,
         editAction: ((Any?) -> Void)? = nil,
     ) {
-        self.title = title
+        self.title = title ?? ""
         self.value = value
         self.isSelected = isSelected
         self.selectAction = selectAction

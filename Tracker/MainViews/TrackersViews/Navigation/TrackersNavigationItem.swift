@@ -28,7 +28,7 @@ final class TrackersNavigationItem: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.date = selectedDate
+        datePicker.date = filter.date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         return datePicker
@@ -48,7 +48,6 @@ final class TrackersNavigationItem: UIViewController {
     
     private lazy var stubView: StubView = {
         let stubView = StubView()
-        stubView.labelText = stubLabelText
         stubView.translatesAutoresizingMaskIntoConstraints = false
         return stubView
     } ()
@@ -65,6 +64,8 @@ final class TrackersNavigationItem: UIViewController {
         filtersButton.backgroundColor = .AppColors.blue
         filtersButton.layer.masksToBounds = true
         filtersButton.layer.cornerRadius = 16
+        filtersButton.layer.borderColor = UIColor.AppColors.blue.cgColor
+        filtersButton.layer.borderWidth = 5
         filtersButton.translatesAutoresizingMaskIntoConstraints = false
         filtersButton.addTarget(
             self,
@@ -76,10 +77,18 @@ final class TrackersNavigationItem: UIViewController {
     
     // MARK: - UI Properties
     
-    private let stubLabelText = NSLocalizedString(
-        "trackersView.stubText",
+    private let emptyStubLabelText = NSLocalizedString(
+        "trackersView.emptyStubText",
         comment: "Display text when list is empty"
     )
+    private let emptyStubImageResource: ImageResource = .StubImages.emptyList
+    
+    private let notFoundStubLabelText = NSLocalizedString(
+        "trackersView.notFoundStubText",
+        comment: "Display text when nothing found"
+    )
+    private let notFoundStubImageResource: ImageResource = .StubImages.notFound
+    
     private let addButtonIconResource: ImageResource = .Icons.plus
     private let dateButtonSpace = 6.0
     
@@ -88,11 +97,17 @@ final class TrackersNavigationItem: UIViewController {
     private let filtersButtonYSpacing = 16.0
     
     // MARK: - Internal Properties
-    
-    private(set) var selectedDate: Date = Date()
+
+    var selectedDate: Date { filter.date }
     
     // MARK: - Private Properties
 
+    private var filter: Filter = Filter() {
+        didSet {
+            datePicker.date = filter.date
+        }
+    }
+    
     private let trackerStore = TrackerStore()
     
     // MARK: - Lifecycle
@@ -128,13 +143,21 @@ final class TrackersNavigationItem: UIViewController {
     
     @objc
     private func dateChanged(_ sender: UIDatePicker) {
-        selectedDate = sender.date
+        filter.date = sender.date
         updateCollection()
     }
     
     @objc
     private func didFiltersButton() {
         let filtersNavigationController = FiltersNavigationController()
+        let filtersViewModel = FiltersViewModel(for: filter)
+        filtersViewModel.onFilterStateChange = { [weak self] newFilter in
+            self?.filter = newFilter
+            self?.updateFilterButton()
+            self?.updateCollection()
+            filtersNavigationController.dismiss(animated: true)
+        }
+        filtersNavigationController.viewModel = filtersViewModel
         present(filtersNavigationController, animated: true)
     }
     
@@ -203,8 +226,15 @@ final class TrackersNavigationItem: UIViewController {
         }
     }
     
+    func updateFilterButton() {
+        filtersButton.layer.borderColor =
+            filter.isFinished != nil
+            ? UIColor.AppColors.white.withAlphaComponent(0.5).cgColor
+            : UIColor.AppColors.blue.cgColor
+    }
+    
     func updateCollection() {
-        trackerStore.setFetchRequest(for: selectedDate)
+        trackerStore.setFetchRequest(for: filter)
         let categories = trackerStore.trackersByCategory
         if categories.isEmpty {
             showStub()
@@ -215,6 +245,15 @@ final class TrackersNavigationItem: UIViewController {
     
     private func showStub() {
         collectionView.isHidden = true
+        
+        if filter.isFinished == nil {
+            stubView.labelText = emptyStubLabelText
+            stubView.imageResource = emptyStubImageResource
+        } else {
+            stubView.labelText = notFoundStubLabelText
+            stubView.imageResource = notFoundStubImageResource
+        }
+        
         stubView.isHidden = false
         stubView.bringSubviewToFront(collectionView)
     }

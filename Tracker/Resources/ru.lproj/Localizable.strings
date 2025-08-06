@@ -75,7 +75,8 @@ trackerBuilderErrors.trackerIsNotFull = "Трекер определен не п
 // MARK: - Trackers View.
 
 trackersView.title = "Трекеры";
-trackersView.stubText = "Что будем отслеживать?";
+trackersView.emptyStubText = "Что будем отслеживать?";
+trackersView.notFoundStubText = "Ничего не найдено";
 trackersView.deleteAlertMessage = "Уверены что хотите удалить трекер?";
 trackersView.filters = "Фильтры";
 
