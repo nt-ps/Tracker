@@ -79,6 +79,7 @@ trackersView.emptyStubText = "Что будем отслеживать?";
 trackersView.notFoundStubText = "Ничего не найдено";
 trackersView.deleteAlertMessage = "Уверены что хотите удалить трекер?";
 trackersView.filters = "Фильтры";
+trackersView.searchFieldPlaceholder = "Поиск";
 
 // MARK: - Filters View.
 

@@ -65,6 +65,8 @@ final class CategoryEditorViewController: UIViewController {
         view.addSubview(titleTextField)
         view.addSubview(buttonsStackView)
         setConstraints()
+        
+        addTapGestureToHideKeyboard()
     }
     
     // MARK: - View Model Methods
@@ -139,5 +141,14 @@ final class CategoryEditorViewController: UIViewController {
                 constant: buttonsTopSpacing
             )
         ])
+    }
+    
+    private func addTapGestureToHideKeyboard() {
+        let tapGesture = UITapGestureRecognizer(
+            target: view,
+            action: #selector(view.endEditing)
+        )
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 }

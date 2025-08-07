@@ -34,6 +34,17 @@ final class TrackersNavigationItem: UIViewController {
         return datePicker
     } ()
     
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = NSLocalizedString(
+            "trackersView.searchFieldPlaceholder",
+            comment: "Search field placeholder"
+        )
+        searchController.searchResultsUpdater = self
+        return searchController
+    } ()
+    
     private lazy var collectionView: TrackersCollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = TrackersCollectionView(
@@ -54,10 +65,7 @@ final class TrackersNavigationItem: UIViewController {
     
     private lazy var filtersButton: UIButton = {
         let filtersButton = UIButton()
-        let title = NSLocalizedString(
-            "trackersView.filters",
-            comment: "Filter button title"
-        )
+        let title = NSLocalizedString("trackersView.filters", comment: "Filter button title")
         filtersButton.setTitle(title, for: .normal)
         filtersButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         filtersButton.setTitleColor(.AppColors.white, for: .normal)
@@ -121,8 +129,7 @@ final class TrackersNavigationItem: UIViewController {
         
         navigationItem.leftBarButtonItem = addBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem
-        
-        navigationItem.searchController = UISearchController()
+        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         
         view.addSubview(collectionView)
@@ -246,7 +253,7 @@ final class TrackersNavigationItem: UIViewController {
     private func showStub() {
         collectionView.isHidden = true
         
-        if filter.isFinished == nil {
+        if filter.isFinished == nil && filter.name == nil {
             stubView.labelText = emptyStubLabelText
             stubView.imageResource = emptyStubImageResource
         } else {
@@ -303,6 +310,8 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         }
         
         if !update.updatedIndexes.isEmpty {
+            // TODO: При изменении имени категории, если при этом меняется порядок
+            // секций, то приложение падает. Исправить.
             collectionView.performBatchUpdates {
                 let updateSectionsIndexes: Set<Int> = update.updatedIndexes.reduce(
                     into: []
@@ -360,5 +369,16 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         if newCategories.isEmpty {
             showStub()
         }
+    }
+}
+
+extension TrackersNavigationItem: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text, !searchText.isEmpty {
+            filter.name = searchText
+        } else {
+            filter.name = nil
+        }
+        updateCollection()
     }
 }

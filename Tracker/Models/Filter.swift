@@ -6,6 +6,7 @@ import Foundation
 struct Filter {
     var date: Date
     private(set) var isFinished: Bool?
+    var name: String?
     
     private static var defaultDate: Date { Date.now }
     private static var defaultIsFinishedFlag: Bool? { nil }
