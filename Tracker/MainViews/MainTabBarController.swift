@@ -11,21 +11,23 @@ final class MainTabBarController: UITabBarController {
         tabBar.standardAppearance = appearance
         tabBar.tintColor = .AppColors.blue
         
-        let trackersNavigationController = TrackersNavigationController()
+        let trackersNavigationController = MainNavigationController()
+        trackersNavigationController.viewController = TrackersNavigationItem()
         trackersNavigationController.tabBarItem = UITabBarItem(
             title: NSLocalizedString("mainTabBar.trackersTitle", comment: "Trackers tab title"),
             image: UIImage(resource: .Icons.trackersTab),
             selectedImage: nil
         )
         
-        let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(
+        let statisticsNavigationController = MainNavigationController()
+        statisticsNavigationController.viewController = StatisticsNavigationItem()
+        statisticsNavigationController.tabBarItem = UITabBarItem(
             title: NSLocalizedString("mainTabBar.statisticsTitle", comment: "Statistics tab title"),
             image: UIImage(resource: .Icons.statisticsTab),
             selectedImage: nil
         )
         
-        viewControllers = [trackersNavigationController, statisticsViewController]
+        viewControllers = [trackersNavigationController, statisticsNavigationController]
     }
 }
 

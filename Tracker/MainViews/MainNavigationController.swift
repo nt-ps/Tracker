@@ -1,6 +1,8 @@
 import UIKit
 
-final class TrackersNavigationController: UINavigationController {
+final class MainNavigationController: UINavigationController {
+    var viewController: UIViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -8,7 +10,8 @@ final class TrackersNavigationController: UINavigationController {
         navigationBar.backgroundColor = .clear
         navigationBar.isTranslucent = true
         
-        let trackersNavigationItem = TrackersNavigationItem()
-        viewControllers = [ trackersNavigationItem ]
+        if let viewController {
+            viewControllers = [ viewController ]
+        }
     }
 }

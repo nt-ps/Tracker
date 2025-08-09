@@ -32,6 +32,13 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         return trackerCategories
     }
     
+    var trackersNumber: Int {
+        let request = NSFetchRequest<TrackerCoreData>(
+            entityName: String(describing: TrackerCoreData.self)
+        )        
+        return (try? context?.count(for: request)) ?? 0
+    }
+    
     // MARK: - Private Properties
     
     private let context: NSManagedObjectContext?

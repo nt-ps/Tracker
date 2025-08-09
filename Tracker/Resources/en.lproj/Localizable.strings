@@ -94,6 +94,12 @@ filtersView.unfinishedTrackersCheckmarkTitle = "Unfinished";
 mainTabBar.trackersTitle = "Trackers";
 mainTabBar.statisticsTitle = "Statistics";
 
+// MARK: - Statistics View.
+
+statisticsView.title = "Statistics";
+statisticsView.finishedNumberLabel = "Trackers completed";
+statisticsView.stubText = "There is nothing to analyze yet";
+
 // MARK: - Schedule.
 
 schedule.everyDay = "Every day";

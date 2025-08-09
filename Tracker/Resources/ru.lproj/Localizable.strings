@@ -94,6 +94,12 @@ filtersView.unfinishedTrackersCheckmarkTitle = "Не завершенные";
 mainTabBar.trackersTitle = "Трекеры";
 mainTabBar.statisticsTitle = "Статистика";
 
+// MARK: - Statistics View.
+
+statisticsView.title = "Статистика";
+statisticsView.finishedNumberLabel = "Трекеров завершено";
+statisticsView.stubText = "Анализировать пока нечего";
+
 // MARK: - Schedule.
 
 schedule.everyDay = "Каждый день";
