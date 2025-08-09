@@ -140,10 +140,21 @@ final class TrackersNavigationItem: UIViewController {
         updateCollection()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.reportOpening("Main")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AnalyticsService.reportСlosing("Main")
+    }
+    
     // MARK: - Button Actions
     
     @objc
     private func didTapAddButton() {
+        AnalyticsService.reportClick(screen: "Main", item: "add_track")
         let trackerEditorNavigationController = TrackerEditorNavigationController()
         present(trackerEditorNavigationController, animated: true)
     }
@@ -156,6 +167,8 @@ final class TrackersNavigationItem: UIViewController {
     
     @objc
     private func didFiltersButton() {
+        AnalyticsService.reportClick(screen: "Main", item: "filter")
+        
         let filtersNavigationController = FiltersNavigationController()
         let filtersViewModel = FiltersViewModel(for: filter)
         filtersViewModel.onFilterStateChange = { [weak self] newFilter in

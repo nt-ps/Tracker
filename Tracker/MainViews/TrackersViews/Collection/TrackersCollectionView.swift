@@ -170,6 +170,9 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
                         title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
                     ) { [weak self] _ in
                         guard let self else { return }
+                        
+                        AnalyticsService.reportClick(screen: "Main", item: "edit")
+                        
                         let category = self.categories[indexPath.section].title
                         let recordsNum = self.completedTrackers.count { record in
                             record.trackerId == tracker.id
@@ -184,6 +187,7 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
                         title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
                         attributes: .destructive
                     ) { [weak self] _ in
+                        AnalyticsService.reportClick(screen: "Main", item: "delete")
                         self?.navigationItem?.deleteTracker(tracker)
                     }
                 ])
@@ -253,6 +257,8 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
 
 extension TrackersCollectionView: TrackersCollectionViewCellDelegate {
     func trackerCellDoneButtonDidTap(_ cell: TrackersCollectionViewCell) {
+        AnalyticsService.reportClick(screen: "Main", item: "track")
+        
         guard
             let indexPath = indexPath(for: cell),
             let tracker = getTracker(with: indexPath),

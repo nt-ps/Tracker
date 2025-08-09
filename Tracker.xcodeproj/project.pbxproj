@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3A53002E2E47761B00767D6E /* AppMetricaCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3A53002D2E47761B00767D6E /* AppMetricaCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		3A0BAA2E2E09CC2D00884FCF /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A53002E2E47761B00767D6E /* AppMetricaCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = Tracker;
 			packageProductDependencies = (
+				3A53002D2E47761B00767D6E /* AppMetricaCore */,
 			);
 			productName = Tracker;
 			productReference = 3A0BAA2E2E09CC2D00884FCF /* Tracker.app */;
@@ -109,6 +115,7 @@
 			mainGroup = 3A0BAA252E09CC2D00884FCF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				3A53002C2E47761B00767D6E /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3A0BAA2F2E09CC2D00884FCF /* Products */;
@@ -348,6 +355,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3A53002C2E47761B00767D6E /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/appmetrica/appmetrica-sdk-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3A53002D2E47761B00767D6E /* AppMetricaCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3A53002C2E47761B00767D6E /* XCRemoteSwiftPackageReference "appmetrica-sdk-ios" */;
+			productName = AppMetricaCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3A0BAA262E09CC2D00884FCF /* Project object */;
 }
