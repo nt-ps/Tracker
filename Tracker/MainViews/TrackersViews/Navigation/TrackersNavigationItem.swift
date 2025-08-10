@@ -300,6 +300,11 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         
         collectionView.categories = newCategories
         
+        // Не комментируйте это, пожалуйста, никак...
+        // Мне сложно объяснить, что я тут понаписал, но это работает для всех случаев.
+        // Когда удаляются секции, когда создаются новые, когда секции не трогаются.
+        // И ячейки обновляются при перемещении. Короче больше никак, иначе ругается.
+        
         if !update.deletedIndexes.isEmpty {
             collectionView.performBatchUpdates {
                 collectionView.deleteItems(at: update.deletedIndexes)
@@ -323,29 +328,29 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
         }
         
         if !update.updatedIndexes.isEmpty {
-            // TODO: При изменении имени категории, если при этом меняется порядок
-            // секций, то приложение падает. Исправить.
             collectionView.performBatchUpdates {
-                let updateSectionsIndexes: Set<Int> = update.updatedIndexes.reduce(
-                    into: []
-                ) { (result, indexPath) in
-                    result.insert(indexPath.section)
+                for (oldIndex, item) in oldCategories.enumerated() {
+                    if let newIndex = newCategories.firstIndex(where: { $0.title == item.title }) {
+                        if newIndex != oldIndex {
+                            collectionView.moveSection(oldIndex, toSection: newIndex)
+                        }
+                    } else {
+                        collectionView.deleteSections(IndexSet(integer: oldIndex))
+                    }
                 }
-                updateSectionsIndexes.forEach {
-                    let header = collectionView.supplementaryView(
-                        forElementKind: UICollectionView.elementKindSectionHeader,
-                        at: IndexPath(item: 0, section: $0)
-                    ) as? HeaderView
-                    header?.title = newCategories[$0].title
+                for (newIndex, item) in newCategories.enumerated() {
+                    if !oldCategories.contains(where: { $0.title == item.title }) {
+                        collectionView.insertSections(IndexSet(integer: newIndex))
+                        continue
+                    }
                 }
+            }
+  
+            collectionView.performBatchUpdates {
                 collectionView.reloadItems(at: update.updatedIndexes)
             }
         }
-        
-        // Не комментируйте это, пожалуйста, никак...
-        // Мне сложно объяснить, что я тут понаписал, но это работает для всех случаев перемещения.
-        // Когда удаляются секции, когда создаются новые, когда секции не трогаются.
-        // И ячейки обновляются при перемещении. Короче больше никак, иначе ругается.
+    
         if !update.movedIndexes.isEmpty {
             collectionView.performBatchUpdates {
                 for i in 0...oldCategories.count - 1 {
