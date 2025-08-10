@@ -23,7 +23,7 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     private var viewModel: CheckmarkCellViewModel?
     
     // MARK: - Initializers
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -39,7 +39,7 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
         super.init(coder: coder)
         print("CheckmarkCellView.init(coder:) has not been implemented")
     }
-
+    
     // MARK: - View Model Methods
     
     func setViewModel(_ viewModel: CheckmarkCellViewModel) {

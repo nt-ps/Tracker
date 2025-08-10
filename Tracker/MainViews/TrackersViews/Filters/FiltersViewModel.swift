@@ -17,7 +17,7 @@ final class FiltersViewModel {
         "filtersView.allTrackersButtonTitle",
         comment: "All trackers button title"
     )
-
+    
     let trackersForTodayButtonTitle = NSLocalizedString(
         "filtersView.trackersForTodayButtonTitle",
         comment: "Trackers for today button title"

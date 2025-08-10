@@ -86,6 +86,12 @@ final class CounterView: UIView {
         layer.addSublayer(gradient)
     }
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    // MARK: - Overridden Methods
+    
     override func layoutMarginsDidChange() {
         super.layoutMarginsDidChange()
         
@@ -118,7 +124,4 @@ final class CounterView: UIView {
         gradient.mask = shape
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
 }

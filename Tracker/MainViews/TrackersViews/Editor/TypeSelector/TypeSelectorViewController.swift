@@ -68,7 +68,7 @@ final class TypeSelectorViewController: UIViewController {
     
     private func bind() {
         guard let viewModel = viewModel else { return }
-
+        
         viewModel.onTypeSelectedStateChange = { [weak self] in
             self?.showMainEditor()
         }
@@ -80,7 +80,7 @@ final class TypeSelectorViewController: UIViewController {
     private func didTapHabitButton() {
         viewModel?.setHabitType()
     }
-
+    
     @objc
     private func didTapEventButton() {
         viewModel?.setEventType()

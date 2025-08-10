@@ -42,7 +42,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
             titleLabel.text = title
         }
     }
-     
+    
     var subtitle: String? {
         didSet {
             if
@@ -66,7 +66,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
     }
     
     // MARK: - Initializers
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -83,7 +83,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
         super.init(coder: coder)
         print("ButtonCellView.init(coder:) has not been implemented")
     }
-
+    
     // MARK: - UI Updates
     
     private func setConstraints() {

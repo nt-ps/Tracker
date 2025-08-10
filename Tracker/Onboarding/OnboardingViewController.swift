@@ -76,7 +76,7 @@ final class OnboardingViewController: UIPageViewController {
             assertionFailure("[\(#function)] Invalid Configuration.")
             return
         }
-
+        
         let mainTabBarController = MainTabBarController()
         window.rootViewController = mainTabBarController
     }
@@ -142,7 +142,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         }
         
         let nextIndex = viewControllerIndex + 1 < pages.count ? viewControllerIndex + 1 : 0
-
+        
         return pages[nextIndex]
     }
 }
@@ -154,9 +154,9 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
     ) {
-       if let currentViewController = pageViewController.viewControllers?.first,
-          let currentIndex = pages.firstIndex(of: currentViewController) {
-           pageControl.currentPage = currentIndex
-       }
-   }
+        if let currentViewController = pageViewController.viewControllers?.first,
+           let currentIndex = pages.firstIndex(of: currentViewController) {
+            pageControl.currentPage = currentIndex
+        }
+    }
 }

@@ -13,7 +13,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         try? fetchedResultsController?.performFetch()
         
         guard let categories = fetchedResultsController?.sections else { return [] }
-    
+        
         let trackerCategories = categories.map {
             let title = $0.name
             let trackers: [Tracker]? = $0.objects?.reduce(
@@ -35,7 +35,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
     var trackersNumber: Int {
         let request = NSFetchRequest<TrackerCoreData>(
             entityName: String(describing: TrackerCoreData.self)
-        )        
+        )
         return (try? context?.count(for: request)) ?? 0
     }
     
@@ -62,10 +62,10 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         )
         fetchedResultsController?.delegate = self
         try? fetchedResultsController?.performFetch()
-
+        
         return fetchedResultsController
     } ()
-
+    
     private var insertedIndexes: [IndexPath] = []
     private var deletedIndexes: [IndexPath] = []
     private var movedIndexes: [(IndexPath, IndexPath)] = []
@@ -78,13 +78,13 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         let context = appDelegate?.persistentContainer.viewContext
         self.init(context: context)
     }
-
+    
     init(context: NSManagedObjectContext?) {
         self.context = context
     }
     
     // MARK: - Internal Methods
-
+    
     func setFetchRequest(for filter: Filter) {
         var dayNumber = Calendar.current.component(.weekday, from: filter.date)
         dayNumber = dayNumber - 1 < 1 ? 7 : dayNumber - 1
@@ -180,7 +180,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
         
         try context.save()
     }
-
+    
     func updateExistingTracker(
         _ trackerCoreData: TrackerCoreData,
         with tracker: Tracker,
@@ -237,7 +237,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
             #keyPath(TrackerCategoryCoreData.title),
             title
         )
-
+        
         return try context.fetch(request).first
     }
     
@@ -255,7 +255,7 @@ final class TrackerStore: NSObject, TrackersSourceProtocol {
             #keyPath(TrackerCoreData.trackerId),
             "\(tracker.id)"
         )
-
+        
         return try context.fetch(request).first
     }
 }
@@ -267,7 +267,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         movedIndexes.removeAll()
         updatedIndexes.removeAll()
     }
-
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
             TrackerStoreUpdate(

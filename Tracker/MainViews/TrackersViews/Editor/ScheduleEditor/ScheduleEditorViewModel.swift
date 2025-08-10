@@ -52,9 +52,9 @@ final class ScheduleEditorViewModel {
             selectedDays.append(day)
         }
     }
-
+    
     func saveSchedule() {
-        if case .habit = model.type {            
+        if case .habit = model.type {
             let schedule = Schedule(days: selectedDays)
             model.type = .habit(schedule)
             

@@ -11,7 +11,7 @@ struct AnalyticsService {
             AppMetrica.activate(with: configuration)
         }
     }
-
+    
     static func reportOpening(_ screen: String) {
         AnalyticsService.report(
             event: .open,

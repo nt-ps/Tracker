@@ -36,8 +36,8 @@ final class MainEditorViewModel {
     
     var saveButtonTitle: String? {
         return model.validate()
-            ? NSLocalizedString("saveButtonTitle", comment: "Save button title")
-            : NSLocalizedString("createButtonTitle", comment: "Create button title")
+        ? NSLocalizedString("saveButtonTitle", comment: "Save button title")
+        : NSLocalizedString("createButtonTitle", comment: "Create button title")
     }
     
     var isScheduleAvailable: Bool {

@@ -105,11 +105,11 @@ final class TrackersNavigationItem: UIViewController {
     private let filtersButtonYSpacing = 16.0
     
     // MARK: - Internal Properties
-
+    
     var selectedDate: Date { filter.date }
     
     // MARK: - Private Properties
-
+    
     private var filter: Filter = Filter() {
         didSet {
             datePicker.date = filter.date
@@ -248,9 +248,9 @@ final class TrackersNavigationItem: UIViewController {
     
     func updateFilterButton() {
         filtersButton.layer.borderColor =
-            filter.isFinished != nil
-            ? UIColor.AppColors.white.withAlphaComponent(0.5).cgColor
-            : UIColor.AppColors.blue.cgColor
+        filter.isFinished != nil
+        ? UIColor.AppColors.white.withAlphaComponent(0.5).cgColor
+        : UIColor.AppColors.blue.cgColor
     }
     
     func updateCollection() {
@@ -347,12 +347,12 @@ extension TrackersNavigationItem: TrackerStoreDelegate {
                     }
                 }
             }
-  
+            
             collectionView.performBatchUpdates {
                 collectionView.reloadItems(at: update.updatedIndexes)
             }
         }
-    
+        
         if !update.movedIndexes.isEmpty {
             collectionView.performBatchUpdates {
                 for i in 0...oldCategories.count - 1 {

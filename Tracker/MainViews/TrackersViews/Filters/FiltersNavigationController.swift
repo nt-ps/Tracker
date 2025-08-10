@@ -12,7 +12,7 @@ final class FiltersNavigationController: UINavigationController {
         navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
-
+        
         let filtersViewController = FiltersViewController()
         if let viewModel {
             filtersViewController.setViewModel(viewModel)

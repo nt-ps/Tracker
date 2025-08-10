@@ -165,9 +165,6 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
             previewProvider: { trackerCell.contextMenuPreview },
             actionProvider: { suggestedActions in
                 return UIMenu(children: [
-                    /*UIAction(
-                        title: NSLocalizedString("pinButtonTitle", comment: "Pin button title")
-                    ) { _ in /* TODO: action */ },*/
                     UIAction(
                         title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
                     ) { [weak self] _ in

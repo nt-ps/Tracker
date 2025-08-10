@@ -9,7 +9,7 @@ final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
     
     var categories: [String] {
         guard let categories = fetchedResultsController?.fetchedObjects else { return [] }
-    
+        
         let trackerCategories: [String] = categories.reduce(
             into: []
         ) { (result, data) in
@@ -53,7 +53,7 @@ final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
         let context = appDelegate?.persistentContainer.viewContext
         self.init(context: context)
     }
-
+    
     init(context: NSManagedObjectContext?) {
         self.context = context
     }
@@ -83,7 +83,7 @@ final class TrackerCategoryStore: NSObject, CategoriesSourceProtocol {
         guard let trackerCategoryCoreData = try? getCategoryCoreData(oldTitle) else {
             throw TrackerCategoryStoreError.categoryNotFound
         }
-    
+        
         trackerCategoryCoreData.title = newTitle
         
         // Прописал так, чтобы приходило уведомление об обновлении в TrackerStoreDelegate.
@@ -140,7 +140,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes.removeAll()
     }
-
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(
             CategoriesSourceUpdate(insertedIndexes: insertedIndexes)

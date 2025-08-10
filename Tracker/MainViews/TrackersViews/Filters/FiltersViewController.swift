@@ -17,7 +17,7 @@ final class FiltersViewController: UIViewController {
         filtersTableView.updateParameters(parameters)
         return filtersTableView
     } ()
-
+    
     private lazy var allTrackersButton: ButtonCellView = {
         let allTrackersButton = ButtonCellView()
         allTrackersButton.title = viewModel?.allTrackersButtonTitle
@@ -84,7 +84,7 @@ final class FiltersViewController: UIViewController {
         
         navigationItem.title = viewModel?.viewTitle
         navigationItem.setHidesBackButton(true, animated: true)
-
+        
         view.addSubview(filtersTableView)
         setConstraints()
     }
@@ -96,7 +96,7 @@ final class FiltersViewController: UIViewController {
     }
     
     // MARK: - UI Updates
-
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             filtersTableView.leadingAnchor.constraint(
