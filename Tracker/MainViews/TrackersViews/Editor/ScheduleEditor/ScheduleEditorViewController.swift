@@ -68,7 +68,7 @@ final class ScheduleEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
         navigationItem.title = NSLocalizedString("scheduleEditor.title", comment: "UI view title")
         navigationItem.setHidesBackButton(true, animated: true)

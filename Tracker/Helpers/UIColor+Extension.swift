@@ -1,6 +1,9 @@
 import UIKit
 
 extension UIColor {
+    var dark: UIColor  { resolvedColor(with: .init(userInterfaceStyle: .dark))  }
+    var light: UIColor { resolvedColor(with: .init(userInterfaceStyle: .light)) }
+    
     public convenience init?(hexaDecimalString: String) {
         let r, g, b, a: CGFloat
 

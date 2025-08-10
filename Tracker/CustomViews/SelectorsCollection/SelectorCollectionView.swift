@@ -22,6 +22,8 @@ final class SelectorCollectionView: UICollectionView {
         isScrollEnabled = false
         allowsMultipleSelection = false
         
+        backgroundColor = .clear
+        
         geometryParameters = GeometryParameters(
             cellCount: 6,
             sectionInsets: UIEdgeInsets(

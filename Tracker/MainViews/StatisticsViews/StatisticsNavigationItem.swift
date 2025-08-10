@@ -37,7 +37,7 @@ final class StatisticsNavigationItem: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         navigationItem.title = NSLocalizedString("statisticsView.title", comment: "UI view title")
         
         view.addSubview(finishedNumberCounter)

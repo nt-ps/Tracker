@@ -68,7 +68,7 @@ final class TrackersNavigationItem: UIViewController {
         let title = NSLocalizedString("trackersView.filters", comment: "Filter button title")
         filtersButton.setTitle(title, for: .normal)
         filtersButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        filtersButton.setTitleColor(.AppColors.white, for: .normal)
+        filtersButton.setTitleColor(.AppColors.white.light, for: .normal)
         filtersButton.backgroundColor = .AppColors.blue
         filtersButton.layer.masksToBounds = true
         filtersButton.layer.cornerRadius = 16
@@ -264,6 +264,7 @@ final class TrackersNavigationItem: UIViewController {
     }
     
     private func showStub() {
+        filtersButton.isHidden = filter.isFinished == nil
         collectionView.isHidden = true
         
         if filter.isFinished == nil && filter.name == nil {
@@ -279,6 +280,7 @@ final class TrackersNavigationItem: UIViewController {
     }
     
     private func showCollectionView(with categories: [TrackerCategory]) {
+        filtersButton.isHidden = false
         collectionView.isHidden = false
         stubView.isHidden = true
         collectionView.bringSubviewToFront(stubView)

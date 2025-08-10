@@ -11,6 +11,8 @@ final class MainTabBarController: UITabBarController {
         tabBar.standardAppearance = appearance
         tabBar.tintColor = .AppColors.blue
         
+        view.backgroundColor = .AppColors.white
+        
         let trackersNavigationController = MainNavigationController()
         trackersNavigationController.viewController = TrackersNavigationItem()
         trackersNavigationController.tabBarItem = UITabBarItem(

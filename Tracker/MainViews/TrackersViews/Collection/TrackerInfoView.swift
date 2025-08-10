@@ -9,7 +9,7 @@ final class TrackerInfoView: UIView {
         // эмодзи слишком большое в сравнении с макетом.
         emojiLabel.font = .systemFont(ofSize: 13, weight: .regular)
         emojiLabel.textAlignment = .center
-        emojiLabel.backgroundColor = .AppColors.white.withAlphaComponent(0.3)
+        emojiLabel.backgroundColor = .AppColors.white.light.withAlphaComponent(0.3)
         emojiLabel.layer.masksToBounds = true
         emojiLabel.layer.cornerRadius = emojiLabelCornerRadius
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -22,7 +22,7 @@ final class TrackerInfoView: UIView {
         nameLabel.numberOfLines = 2
         nameLabel.adjustsFontSizeToFitWidth = false
         nameLabel.lineBreakMode = .byTruncatingTail
-        nameLabel.textColor = .AppColors.white
+        nameLabel.textColor = .AppColors.white.light
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         return nameLabel
     } ()

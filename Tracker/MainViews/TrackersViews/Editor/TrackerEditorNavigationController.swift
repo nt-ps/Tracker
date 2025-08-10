@@ -7,7 +7,7 @@ final class TrackerEditorNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
         navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)

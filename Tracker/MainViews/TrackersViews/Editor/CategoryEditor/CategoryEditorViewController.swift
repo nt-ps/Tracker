@@ -57,7 +57,7 @@ final class CategoryEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
         navigationItem.title = viewModel?.editorTitle
         navigationItem.setHidesBackButton(true, animated: true)

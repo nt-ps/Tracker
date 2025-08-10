@@ -25,8 +25,8 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
-        pageControl.currentPageIndicatorTintColor = .AppColors.black
-        pageControl.pageIndicatorTintColor = .AppColors.black.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .AppColors.black.light
+        pageControl.pageIndicatorTintColor = .AppColors.black.light.withAlphaComponent(0.3)
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
@@ -39,6 +39,8 @@ final class OnboardingViewController: UIPageViewController {
             comment: "Onboarding button title"
         )
         doneButton.setTitle(buttonTitle, for: .normal)
+        doneButton.enabledBackgroundColor = .AppColors.black.light
+        doneButton.titleColor = .AppColors.white.light
         doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
