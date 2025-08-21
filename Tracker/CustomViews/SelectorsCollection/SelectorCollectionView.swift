@@ -4,9 +4,9 @@ final class SelectorCollectionView: UICollectionView {
 
     // MARK: - Internal Properties
 
-    var title: String = "Без названия"
+    var title: String = NSLocalizedString("defaultTitle", comment: "Default title")
     
-    private(set) var selectedValue: Any?
+    var selectedValue: Any?
     var selectionAction: (() -> Void)?
     
     // MARK: - Private Properties
@@ -21,6 +21,8 @@ final class SelectorCollectionView: UICollectionView {
         
         isScrollEnabled = false
         allowsMultipleSelection = false
+        
+        backgroundColor = .clear
         
         geometryParameters = GeometryParameters(
             cellCount: 6,
@@ -111,7 +113,14 @@ extension SelectorCollectionView: UICollectionViewDataSource {
             else {
                 return UICollectionViewCell()
             }
-            cell.character = cellData as? Character
+            let caracter = cellData as? Character
+            cell.character = caracter
+            if
+                let selectedValue = selectedValue as? Character,
+                selectedValue == caracter
+            {
+                selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            }
             return cell
         case is UIColor:
             guard
@@ -122,7 +131,14 @@ extension SelectorCollectionView: UICollectionViewDataSource {
             else {
                 return UICollectionViewCell()
             }
-            cell.color = cellData as? UIColor
+            let color = cellData as? UIColor
+            cell.color = color
+            if
+                let selectedValue = selectedValue as? UIColor,
+                selectedValue.toHexString() == color?.toHexString()
+            {
+                selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            }
             return cell
         default:
             return UICollectionViewCell()

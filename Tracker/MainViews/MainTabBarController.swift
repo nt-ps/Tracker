@@ -1,5 +1,5 @@
 import UIKit
- 
+
 final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -11,21 +11,25 @@ final class MainTabBarController: UITabBarController {
         tabBar.standardAppearance = appearance
         tabBar.tintColor = .AppColors.blue
         
-        let trackersNavigationController = TrackersNavigationController()
+        view.backgroundColor = .AppColors.white
+        
+        let trackersNavigationController = MainNavigationController()
+        trackersNavigationController.viewController = TrackersNavigationItem()
         trackersNavigationController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("mainTabBar.trackersTitle", comment: "Trackers tab title"),
             image: UIImage(resource: .Icons.trackersTab),
             selectedImage: nil
         )
         
-        let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+        let statisticsNavigationController = MainNavigationController()
+        statisticsNavigationController.viewController = StatisticsNavigationItem()
+        statisticsNavigationController.tabBarItem = UITabBarItem(
+            title: NSLocalizedString("mainTabBar.statisticsTitle", comment: "Statistics tab title"),
             image: UIImage(resource: .Icons.statisticsTab),
             selectedImage: nil
         )
         
-        viewControllers = [trackersNavigationController, statisticsViewController]
+        viewControllers = [trackersNavigationController, statisticsNavigationController]
     }
 }
 

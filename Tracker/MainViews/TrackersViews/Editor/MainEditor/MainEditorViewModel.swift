@@ -5,9 +5,13 @@ final class MainEditorViewModel {
     // MARK: - Bindings
     
     var onTrackerCreationAllowedStateChange: Binding<Bool>?
+    var onRecordCounterStateChange: Binding<String?>?
+    var onNameStateChange: Binding<String?>?
     var onNameErrorStateChange: Binding<String?>?
     var onCategorySelectionStateChange: Binding<String?>?
     var onScheduleStateChange: Binding<String?>?
+    var onEmojiStateChange: Binding<Character?>?
+    var onColorStateChange: Binding<UIColor?>?
     
     // MARK: - Internal Properties
     
@@ -15,11 +19,25 @@ final class MainEditorViewModel {
     var colorValues: [UIColor] { TrackerEditorData.colors }
     
     var mainEditorTitle: String? {
-        switch model.type {
-        case .habit: "Новая привычка"
-        case .event: "Новое нерегулярное событие"
-        default: ""
+        if model.validate() {
+            switch model.type {
+            case .habit: NSLocalizedString("mainEditor.editingHabitTitle", comment: "Editing habit title")
+            case .event: NSLocalizedString("mainEditor.editingEventTitle", comment: "Editing event title")
+            default: ""
+            }
+        } else {
+            switch model.type {
+            case .habit: NSLocalizedString("mainEditor.newHabitTitle", comment: "New habit title")
+            case .event: NSLocalizedString("mainEditor.newEventTitle", comment: "New event title")
+            default: ""
+            }
         }
+    }
+    
+    var saveButtonTitle: String? {
+        return model.validate()
+        ? NSLocalizedString("saveButtonTitle", comment: "Save button title")
+        : NSLocalizedString("createButtonTitle", comment: "Create button title")
     }
     
     var isScheduleAvailable: Bool {
@@ -29,13 +47,15 @@ final class MainEditorViewModel {
         }
     }
     
-    var categoriesViewModel: CategoriesViewModel {
-        let categoriesViewModel = CategoriesViewModel(for: model)
-        categoriesViewModel.onCategorySelectionStateChange = { [weak self] category in
+    var showRecordCounter: Bool { model.validate() }
+    
+    var categorySelectorViewModel: CategorySelectorViewModel {
+        let categorySelectorViewModel = CategorySelectorViewModel(for: model)
+        categorySelectorViewModel.onCategorySelectionStateChange = { [weak self] category in
             self?.onCategorySelectionStateChange?(category)
             self?.validate()
         }
-        return categoriesViewModel
+        return categorySelectorViewModel
     }
     
     var scheduleEditorViewModel: ScheduleEditorViewModel {
@@ -89,14 +109,30 @@ final class MainEditorViewModel {
         validate()
     }
     
-    func addTracker() {
+    func saveTracker() {
         // TODO: В будущем пробросить ошибки.
         guard
             let tracker = try? model.getTracker(),
             let category = model.category
         else { return }
         
-        try? trackersSource.addTracker(tracker, to: category)
+        try? trackersSource.saveTracker(tracker, to: category)
+    }
+    
+    func updateData() {
+        onRecordCounterStateChange?(String.localizedStringWithFormat(
+            NSLocalizedString("numberOfDays", comment: "Number of days marked"),
+            model.recordsNum ?? 0
+        ))
+        onNameStateChange?(model.name)
+        onCategorySelectionStateChange?(model.category)
+        if case .habit(let schedule) = model.type {
+            onScheduleStateChange?(schedule.toString())
+        }
+        onEmojiStateChange?(model.emoji)
+        onColorStateChange?(model.color)
+        
+        validate()
     }
     
     // MARK: - Private Methods

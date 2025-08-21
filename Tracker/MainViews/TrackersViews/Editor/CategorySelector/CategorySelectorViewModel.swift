@@ -1,9 +1,10 @@
-final class CategoriesViewModel {
+final class CategorySelectorViewModel {
     
     // MARK: - Bindings
 
     var onCategorySelectionStateChange: Binding<String?>?
     var onCategoriesListStateChange: Binding<[CheckmarkCellViewModel]>?
+    var onCategoryEditStateChange: Binding<CategoryEditorViewModel>?
     
     // MARK: - Internal Properties
     
@@ -16,6 +17,22 @@ final class CategoriesViewModel {
                 selectAction: { [weak self] value in
                     guard let category = value as? String else { return }
                     self?.categoryDidSelected(category)
+                },
+                deleteAction: { [weak self] value in
+                    guard let category = value as? String else { return }
+                    self?.deleteCategory(category)
+                },
+                editAction: { [weak self] value in
+                    guard let self, let category = value as? String else { return }
+                    let categoryBuilder = CategoryBuilder(for: category)
+                    let categoryEditorViewModel = CategoryEditorViewModel(
+                        for: categoryBuilder,
+                        categoriesSource: self.categoriesSource
+                    )
+                    categoryEditorViewModel.onSelectedCategoryStateChange = { [weak self] newTitle in
+                        self?.model.category = newTitle
+                    }
+                    onCategoryEditStateChange?(categoryEditorViewModel)
                 }
             )
         }
@@ -52,9 +69,15 @@ final class CategoriesViewModel {
         model.category = category
         onCategorySelectionStateChange?(category)
     }
+    
+    // MARK: - Private Methods
+    
+    func deleteCategory(_ category: String) {
+        try? categoriesSource.deleteCategory(category)
+    }
 }
 
-extension CategoriesViewModel: CategoriesSourceDelegate {
+extension CategorySelectorViewModel: CategoriesSourceDelegate {
     func didUpdate(_ update: CategoriesSourceUpdate) {
         // TODO: Переписать с добавлением только нового элемента.
         onCategoriesListStateChange?(categories)

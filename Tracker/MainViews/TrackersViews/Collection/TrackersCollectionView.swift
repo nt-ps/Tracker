@@ -19,6 +19,8 @@ final class TrackersCollectionView: UICollectionView {
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         
+        backgroundColor = .clear
+        
         completedTrackers = trackerRecordStore.records
         
         geometryParameters = GeometryParameters(
@@ -147,9 +149,72 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
         
         return UICollectionViewCell()
     }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard
+            let indexPath = indexPaths.first,
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        
+        let tracker = categories[indexPath.section].trackers[indexPath.item]
+        
+        return UIContextMenuConfiguration(
+            previewProvider: { trackerCell.contextMenuPreview },
+            actionProvider: { suggestedActions in
+                return UIMenu(children: [
+                    UIAction(
+                        title: NSLocalizedString("editButtonTitle", comment: "Edit button title")
+                    ) { [weak self] _ in
+                        guard let self else { return }
+                        
+                        AnalyticsService.reportClick(screen: "Main", item: "edit")
+                        
+                        let category = self.categories[indexPath.section].title
+                        let recordsNum = self.completedTrackers.count { record in
+                            record.trackerId == tracker.id
+                        }
+                        self.navigationItem?.editTracker(
+                            tracker,
+                            category: category,
+                            recordsNum: recordsNum
+                        )
+                    },
+                    UIAction(
+                        title: NSLocalizedString("deleteButtonTitle", comment: "Delete button title"),
+                        attributes: .destructive
+                    ) { [weak self] _ in
+                        AnalyticsService.reportClick(screen: "Main", item: "delete")
+                        self?.navigationItem?.deleteTracker(tracker)
+                    }
+                ])
+            }
+        )
+    }
     
-    // На будущее. Метод вызова контекстного меню.
-    //func collectionView(_ collectionView: UICollectionView,contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? { }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        highlightPreviewForItemAt indexPath: IndexPath
+    ) -> UITargetedPreview? {
+        guard
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        return UITargetedPreview(view: trackerCell.infoView)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        dismissalPreviewForItemAt indexPath: IndexPath
+    ) -> UITargetedPreview? {
+        guard
+            let trackerCell = cellForItem(at: indexPath) as? TrackersCollectionViewCell
+        else { return nil }
+        return UITargetedPreview(view: trackerCell.infoView)
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -191,6 +256,8 @@ extension TrackersCollectionView: UICollectionViewDelegateFlowLayout {
 
 extension TrackersCollectionView: TrackersCollectionViewCellDelegate {
     func trackerCellDoneButtonDidTap(_ cell: TrackersCollectionViewCell) {
+        AnalyticsService.reportClick(screen: "Main", item: "track")
+        
         guard
             let indexPath = indexPath(for: cell),
             let tracker = getTracker(with: indexPath),

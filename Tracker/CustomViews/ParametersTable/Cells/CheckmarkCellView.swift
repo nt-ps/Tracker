@@ -23,11 +23,11 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     private var viewModel: CheckmarkCellViewModel?
     
     // MARK: - Initializers
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clear
+        backgroundColor = .AppColors.background
         accessoryType = .none
         selectionStyle = .none
         
@@ -39,7 +39,7 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
         super.init(coder: coder)
         print("CheckmarkCellView.init(coder:) has not been implemented")
     }
-
+    
     // MARK: - View Model Methods
     
     func setViewModel(_ viewModel: CheckmarkCellViewModel) {
@@ -51,6 +51,14 @@ final class CheckmarkCellView: UITableViewCell, ParametersTableViewCellProtocol 
     
     func didSelect() {
         viewModel?.updateModel(isSelected)
+    }
+    
+    func didDelete() {
+        viewModel?.delete()
+    }
+    
+    func didEdit() {
+        viewModel?.edit()
     }
     
     private func updateView() {

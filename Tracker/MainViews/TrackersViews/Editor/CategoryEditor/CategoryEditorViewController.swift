@@ -6,7 +6,10 @@ final class CategoryEditorViewController: UIViewController {
     
     private lazy var titleTextField: OneLineTextField = {
         let titleTextField = OneLineTextField()
-        titleTextField.placeholder = "Введите название категории"
+        titleTextField.placeholder = NSLocalizedString(
+            "categoryEditor.textFieldPlaceholder",
+            comment: "Instruction to action with text field"
+        )
         titleTextField.text = viewModel?.categoryTitle
         titleTextField.editingAction = titleDidChange
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -24,13 +27,14 @@ final class CategoryEditorViewController: UIViewController {
     
     private lazy var createButton: SolidButton = {
         let createButton = SolidButton()
-        createButton.setTitle("Готово", for: .normal)
+        let buttonTitle = NSLocalizedString("doneButtonTitle", comment: "Done button title")
+        createButton.setTitle(buttonTitle, for: .normal)
         createButton.addTarget(
             self,
             action: #selector(didTapCreateButton),
             for: .touchUpInside
         )
-        createButton.isEnabled = false
+        createButton.isEnabled = viewModel?.categoryTitle != nil
         return createButton
     } ()
     
@@ -53,7 +57,7 @@ final class CategoryEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
         navigationItem.title = viewModel?.editorTitle
         navigationItem.setHidesBackButton(true, animated: true)
@@ -61,6 +65,8 @@ final class CategoryEditorViewController: UIViewController {
         view.addSubview(titleTextField)
         view.addSubview(buttonsStackView)
         setConstraints()
+        
+        addTapGestureToHideKeyboard()
     }
     
     // MARK: - View Model Methods
@@ -86,7 +92,7 @@ final class CategoryEditorViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
-        viewModel?.addCategory()
+        viewModel?.updateCategory()
         navigationController?.popViewController(animated: true)
     }
     
@@ -135,5 +141,14 @@ final class CategoryEditorViewController: UIViewController {
                 constant: buttonsTopSpacing
             )
         ])
+    }
+    
+    private func addTapGestureToHideKeyboard() {
+        let tapGesture = UITapGestureRecognizer(
+            target: view,
+            action: #selector(view.endEditing)
+        )
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 }

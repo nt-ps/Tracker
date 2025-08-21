@@ -32,7 +32,7 @@ final class HeaderView: UICollectionReusableView {
     // MARK: - Private Enumerations
     
     private enum HeaderConstants {
-        static let defaultTitle = "Без названия"
+        static let defaultTitle = NSLocalizedString("defaultTitle", comment: "Default title")
     }
     
     // MARK: - Private Properties

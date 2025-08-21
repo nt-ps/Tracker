@@ -1,0 +1,111 @@
+// MARK: - General.
+
+defaultTitle = "Без названия";
+
+doneButtonTitle = "Готово";
+cancelButtonTitle = "Отменить";
+createButtonTitle = "Создать";
+editButtonTitle = "Редактировать";
+deleteButtonTitle = "Удалить";
+pinButtonTitle = "Закрепить";
+saveButtonTitle = "Сохранить";
+
+// MARK: - Days of the week.
+
+mondayFull = "Понедельник";
+mondayShort = "Пн";
+
+tuesdayFull = "Вторник";
+tuesdayShort = "Вт";
+
+wednesdayFull = "Среда";
+wednesdayShort = "Ср";
+
+thursdayFull = "Четверг";
+thursdayShort = "Чт";
+
+fridayFull = "Пятница";
+fridayShort = "Пт";
+
+saturdayFull = "Суббота";
+saturdayShort = "Сб";
+
+sundayFull = "Воскресенье";
+sundayShort = "Вс";
+
+// MARK: - Category Editor.
+
+categoryEditor.textFieldPlaceholder = "Введите название категории";
+categoryEditor.newCategoryTitle = "Новая категория";
+categoryEditor.editCategoryTitle = "Редактирование категории";
+
+// MARK: - Category Selector.
+
+categorySelector.title = "Категория";
+categorySelector.stubText = "Привычки и события можно\nобъединить по смыслу";
+categorySelector.addButtonTitle = "Добавить категорию";
+categorySelector.deleteAlertMessage = "Эта категория точно не нужна?";
+
+// MARK: - Main Editor.
+
+mainEditor.newHabitTitle = "Новая привычка";
+mainEditor.newEventTitle = "Новое нерегулярное событие";
+mainEditor.editingHabitTitle = "Редактирование привычки";
+mainEditor.editingEventTitle = "Редактирование нерегулярного события";
+mainEditor.nameFieldPlaceholder = "Введите название трекера";
+mainEditor.categoryButtonTitle = "Категория";
+mainEditor.scheduleButtonTitle = "Расписание";
+mainEditor.emojiCollectionTitle = "Emoji";
+mainEditor.colorCollectionTitle = "Цвет";
+
+// MARK: - Schedule Editor.
+
+scheduleEditor.title = "Расписание";
+
+// MARK: - Type Selector.
+
+typeSelector.title = "Создание трекера";
+typeSelector.habitButtonTitle = "Привычка";
+typeSelector.eventButtonTitle = "Нерегулярное событие";
+
+// MARK: - Tracker Builder Errors.
+
+trackerBuilderErrors.trackerIsNotFull = "Трекер определен не полностью";
+
+// MARK: - Trackers View.
+
+trackersView.title = "Трекеры";
+trackersView.emptyStubText = "Что будем отслеживать?";
+trackersView.notFoundStubText = "Ничего не найдено";
+trackersView.deleteAlertMessage = "Уверены что хотите удалить трекер?";
+trackersView.filters = "Фильтры";
+trackersView.searchFieldPlaceholder = "Поиск";
+
+// MARK: - Filters View.
+
+filtersView.title = "Фильтры";
+filtersView.allTrackersButtonTitle = "Все трекеры";
+filtersView.trackersForTodayButtonTitle = "Трекеры на сегодня";
+filtersView.finishedTrackersCheckmarkTitle = "Завершенные";
+filtersView.unfinishedTrackersCheckmarkTitle = "Не завершенные";
+
+// MARK: - Main Tab Bar.
+
+mainTabBar.trackersTitle = "Трекеры";
+mainTabBar.statisticsTitle = "Статистика";
+
+// MARK: - Statistics View.
+
+statisticsView.title = "Статистика";
+statisticsView.finishedNumberLabel = "Трекеров завершено";
+statisticsView.stubText = "Анализировать пока нечего";
+
+// MARK: - Schedule.
+
+schedule.everyDay = "Каждый день";
+
+// MARK: - Onboarding.
+
+onboarding.firstScreenText = "Отслеживайте только то, что хотите";
+onboarding.secondScreenText = "Даже если это не литры воды и йога";
+onboarding.buttonTitle = "Вот это технологии!";

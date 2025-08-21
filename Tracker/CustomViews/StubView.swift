@@ -5,8 +5,7 @@ final class StubView: UIView {
     // MARK: - Views
     
     private lazy var imageView: UIImageView = {
-        let image = UIImage(resource: imageResource)
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     } ()
@@ -23,8 +22,7 @@ final class StubView: UIView {
     } ()
     
     // MARK: - UI Properties
-    
-    private let imageResource: ImageResource = .trackersStub
+
     private let labelSize = 12.0
     
     // MARK: - Internal Properties
@@ -32,6 +30,14 @@ final class StubView: UIView {
     var labelText: String? {
         didSet {
             labelView.text = labelText
+        }
+    }
+    
+    var imageResource: ImageResource? {
+        didSet {
+            if let imageResource {
+                imageView.image = UIImage(resource: imageResource)
+            }
         }
     }
     

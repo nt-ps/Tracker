@@ -42,7 +42,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
             titleLabel.text = title
         }
     }
-     
+    
     var subtitle: String? {
         didSet {
             if
@@ -59,14 +59,21 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
     
     var tapAction: (() -> Void)?
     
+    var isAccessoryHidden: Bool? {
+        didSet {
+            accessoryType = (isAccessoryHidden ?? false) ? .none : .disclosureIndicator
+        }
+    }
+    
     // MARK: - Initializers
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clear
-        accessoryType = .disclosureIndicator
+        backgroundColor = .AppColors.background
         selectionStyle = .none
+        
+        isAccessoryHidden = false
         
         contentView.addSubview(stackView)
         setConstraints()
@@ -76,7 +83,7 @@ final class ButtonCellView: UITableViewCell, ParametersTableViewCellProtocol {
         super.init(coder: coder)
         print("ButtonCellView.init(coder:) has not been implemented")
     }
-
+    
     // MARK: - UI Updates
     
     private func setConstraints() {

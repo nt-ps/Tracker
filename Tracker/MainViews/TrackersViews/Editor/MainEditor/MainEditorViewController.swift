@@ -13,14 +13,14 @@ final class MainEditorViewController: UIViewController {
     } ()
     
     private lazy var parametersStackView: UIStackView = {
-        let parametersStackView = UIStackView(
-            arrangedSubviews: [
-                nameTextField,
-                parametersTableView,
-                emojiCollectionView,
-                colorCollectionView
-            ]
-        )
+        let parametersStackView = UIStackView(arrangedSubviews: [
+            nameTextField, parametersTableView,
+            emojiCollectionView, colorCollectionView
+        ])
+        if viewModel?.showRecordCounter ?? false {
+            parametersStackView.insertArrangedSubview(recordCounterLabel, at: 0)
+            parametersStackView.setCustomSpacing(40.0, after: recordCounterLabel)
+        }
         parametersStackView.axis = .vertical
         parametersStackView.spacing = stackItemYSpacing
         parametersStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,9 +28,21 @@ final class MainEditorViewController: UIViewController {
         return parametersStackView
     } ()
     
+    private lazy var recordCounterLabel: UILabel = {
+        let recordCounterLabel = UILabel()
+        recordCounterLabel.font = .systemFont(ofSize: 32, weight: .bold)
+        recordCounterLabel.textColor = .AppColors.black
+        recordCounterLabel.textAlignment = .center
+        recordCounterLabel.translatesAutoresizingMaskIntoConstraints = false
+        return recordCounterLabel
+    } ()
+    
     private lazy var nameTextField: OneLineTextField = {
         let nameTextField = OneLineTextField()
-        nameTextField.placeholder = "Введите название трекера"
+        nameTextField.placeholder = NSLocalizedString(
+            "mainEditor.nameFieldPlaceholder",
+            comment: "Instruction to action with text field"
+        )
         nameTextField.editingAction = nameDidChange
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         return nameTextField
@@ -49,14 +61,20 @@ final class MainEditorViewController: UIViewController {
 
     private lazy var categoryButton: ButtonCellView = {
         let categoryButton = ButtonCellView()
-        categoryButton.title = "Категория"
+        categoryButton.title = NSLocalizedString(
+            "mainEditor.categoryButtonTitle",
+            comment: "Category button title"
+        )
         categoryButton.tapAction = showCategories
         return categoryButton
     } ()
     
     private lazy var scheduleButton: ButtonCellView = {
         let scheduleButton = ButtonCellView()
-        scheduleButton.title = "Расписание"
+        scheduleButton.title = NSLocalizedString(
+            "mainEditor.scheduleButtonTitle",
+            comment: "Schedule button title"
+        )
         scheduleButton.tapAction = showScheduleEditor
         return scheduleButton
     } ()
@@ -67,7 +85,10 @@ final class MainEditorViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: layout
         )
-        emojiCollectionView.title = "Emoji"
+        emojiCollectionView.title = NSLocalizedString(
+            "mainEditor.emojiCollectionTitle",
+            comment: "Emoji сollection title"
+        )
         emojiCollectionView.addValues(viewModel?.emojiValues)
         emojiCollectionView.selectionAction = emojiDidChange
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -80,7 +101,10 @@ final class MainEditorViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: layout
         )
-        colorCollectionView.title = "Цвет"
+        colorCollectionView.title = NSLocalizedString(
+            "mainEditor.colorCollectionTitle",
+            comment: "Color collection title"
+        )
         colorCollectionView.addValues(viewModel?.colorValues)
         colorCollectionView.selectionAction = colorDidChange
         colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -88,7 +112,7 @@ final class MainEditorViewController: UIViewController {
     } ()
     
     private lazy var buttonsStackView: UIStackView = {
-        let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
+        let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, saveButton])
         buttonsStackView.axis = .horizontal
         buttonsStackView.spacing = 8.0
         buttonsStackView.distribution = .fillEqually
@@ -98,7 +122,8 @@ final class MainEditorViewController: UIViewController {
     
     private lazy var cancelButton: OutlineButton = {
         let cancelButton = OutlineButton()
-        cancelButton.setTitle("Отменить", for: .normal)
+        let buttonTitle = NSLocalizedString("cancelButtonTitle", comment: "Cancel button title")
+        cancelButton.setTitle(buttonTitle, for: .normal)
         cancelButton.addTarget(
             self,
             action: #selector(didTapCancelButton),
@@ -107,16 +132,17 @@ final class MainEditorViewController: UIViewController {
         return cancelButton
     } ()
     
-    private lazy var createButton: SolidButton = {
-        let createButton = SolidButton()
-        createButton.setTitle("Создать", for: .normal)
-        createButton.addTarget(
+    private lazy var saveButton: SolidButton = {
+        let saveButton = SolidButton()
+        let buttonTitle = viewModel?.saveButtonTitle
+        saveButton.setTitle(buttonTitle, for: .normal)
+        saveButton.addTarget(
             self,
-            action: #selector(didTapCreateButton),
+            action: #selector(didTapSaveButton),
             for: .touchUpInside
         )
-        createButton.isEnabled = false
-        return createButton
+        saveButton.isEnabled = false
+        return saveButton
     } ()
     
     // MARK: - UI Properties
@@ -138,7 +164,7 @@ final class MainEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
         navigationItem.title = viewModel?.mainEditorTitle
         navigationItem.setHidesBackButton(true, animated: true)
@@ -162,11 +188,21 @@ final class MainEditorViewController: UIViewController {
         guard let viewModel = viewModel else { return }
 
         viewModel.onTrackerCreationAllowedStateChange = { [weak self] isCreationAllowed in
-            self?.createButton.isEnabled = isCreationAllowed
+            self?.saveButton.isEnabled = isCreationAllowed
+        }
+        
+        if viewModel.showRecordCounter {
+            viewModel.onRecordCounterStateChange = { [weak self] text in
+                self?.recordCounterLabel.text = text
+            }
         }
         
         viewModel.onNameErrorStateChange = { [weak self] message in
             self?.nameTextField.message = message
+        }
+        
+        viewModel.onNameStateChange = { [weak self] text in
+            self?.nameTextField.text = text
         }
         
         viewModel.onCategorySelectionStateChange = { [weak self] category in
@@ -178,6 +214,16 @@ final class MainEditorViewController: UIViewController {
         viewModel.onScheduleStateChange = { [weak self] schedule in
             self?.scheduleButton.subtitle = schedule
         }
+        
+        viewModel.onEmojiStateChange = { [weak self] emoji in
+            self?.emojiCollectionView.selectedValue = emoji
+        }
+        
+        viewModel.onColorStateChange = { [weak self] color in
+            self?.colorCollectionView.selectedValue = color
+        }
+        
+        viewModel.updateData()
     }
     
     // MARK: - UI Actions
@@ -188,8 +234,8 @@ final class MainEditorViewController: UIViewController {
     }
     
     @objc
-    private func didTapCreateButton() {
-        viewModel?.addTracker()
+    private func didTapSaveButton() {
+        viewModel?.saveTracker()
         dismiss(animated: true)
     }
     
@@ -223,9 +269,9 @@ final class MainEditorViewController: UIViewController {
     private func showCategories() {
         guard let viewModel else { return }
         
-        let categoriesViewController = CategoriesViewController()
+        let categoriesViewController = CategorySelectorViewController()
         
-        let categoriesViewModel = viewModel.categoriesViewModel
+        let categoriesViewModel = viewModel.categorySelectorViewModel
         categoriesViewController.setViewModel(categoriesViewModel)
         
         navigationController?.pushViewController(categoriesViewController, animated: true)
@@ -310,7 +356,7 @@ final class MainEditorViewController: UIViewController {
                 constant: buttonsTopSpacing
             ),
             
-            createButton.topAnchor.constraint(
+            saveButton.topAnchor.constraint(
                 equalTo: buttonsStackView.topAnchor,
                 constant: buttonsTopSpacing
             )

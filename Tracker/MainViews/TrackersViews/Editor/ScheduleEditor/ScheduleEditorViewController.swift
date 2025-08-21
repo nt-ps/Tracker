@@ -19,7 +19,7 @@ final class ScheduleEditorViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     } ()
-     
+    
     private lazy var parametersTableView: ParametersTableView = {
         let parametersTableView = ParametersTableView()
         parametersTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -38,7 +38,8 @@ final class ScheduleEditorViewController: UIViewController {
     
     private lazy var doneButton: SolidButton = {
         let doneButton = SolidButton()
-        doneButton.setTitle("Готово", for: .normal)
+        let buttonTitle = NSLocalizedString("doneButtonTitle", comment: "Done button title")
+        doneButton.setTitle(buttonTitle, for: .normal)
         doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
@@ -57,7 +58,6 @@ final class ScheduleEditorViewController: UIViewController {
     private let buttonsBottomSpacing = ScreenType.shared.isWithIsland ? 16.0 : 24.0
     private let buttonsHeight = 68.0
     
-    
     // MARK: - View Model
     
     private var viewModel: ScheduleEditorViewModel?
@@ -67,9 +67,9 @@ final class ScheduleEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .AppColors.white
         
-        navigationItem.title = "Расписание"
+        navigationItem.title = NSLocalizedString("scheduleEditor.title", comment: "UI view title")
         navigationItem.setHidesBackButton(true, animated: true)
         
         scrollView.addSubview(stackView)
@@ -94,7 +94,7 @@ final class ScheduleEditorViewController: UIViewController {
     }
     
     // MARK: - UI Updates
-
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -122,7 +122,7 @@ final class ScheduleEditorViewController: UIViewController {
                 equalTo: scrollView.widthAnchor,
                 constant: -stackViewXSpacing * 2
             ),
-             
+            
             buttonsStackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
                 constant: buttonsXSpacing

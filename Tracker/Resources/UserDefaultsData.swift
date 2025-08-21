@@ -1,7 +1,7 @@
 import Foundation
 
 final class UserDefaultsData {
-
+    
     static let shared = UserDefaultsData()
     
     var hasLaunchBefore: Bool {

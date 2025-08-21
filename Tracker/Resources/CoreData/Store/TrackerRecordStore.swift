@@ -10,14 +10,10 @@ final class TrackerRecordStore {
     var records: Set<TrackerRecord> {
         var records = Set<TrackerRecord>()
         
-        guard let context else { return records }
-    
-        let request = NSFetchRequest<TrackerRecordCoreData>(
-            entityName: String(describing: TrackerRecordCoreData.self)
-        )
-        request.returnsObjectsAsFaults = false
-        
-        guard let recordsCoreData = try? context.fetch(request) else { return records }
+        guard
+            let context,
+            let recordsCoreData = try? context.fetch(request)
+        else { return records }
         
         recordsCoreData.forEach{
             if let record = try? createTrackerRecord(from: $0) {
@@ -28,9 +24,19 @@ final class TrackerRecordStore {
         return records
     }
     
+    var recordsNumber: Int { (try? context?.count(for: request)) ?? 0 }
+    
     // MARK: - Private Properties
     
     private let context: NSManagedObjectContext?
+    
+    private lazy var request: NSFetchRequest<TrackerRecordCoreData> = {
+        let request = NSFetchRequest<TrackerRecordCoreData>(
+            entityName: String(describing: TrackerRecordCoreData.self)
+        )
+        request.returnsObjectsAsFaults = false
+        return request
+    } ()
 
     // MARK: - Initializers
     
@@ -115,8 +121,6 @@ final class TrackerRecordStore {
             throw TrackerCategoryStoreError.couldNotGetContext
         }
         
-        let date = NSDate(timeIntervalSince1970: record.date.timeIntervalSince1970)
-        
         let request = NSFetchRequest<TrackerRecordCoreData>(
             entityName: String(describing: TrackerRecordCoreData.self)
         )
@@ -126,7 +130,7 @@ final class TrackerRecordStore {
             #keyPath(TrackerRecordCoreData.tracker.trackerId),
             "\(record.trackerId)",
             #keyPath(TrackerRecordCoreData.date),
-            date
+            record.date as CVarArg
         )
         
         return try context.fetch(request).first

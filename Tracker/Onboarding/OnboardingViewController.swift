@@ -7,10 +7,16 @@ final class OnboardingViewController: UIPageViewController {
     lazy var pages: [UIViewController] = {
         let firstScreen = OnboardingScreenViewController()
         firstScreen.backgroundImage = UIImage(resource: .Onboarding.firstScreenBackground)
-        firstScreen.labelText = "Отслеживайте только то, что хотите"
+        firstScreen.labelText = NSLocalizedString(
+            "onboarding.firstScreenText",
+            comment: "Text for the first page"
+        )
         let secondScreen = OnboardingScreenViewController()
         secondScreen.backgroundImage = UIImage(resource: .Onboarding.secondScreenBackground)
-        secondScreen.labelText = "Даже если это не литры воды и йога"
+        secondScreen.labelText = NSLocalizedString(
+            "onboarding.secondScreenText",
+            comment: "Text for the second page"
+        )
         return [firstScreen, secondScreen]
     } ()
     
@@ -19,8 +25,8 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
-        pageControl.currentPageIndicatorTintColor = .AppColors.black
-        pageControl.pageIndicatorTintColor = .AppColors.black.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .AppColors.black.light
+        pageControl.pageIndicatorTintColor = .AppColors.black.light.withAlphaComponent(0.3)
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
@@ -28,7 +34,13 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var doneButton: SolidButton = {
         let doneButton = SolidButton()
-        doneButton.setTitle("Вот это технологии!", for: .normal)
+        let buttonTitle = NSLocalizedString(
+            "onboarding.buttonTitle",
+            comment: "Onboarding button title"
+        )
+        doneButton.setTitle(buttonTitle, for: .normal)
+        doneButton.enabledBackgroundColor = .AppColors.black.light
+        doneButton.titleColor = .AppColors.white.light
         doneButton.addTarget(
             self,
             action: #selector(didTapDoneButton),
@@ -64,7 +76,7 @@ final class OnboardingViewController: UIPageViewController {
             assertionFailure("[\(#function)] Invalid Configuration.")
             return
         }
-
+        
         let mainTabBarController = MainTabBarController()
         window.rootViewController = mainTabBarController
     }
@@ -130,7 +142,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         }
         
         let nextIndex = viewControllerIndex + 1 < pages.count ? viewControllerIndex + 1 : 0
-
+        
         return pages[nextIndex]
     }
 }
@@ -142,9 +154,9 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
     ) {
-       if let currentViewController = pageViewController.viewControllers?.first,
-          let currentIndex = pages.firstIndex(of: currentViewController) {
-           pageControl.currentPage = currentIndex
-       }
-   }
+        if let currentViewController = pageViewController.viewControllers?.first,
+           let currentIndex = pages.firstIndex(of: currentViewController) {
+            pageControl.currentPage = currentIndex
+        }
+    }
 }

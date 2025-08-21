@@ -1,7 +1,8 @@
 final class CategoryBuilder {
     // MARK: - Category Data
     
-    private(set) var title: String?
+    private(set) var oldTitle: String?
+    private(set) var newTitle: String?
     
     // MARK: - Private Properties
     
@@ -10,32 +11,33 @@ final class CategoryBuilder {
     // MARK: - Initializers
     
     init(for categoryTitle: String? = nil) {
-        self.title = categoryTitle
+        self.oldTitle = categoryTitle
+        self.newTitle = categoryTitle
     }
     
     // MARK: - Internal Methods
     
-    func didTitleEnter(_ name: String?) -> Result<Void, Error> {
+    func didTitleEnter(_ title: String?) -> Result<Void, Error> {
         do {
-            try validate(name: name)
+            try validate(title: title)
         } catch {
-            self.title = nil
+            self.newTitle = nil
             return .failure(error)
         }
 
-        self.title = name
+        self.newTitle = title
         
         return .success(())
     }
     
     func validate() -> Bool {
-        guard let title else { return false }
-        return !title.isEmpty
+        guard let newTitle else { return false }
+        return !newTitle.isEmpty
     }
     
     // MARK: - Private Methods
     
-    private func validate(name string: String?) throws {
+    private func validate(title string: String?) throws {
         guard
             let string,
             !string.isEmpty

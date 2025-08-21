@@ -1,0 +1,111 @@
+// MARK: - General.
+
+defaultTitle = "Untitled";
+
+doneButtonTitle = "Done";
+cancelButtonTitle = "Cancel";
+createButtonTitle = "Create";
+editButtonTitle = "Edit";
+deleteButtonTitle = "Delete";
+pinButtonTitle = "Pin";
+saveButtonTitle = "Save";
+
+// MARK: - Days of the week.
+
+mondayFull = "Monday";
+mondayShort = "Mon";
+
+tuesdayFull = "Tuesday";
+tuesdayShort = "Tue";
+
+wednesdayFull = "Wednesday";
+wednesdayShort = "Wed";
+
+thursdayFull = "Thursday";
+thursdayShort = "Thu";
+
+fridayFull = "Friday";
+fridayShort = "Fri";
+
+saturdayFull = "Saturday";
+saturdayShort = "Sat";
+
+sundayFull = "Sunday";
+sundayShort = "Sun";
+
+// MARK: - Category Editor.
+
+categoryEditor.textFieldPlaceholder = "Enter category name";
+categoryEditor.newCategoryTitle = "New category";
+categoryEditor.editCategoryTitle = "Edit category";
+
+// MARK: - Category Selector.
+
+categorySelector.title = "Category";
+categorySelector.stubText = "Habits and events can be\ncombined by meaning";
+categorySelector.addButtonTitle = "Add category";
+categorySelector.deleteAlertMessage = "Are you sure this category is not needed?";
+
+// MARK: - Main Editor.
+
+mainEditor.newHabitTitle = "New habit";
+mainEditor.newEventTitle = "New irregular event";
+mainEditor.editingHabitTitle = "Editing habit";
+mainEditor.editingEventTitle = "Editing irregular event";
+mainEditor.nameFieldPlaceholder = "Enter tracker name";
+mainEditor.categoryButtonTitle = "Category";
+mainEditor.scheduleButtonTitle = "Schedule";
+mainEditor.emojiCollectionTitle = "Emoji";
+mainEditor.colorCollectionTitle = "Color";
+
+// MARK: - Schedule Editor.
+
+scheduleEditor.title = "Schedule";
+
+// MARK: - Type Selector.
+
+typeSelector.title = "Create tracker";
+typeSelector.habitButtonTitle = "Habit";
+typeSelector.eventButtonTitle = "Irregular event";
+
+// MARK: - Tracker Builder Errors.
+
+trackerBuilderErrors.trackerIsNotFull = "Tracker is not fully defined";
+
+// MARK: - Trackers View.
+
+trackersView.title = "Trackers";
+trackersView.emptyStubText = "What will we track?";
+trackersView.notFoundStubText = "Nothing found";
+trackersView.deleteAlertMessage = "Are you sure you want to delete the tracker?";
+trackersView.filters = "Filters";
+trackersView.searchFieldPlaceholder = "Search";
+
+// MARK: - Filters View.
+
+filtersView.title = "Filters";
+filtersView.allTrackersButtonTitle = "All trackers";
+filtersView.trackersForTodayButtonTitle = "Trackers for today";
+filtersView.finishedTrackersCheckmarkTitle = "Finished";
+filtersView.unfinishedTrackersCheckmarkTitle = "Unfinished";
+
+// MARK: - Main Tab Bar.
+
+mainTabBar.trackersTitle = "Trackers";
+mainTabBar.statisticsTitle = "Statistics";
+
+// MARK: - Statistics View.
+
+statisticsView.title = "Statistics";
+statisticsView.finishedNumberLabel = "Trackers completed";
+statisticsView.stubText = "There is nothing to analyze yet";
+
+// MARK: - Schedule.
+
+schedule.everyDay = "Every day";
+
+// MARK: - Onboarding.
+
+onboarding.firstScreenText = "Track only what you want";
+onboarding.secondScreenText = "Even if it's not glasses of water and yoga";
+onboarding.buttonTitle = "Now that's technology!";

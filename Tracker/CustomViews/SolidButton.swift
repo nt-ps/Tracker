@@ -1,10 +1,28 @@
 import UIKit
 
 final class SolidButton: UIButton {
+    var enabledBackgroundColor: UIColor? {
+        didSet {
+            updateBackground()
+        }
+    }
+    
+    var disabledBackgroundColor: UIColor? {
+        didSet {
+            updateBackground()
+        }
+    }
+    
+    var titleColor: UIColor? {
+        didSet {
+            setTitleColor(titleColor, for: .normal)
+        }
+    }
+    
     override var isEnabled: Bool {
         didSet {
             super.isEnabled = isEnabled
-            backgroundColor = isEnabled ? .AppColors.black : .AppColors.gray
+            updateBackground()
         }
     }
     
@@ -12,10 +30,14 @@ final class SolidButton: UIButton {
         super.init(frame: frame)
         
         titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        setTitleColor(.AppColors.white, for: .normal)
+        setTitleColor(titleColor, for: .normal)
         
-        backgroundColor = .AppColors.black
-        
+        defer {
+            enabledBackgroundColor = .AppColors.black
+            disabledBackgroundColor = .AppColors.gray
+            titleColor = .AppColors.white
+        }
+
         layer.masksToBounds = true
         layer.cornerRadius = 16
         
@@ -26,6 +48,11 @@ final class SolidButton: UIButton {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("SolidButton.init(coder:) has not been implemented")
+        super.init(coder: coder)
+        print("SolidButton.init(coder:) has not been implemented")
+    }
+    
+    private func updateBackground() {
+        backgroundColor = isEnabled ? enabledBackgroundColor : disabledBackgroundColor
     }
 }
